@@ -7,4 +7,4 @@ const AuditableSchema = new mongoose.Schema({
   modifiedAt: { type: Date, default: Date.now },
 });
 
-export default mongoose.models.Auditable || mongoose.model('Auditable', AuditableSchema);
+export default mongoose.model('Auditable', AuditableSchema);

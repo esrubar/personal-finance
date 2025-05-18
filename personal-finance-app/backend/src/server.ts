@@ -3,26 +3,44 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
+// Importa tus rutas reales
+import expenseRoutes from './routes/expense.routes';
+import categoryRoutes from './routes/category.routes';
+import auditableRoutes from './routes/auditable.routes';
+
 dotenv.config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Aquí van las rutas (por ejemplo: gastos, ingresos)
+// Ruta de prueba
 app.get('/', (_req, res) => {
   res.send('API Finanzas funcionando');
 });
 
-const NEXT_PUBLIC_PORT = process.env.NEXT_PUBLIC_PORT || 4000;
-const NEXT_PUBLIC_MONGODB_URI = process.env.NEXT_PUBLIC_MONGODB_URI || '';
+// Tus rutas reales
+app.use('/api/expenses', expenseRoutes);
+app.use('/api/categories', categoryRoutes);
+app.use('/api/auditables', auditableRoutes);
+app.use('/api/saving-projects', savingProjectRoutes);
+app.use('/api/users', userRoutes);
 
-mongoose
-  .connect(NEXT_PUBLIC_MONGODB_URI)
-  .then(() => {
-    console.log('Conectado a MongoDB');
-    app.listen(NEXT_PUBLIC_PORT, () => {
-      console.log(`Servidor escuchando en http://localhost:${NEXT_PUBLIC_PORT}`);
-    });
-  })
-  .catch((err) => console.error('Error de conexión a MongoDB', err));
+// Exporta el app para usar en tests
+export default app;
+
+// Lanza el servidor solo si no está en entorno de test
+if (process.env.NODE_ENV !== 'test') {
+  const NEXT_PUBLIC_PORT = process.env.NEXT_PUBLIC_PORT || 4000;
+  const NEXT_PUBLIC_MONGODB_URI = process.env.NEXT_PUBLIC_MONGODB_URI || '';
+
+  mongoose
+    .connect(NEXT_PUBLIC_MONGODB_URI)
+    .then(() => {
+      console.log('Conectado a MongoDB');
+      app.listen(NEXT_PUBLIC_PORT, () => {
+        console.log(`Servidor escuchando en http://localhost:${NEXT_PUBLIC_PORT}`);
+      });
+    })
+    .catch((err) => console.error('Error de conexión a MongoDB', err));
+}

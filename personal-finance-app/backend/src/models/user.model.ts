@@ -6,4 +6,4 @@ const UserSchema = new mongoose.Schema({
   auditable: { type: mongoose.Schema.Types.ObjectId, ref: 'Auditable', required: true },
 });
 
-export default mongoose.models.User || mongoose.model('User', UserSchema);
+export default mongoose.model('User', UserSchema);

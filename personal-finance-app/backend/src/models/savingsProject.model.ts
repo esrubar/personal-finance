@@ -5,4 +5,4 @@ const SavingsProjectSchema = new mongoose.Schema({
   auditable: { type: mongoose.Schema.Types.ObjectId, ref: 'Auditable', required: true },
 });
 
-export default mongoose.models.SavingsProject || mongoose.model('SavingsProject', SavingsProjectSchema);
+export default mongoose.model('SavingProject', SavingsProjectSchema);

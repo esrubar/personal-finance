@@ -5,4 +5,4 @@ const CategorySchema = new mongoose.Schema({
   auditable: { type: mongoose.Schema.Types.ObjectId, ref: 'Auditable', required: true },
 });
 
-export default mongoose.models.Category || mongoose.model('Category', CategorySchema);
+export default mongoose.model('Category', CategorySchema);
