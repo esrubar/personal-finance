@@ -1,30 +1,87 @@
-import React from 'react';
-import { Button, Table, Space } from 'antd';
+import React, { useState } from 'react';
+import { Button, Table, Space, Modal, message } from 'antd';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { useExpenses } from '../hooks/useExpenses';
+import { useDeleteExpense } from '../hooks/useExpenseMutations';
+import type { Expense } from '../models/expense';
+import ExpenseForm from '../components/ExpenseForm';
 
 export const Expenses: React.FC = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
+  const [refreshKey, setRefreshKey] = useState(0);
+  const { expenses, loading, error } = useExpenses();
+  const { deleteExpense, loading: deleting } = useDeleteExpense();
+
   const columns = [
-    { title: 'Date', dataIndex: 'date' },
-    { title: 'Source', dataIndex: 'source' },
-    { title: 'Amount', dataIndex: 'amount' },
+    { title: 'Amount', dataIndex: 'amount', key: 'amount' },
+    { title: 'Category', dataIndex: ['category', 'name'], key: 'category' },
     {
       title: 'Actions',
-      render: () => (
+      key: 'actions',
+      render: (_: unknown, record: Expense) => (
         <Space>
-          <EditOutlined />
-          <DeleteOutlined />
+          <Button
+            type="link"
+            icon={<EditOutlined />}
+            onClick={() => {
+              setEditingExpense(record);
+              setIsModalOpen(true);
+            }}
+          />
+          <Button
+            type="link"
+            danger
+            loading={deleting}
+            icon={<DeleteOutlined />}
+            onClick={async () => {
+              try {
+                await deleteExpense(record.id);
+                message.success('Expense deleted');
+                setRefreshKey(prev => prev + 1);
+              } catch (err) {
+                message.error(err instanceof Error ? err.message : 'Error deleting expense');
+              }
+            }}
+          />
         </Space>
       ),
     },
   ];
 
+  const handleOpenModal = () => {
+    setEditingExpense(null);
+    setIsModalOpen(true);
+  };
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setEditingExpense(null);
+    setRefreshKey(prev => prev + 1);
+  };
+
   return (
     <>
       <h2>Expenses</h2>
-      <Button type="primary" style={{ marginBottom: 16 }}>
+      <Button type="primary" style={{ marginBottom: 16 }} onClick={handleOpenModal}>
         + Add Expense
       </Button>
-      <Table columns={columns} dataSource={[]} pagination={false} />
+      <Table
+        columns={columns}
+        dataSource={expenses}
+        loading={loading}
+        rowKey="id"
+        pagination={false}
+      />
+      <Modal
+        open={isModalOpen}
+        onCancel={handleCloseModal}
+        footer={null}
+        title={editingExpense ? 'Edit Expense' : 'Add Expense'}
+        destroyOnClose
+      >
+        <ExpenseForm initialData={editingExpense || undefined} onSuccess={handleCloseModal} />
+      </Modal>
+      {error && <div style={{ color: 'red' }}>{error.message}</div>}
     </>
   );
 };
