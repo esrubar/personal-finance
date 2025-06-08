@@ -2,7 +2,15 @@ import mongoose from 'mongoose';
 
 const SavingsProjectSchema = new mongoose.Schema({
   amount: { type: Number, required: true },
-  auditable: { type: mongoose.Schema.Types.ObjectId, ref: 'Auditable', required: true },
+  auditable: {
+    type: {
+      createdAt: { type: Date, required: true, default: Date.now },
+      updatedAt: { type: Date, required: true, default: Date.now },
+      createdBy: { type: String, required: true },
+      updatedBy: { type: String, required: true },
+    },
+    required: true,
+  },
 });
 
 export default mongoose.model('SavingProject', SavingsProjectSchema);

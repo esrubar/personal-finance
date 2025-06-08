@@ -1,7 +1,24 @@
-import ExpenseModel, { Expense } from '../models/expense.model';
+import { create } from "domain"
+import expenseModel from "../models/expense.model";
+import { createAuditable, updateAuditable } from "./auditable.service"
 
-export const getAllExpenses = () => ExpenseModel.find();
-export const getExpenseById = (id: string) => ExpenseModel.findById(id);
-export const createExpense = (data: Partial<Expense>) => ExpenseModel.create(data);
-export const updateExpense = (id: string, data: Partial<Expense>) => ExpenseModel.findByIdAndUpdate(id, data, { new: true });
-export const deleteExpense = (id: string) => ExpenseModel.findByIdAndDelete(id);
+export const createExpense = async (data: any) => {
+    const expenseData = {
+        ...data,
+        auditable: createAuditable(),
+    }
+    return await expenseModel.create(expenseData);
+} 
+
+export const getExpenses = async () => await expenseModel.find();
+export const getExpenseById = async (id: string) => await expenseModel.findById(id);
+
+export const updateExpense = async (id: string, data: any) => {
+    const expenseData = {
+        ...data,
+        auditable: updateAuditable(data.auditable),
+    };
+    return await expenseModel.findByIdAndUpdate(id, expenseData, { new: true });
+}
+
+export const deleteExpense = async (id: string) => await expenseModel.findByIdAndDelete(id);

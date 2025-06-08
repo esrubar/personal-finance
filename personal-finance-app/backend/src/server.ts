@@ -13,7 +13,17 @@ import userRoutes from './routes/user.routes'
 dotenv.config();
 
 const app = express();
-app.use(cors());
+const corsOptions = {
+  origin: [
+    "http://localhost:3000",
+    "http://localhost:5173",
+  ],
+  methods: "GET,POST,PUT,DELETE,OPTIONS",
+  allowedHeaders: "Content-Type,Authorization",
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Ruta de prueba
@@ -24,7 +34,6 @@ app.get('/', (_req, res) => {
 // Tus rutas reales
 app.use('/api/expenses', expenseRoutes);
 app.use('/api/categories', categoryRoutes);
-app.use('/api/auditables', auditableRoutes);
 app.use('/api/saving-projects', savingProjectRoutes);
 app.use('/api/users', userRoutes);
 

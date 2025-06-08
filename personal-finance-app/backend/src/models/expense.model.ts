@@ -1,20 +1,19 @@
-import { Schema, model, Document, Types } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
-export interface Expense extends Document {
-  amount: number;
-  category: Types.ObjectId; // Referencia al modelo Category
-  auditable: Types.ObjectId; // Referencia al modelo Auditable
-}
-
-const expenseSchema = new Schema<Expense>(
+const expenseSchema =  new mongoose.Schema(
   {
     amount: { type: Number, required: true },
     category: { type: Schema.Types.ObjectId, ref: 'Category', required: true },
-    auditable: { type: Schema.Types.ObjectId, ref: 'Auditable', required: true }
-  },
-  {
-    timestamps: true // opcional, crea createdAt y updatedAt
+    auditable: {
+      type: {
+        createdAt: { type: Date, required: true, default: Date.now },
+        updatedAt: { type: Date, required: true, default: Date.now },
+        createdBy: { type: String, required: true },
+        updatedBy: { type: String, required: true },
+      },
+      required: true,
+    },
   }
 );
 
-export default model<Expense>('Expense', expenseSchema);
+export default mongoose.model('Expense', expenseSchema);
