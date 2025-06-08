@@ -7,6 +7,8 @@ import dotenv from 'dotenv';
 import expenseRoutes from './routes/expense.routes';
 import categoryRoutes from './routes/category.routes';
 import auditableRoutes from './routes/auditable.routes';
+import savingProjectRoutes from './routes/savingProject.routes'
+import userRoutes from './routes/user.routes'
 
 dotenv.config();
 

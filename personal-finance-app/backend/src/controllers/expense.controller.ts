@@ -7,7 +7,7 @@ export const create = async (req: Request, res: Response) => {
 };
 
 export const getAll = async (_req: Request, res: Response) => {
-  const expenses = await expenseService.getExpenses();
+  const expenses = await expenseService.getAllExpenses();
   res.json(expenses);
 };
 
