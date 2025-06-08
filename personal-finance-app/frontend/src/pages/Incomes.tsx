@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { Button, Table, Space, Modal, message } from 'antd';
-import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import { useIncomes } from '../hooks/useIncomes';
-import { useDeleteIncome } from '../hooks/useIncomeMutations';
-import type { Income } from '../models/income';
-import IncomeForm from '../components/IncomeForm';
+import React, { useState } from "react";
+import { Button, Table, Space, Modal, message } from "antd";
+import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import { useIncomes } from "../hooks/useIncomes";
+import { useDeleteIncome } from "../hooks/useIncomeMutations";
+import type { Income } from "../models/income";
+import IncomeForm from "../components/IncomeForm";
 
 export const Incomes: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -14,11 +14,11 @@ export const Incomes: React.FC = () => {
   const { deleteIncome, loading: deleting } = useDeleteIncome();
 
   const columns = [
-    { title: 'Amount', dataIndex: 'amount', key: 'amount' },
-    { title: 'Source', dataIndex: 'source', key: 'source' },
+    { title: "Amount", dataIndex: "amount", key: "amount" },
+    { title: "Source", dataIndex: "source", key: "source" },
     {
-      title: 'Actions',
-      key: 'actions',
+      title: "Actions",
+      key: "actions",
       render: (_: unknown, record: Income) => (
         <Space>
           <Button
@@ -36,11 +36,13 @@ export const Incomes: React.FC = () => {
             icon={<DeleteOutlined />}
             onClick={async () => {
               try {
-                await deleteIncome(record.id);
-                message.success('Income deleted');
-                setRefreshKey(prev => prev + 1);
+                await deleteIncome(record._id);
+                message.success("Income deleted");
+                setRefreshKey((prev) => prev + 1);
               } catch (err) {
-                message.error(err instanceof Error ? err.message : 'Error deleting income');
+                message.error(
+                  err instanceof Error ? err.message : "Error deleting income",
+                );
               }
             }}
           />
@@ -56,13 +58,17 @@ export const Incomes: React.FC = () => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setEditingIncome(null);
-    setRefreshKey(prev => prev + 1);
+    setRefreshKey((prev) => prev + 1);
   };
 
   return (
     <>
       <h2>Incomes</h2>
-      <Button type="primary" style={{ marginBottom: 16 }} onClick={handleOpenModal}>
+      <Button
+        type="primary"
+        style={{ marginBottom: 16 }}
+        onClick={handleOpenModal}
+      >
         + Add Income
       </Button>
       <Table
@@ -76,12 +82,15 @@ export const Incomes: React.FC = () => {
         open={isModalOpen}
         onCancel={handleCloseModal}
         footer={null}
-        title={editingIncome ? 'Edit Income' : 'Add Income'}
+        title={editingIncome ? "Edit Income" : "Add Income"}
         destroyOnClose
       >
-        <IncomeForm initialData={editingIncome || undefined} onSuccess={handleCloseModal} />
+        <IncomeForm
+          initialData={editingIncome || undefined}
+          onSuccess={handleCloseModal}
+        />
       </Modal>
-      {error && <div style={{ color: 'red' }}>{error.message}</div>}
+      {error && <div style={{ color: "red" }}>{error.message}</div>}
     </>
   );
 };

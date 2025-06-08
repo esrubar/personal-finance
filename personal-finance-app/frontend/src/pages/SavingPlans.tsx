@@ -1,23 +1,25 @@
-import React, { useState } from 'react';
-import { Button, Table, Space, Modal, message } from 'antd';
-import { DeleteOutlined } from '@ant-design/icons';
-import SavingProjectForm from '../components/SavingProjectForm';
-import { useSavingProjects } from '../hooks/useSavingProjects';
-import { useDeleteSavingProject } from '../hooks/useSavingProjectMutations';
-import type { SavingProject } from '../models/savingProject';
+import React, { useState } from "react";
+import { Button, Table, Space, Modal, message } from "antd";
+import { DeleteOutlined } from "@ant-design/icons";
+import SavingProjectForm from "../components/SavingProjectForm";
+import { useSavingProjects } from "../hooks/useSavingProjects";
+import { useDeleteSavingProject } from "../hooks/useSavingProjectMutations";
+import type { SavingProject } from "../models/savingProject";
 
 export const SavingPlans: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingProject, setEditingProject] = useState<SavingProject | null>(null);
+  const [editingProject, setEditingProject] = useState<SavingProject | null>(
+    null,
+  );
   const { savingProjects, loading, error } = useSavingProjects();
   const { deleteSavingProject, loading: deleting } = useDeleteSavingProject();
 
   const columns = [
-    { title: 'ID', dataIndex: 'id', key: 'id' },
-    { title: 'Amount', dataIndex: 'amount', key: 'amount' },
+    { title: "ID", dataIndex: "id", key: "id" },
+    { title: "Amount", dataIndex: "amount", key: "amount" },
     {
-      title: 'Actions',
-      key: 'actions',
+      title: "Actions",
+      key: "actions",
       render: (_: unknown, record: SavingProject) => (
         <Space>
           <Button
@@ -35,10 +37,12 @@ export const SavingPlans: React.FC = () => {
             loading={deleting}
             onClick={async () => {
               try {
-                await deleteSavingProject(record.id);
-                message.success('Saving project deleted');
+                await deleteSavingProject(record._id);
+                message.success("Saving project deleted");
               } catch (err) {
-                message.error(err instanceof Error ? err.message : 'Error deleting project');
+                message.error(
+                  err instanceof Error ? err.message : "Error deleting project",
+                );
               }
             }}
             icon={<DeleteOutlined />}
@@ -60,7 +64,11 @@ export const SavingPlans: React.FC = () => {
   return (
     <>
       <h2>Saving Plans</h2>
-      <Button type="primary" style={{ marginBottom: 16 }} onClick={handleOpenModal}>
+      <Button
+        type="primary"
+        style={{ marginBottom: 16 }}
+        onClick={handleOpenModal}
+      >
         + Add Saving Plan
       </Button>
       <Table
@@ -74,12 +82,15 @@ export const SavingPlans: React.FC = () => {
         open={isModalOpen}
         onCancel={handleCloseModal}
         footer={null}
-        title={editingProject ? 'Edit Saving Project' : 'Add Saving Project'}
+        title={editingProject ? "Edit Saving Project" : "Add Saving Project"}
         destroyOnClose
       >
-        <SavingProjectForm initialData={editingProject || undefined} onSuccess={handleCloseModal} />
+        <SavingProjectForm
+          initialData={editingProject || undefined}
+          onSuccess={handleCloseModal}
+        />
       </Modal>
-      {error && <div style={{ color: 'red' }}>{error.message}</div>}
+      {error && <div style={{ color: "red" }}>{error.message}</div>}
     </>
   );
 };

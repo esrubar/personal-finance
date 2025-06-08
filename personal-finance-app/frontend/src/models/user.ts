@@ -1,7 +1,7 @@
 import type { Auditable } from "./auditable";
 
 export interface User {
-  id: string;
+  _id: string;
   name: string;
   password: string;
   auditable: Auditable;

@@ -1,7 +1,7 @@
 import type { Auditable } from "./auditable";
 
 export interface Category {
-  id?: string;
+  _id?: string;
   name: string;
   auditable?: Auditable;
 }

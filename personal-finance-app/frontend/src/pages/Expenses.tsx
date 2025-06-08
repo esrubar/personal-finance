@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { Button, Table, Space, Modal, message } from 'antd';
-import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import { useExpenses } from '../hooks/useExpenses';
-import { useDeleteExpense } from '../hooks/useExpenseMutations';
-import type { Expense } from '../models/expense';
-import ExpenseForm from '../components/ExpenseForm';
+import React, { useState } from "react";
+import { Button, Table, Space, Modal, message } from "antd";
+import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import { useExpenses } from "../hooks/useExpenses";
+import { useDeleteExpense } from "../hooks/useExpenseMutations";
+import type { Expense } from "../models/expense";
+import ExpenseForm from "../components/ExpenseForm";
 
 export const Expenses: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -14,11 +14,11 @@ export const Expenses: React.FC = () => {
   const { deleteExpense, loading: deleting } = useDeleteExpense();
 
   const columns = [
-    { title: 'Amount', dataIndex: 'amount', key: 'amount' },
-    { title: 'Category', dataIndex: ['category', 'name'], key: 'category' },
+    { title: "Amount", dataIndex: "amount", key: "amount" },
+    { title: "Category", dataIndex: ["category", "name"], key: "category" },
     {
-      title: 'Actions',
-      key: 'actions',
+      title: "Actions",
+      key: "actions",
       render: (_: unknown, record: Expense) => (
         <Space>
           <Button
@@ -36,11 +36,13 @@ export const Expenses: React.FC = () => {
             icon={<DeleteOutlined />}
             onClick={async () => {
               try {
-                await deleteExpense(record.id);
-                message.success('Expense deleted');
-                setRefreshKey(prev => prev + 1);
+                await deleteExpense(record._id);
+                message.success("Expense deleted");
+                setRefreshKey((prev) => prev + 1);
               } catch (err) {
-                message.error(err instanceof Error ? err.message : 'Error deleting expense');
+                message.error(
+                  err instanceof Error ? err.message : "Error deleting expense",
+                );
               }
             }}
           />
@@ -56,13 +58,17 @@ export const Expenses: React.FC = () => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setEditingExpense(null);
-    setRefreshKey(prev => prev + 1);
+    setRefreshKey((prev) => prev + 1);
   };
 
   return (
     <>
       <h2>Expenses</h2>
-      <Button type="primary" style={{ marginBottom: 16 }} onClick={handleOpenModal}>
+      <Button
+        type="primary"
+        style={{ marginBottom: 16 }}
+        onClick={handleOpenModal}
+      >
         + Add Expense
       </Button>
       <Table
@@ -76,12 +82,15 @@ export const Expenses: React.FC = () => {
         open={isModalOpen}
         onCancel={handleCloseModal}
         footer={null}
-        title={editingExpense ? 'Edit Expense' : 'Add Expense'}
+        title={editingExpense ? "Edit Expense" : "Add Expense"}
         destroyOnClose
       >
-        <ExpenseForm initialData={editingExpense || undefined} onSuccess={handleCloseModal} />
+        <ExpenseForm
+          initialData={editingExpense || undefined}
+          onSuccess={handleCloseModal}
+        />
       </Modal>
-      {error && <div style={{ color: 'red' }}>{error.message}</div>}
+      {error && <div style={{ color: "red" }}>{error.message}</div>}
     </>
   );
 };

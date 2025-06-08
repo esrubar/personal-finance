@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import type { User } from '../models/user';
-import { useCreateUser, useUpdateUser } from '../hooks/useUserMutations';
+import React, { useState, useEffect } from "react";
+import type { User } from "../models/user";
+import { useCreateUser, useUpdateUser } from "../hooks/useUserMutations";
 
 interface UserFormProps {
   initialData?: User;
@@ -8,8 +8,8 @@ interface UserFormProps {
 }
 
 const UserForm: React.FC<UserFormProps> = ({ initialData, onSuccess }) => {
-  const [name, setName] = useState(initialData?.name || '');
-  const [password, setPassword] = useState('');
+  const [name, setName] = useState(initialData?.name || "");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -27,14 +27,14 @@ const UserForm: React.FC<UserFormProps> = ({ initialData, onSuccess }) => {
     setLoading(true);
     setError(null);
     try {
-      if (initialData && initialData.id) {
-        await updateUser(initialData.id, { ...initialData, name });
+      if (initialData && initialData._id) {
+        await updateUser(initialData._id, { ...initialData, name });
       } else {
         await createUser({ name, password } as User);
       }
       if (onSuccess) onSuccess();
     } catch (err: any) {
-      setError(err.message || 'Error saving user');
+      setError(err.message || "Error saving user");
     } finally {
       setLoading(false);
     }
@@ -48,7 +48,7 @@ const UserForm: React.FC<UserFormProps> = ({ initialData, onSuccess }) => {
           id="name"
           type="text"
           value={name}
-          onChange={e => setName(e.target.value)}
+          onChange={(e) => setName(e.target.value)}
           required
         />
       </div>
@@ -59,14 +59,14 @@ const UserForm: React.FC<UserFormProps> = ({ initialData, onSuccess }) => {
             id="password"
             type="password"
             value={password}
-            onChange={e => setPassword(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)}
             required
           />
         </div>
       )}
-      {error && <div style={{ color: 'red' }}>{error}</div>}
+      {error && <div style={{ color: "red" }}>{error}</div>}
       <button type="submit" disabled={loading}>
-        {initialData ? 'Update' : 'Create'} User
+        {initialData ? "Update" : "Create"} User
       </button>
     </form>
   );

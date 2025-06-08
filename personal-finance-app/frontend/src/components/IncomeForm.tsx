@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import type { Income } from '../models/income';
-import { useCreateIncome, useUpdateIncome } from '../hooks/useIncomeMutations';
+import React, { useState, useEffect } from "react";
+import type { Income } from "../models/income";
+import { useCreateIncome, useUpdateIncome } from "../hooks/useIncomeMutations";
 
 interface IncomeFormProps {
   initialData?: Income;
@@ -9,7 +9,7 @@ interface IncomeFormProps {
 
 const IncomeForm: React.FC<IncomeFormProps> = ({ initialData, onSuccess }) => {
   const [amount, setAmount] = useState(initialData?.amount || 0);
-  const [source, setSource] = useState(initialData?.source || '');
+  const [source, setSource] = useState(initialData?.source || "");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -28,14 +28,14 @@ const IncomeForm: React.FC<IncomeFormProps> = ({ initialData, onSuccess }) => {
     setLoading(true);
     setError(null);
     try {
-      if (initialData && initialData.id) {
-        await updateIncome(initialData.id, { ...initialData, amount, source });
+      if (initialData && initialData._id) {
+        await updateIncome(initialData._id, { ...initialData, amount, source });
       } else {
         await createIncome({ amount, source } as Income);
       }
       if (onSuccess) onSuccess();
     } catch (err: any) {
-      setError(err.message || 'Error saving income');
+      setError(err.message || "Error saving income");
     } finally {
       setLoading(false);
     }
@@ -49,7 +49,7 @@ const IncomeForm: React.FC<IncomeFormProps> = ({ initialData, onSuccess }) => {
           id="amount"
           type="number"
           value={amount}
-          onChange={e => setAmount(Number(e.target.value))}
+          onChange={(e) => setAmount(Number(e.target.value))}
           required
         />
       </div>
@@ -59,13 +59,13 @@ const IncomeForm: React.FC<IncomeFormProps> = ({ initialData, onSuccess }) => {
           id="source"
           type="text"
           value={source}
-          onChange={e => setSource(e.target.value)}
+          onChange={(e) => setSource(e.target.value)}
           required
         />
       </div>
-      {error && <div style={{ color: 'red' }}>{error}</div>}
+      {error && <div style={{ color: "red" }}>{error}</div>}
       <button type="submit" disabled={loading}>
-        {initialData ? 'Update' : 'Create'} Income
+        {initialData ? "Update" : "Create"} Income
       </button>
     </form>
   );

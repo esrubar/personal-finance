@@ -1,16 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import type { Expense } from '../models/expense';
-import { useCreateExpense, useUpdateExpense } from '../hooks/useExpenseMutations';
-import { useCategories } from '../hooks/useCategories';
+import React, { useState, useEffect } from "react";
+import type { Expense } from "../models/expense";
+import {
+  useCreateExpense,
+  useUpdateExpense,
+} from "../hooks/useExpenseMutations";
+import { useCategories } from "../hooks/useCategories";
 
 interface ExpenseFormProps {
   initialData?: Expense;
   onSuccess?: () => void;
 }
 
-const ExpenseForm: React.FC<ExpenseFormProps> = ({ initialData, onSuccess }) => {
+const ExpenseForm: React.FC<ExpenseFormProps> = ({
+  initialData,
+  onSuccess,
+}) => {
   const [amount, setAmount] = useState(initialData?.amount || 0);
-  const [categoryId, setCategoryId] = useState(initialData?.category?.id || '');
+  const [categoryId, setCategoryId] = useState(
+    initialData?.category?._id || "",
+  );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { categories } = useCategories();
@@ -21,7 +29,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ initialData, onSuccess }) => 
   useEffect(() => {
     if (initialData) {
       setAmount(initialData.amount);
-      setCategoryId(initialData.category?.id || '');
+      setCategoryId(initialData.category?._id || "");
     }
   }, [initialData]);
 
@@ -30,14 +38,21 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ initialData, onSuccess }) => 
     setLoading(true);
     setError(null);
     try {
-      if (initialData && initialData.id) {
-        await updateExpense(initialData.id, { ...initialData, amount, category: { ...initialData.category, id: categoryId } });
+      if (initialData && initialData._id) {
+        await updateExpense(initialData._id, {
+          ...initialData,
+          amount,
+          category: { ...initialData.category, _id: categoryId },
+        });
       } else {
-        await createExpense({ amount, category: { id: categoryId, name: '' } } as Expense);
+        await createExpense({
+          amount,
+          category: { _id: categoryId, name: "" },
+        } as Expense);
       }
       if (onSuccess) onSuccess();
     } catch (err: any) {
-      setError(err.message || 'Error saving expense');
+      setError(err.message || "Error saving expense");
     } finally {
       setLoading(false);
     }
@@ -51,7 +66,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ initialData, onSuccess }) => 
           id="amount"
           type="number"
           value={amount}
-          onChange={e => setAmount(Number(e.target.value))}
+          onChange={(e) => setAmount(Number(e.target.value))}
           required
         />
       </div>
@@ -60,18 +75,20 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ initialData, onSuccess }) => 
         <select
           id="category"
           value={categoryId}
-          onChange={e => setCategoryId(e.target.value)}
+          onChange={(e) => setCategoryId(e.target.value)}
           required
         >
           <option value="">Select category</option>
-          {categories.map(cat => (
-            <option key={cat.id} value={cat.id}>{cat.name}</option>
+          {categories.map((cat) => (
+            <option key={cat._id} value={cat._id}>
+              {cat.name}
+            </option>
           ))}
         </select>
       </div>
-      {error && <div style={{ color: 'red' }}>{error}</div>}
+      {error && <div style={{ color: "red" }}>{error}</div>}
       <button type="submit" disabled={loading}>
-        {initialData ? 'Update' : 'Create'} Expense
+        {initialData ? "Update" : "Create"} Expense
       </button>
     </form>
   );
