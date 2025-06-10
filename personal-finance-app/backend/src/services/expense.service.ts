@@ -10,7 +10,9 @@ export const createExpense = async (data: any) => {
     return await expenseModel.create(expenseData);
 } 
 
-export const getExpenses = async () => await expenseModel.find();
+export const getExpenses = async () => { 
+    return await expenseModel.find().populate('category', 'name');
+}
 export const getExpenseById = async (id: string) => await expenseModel.findById(id);
 
 export const updateExpense = async (id: string, data: any) => {
