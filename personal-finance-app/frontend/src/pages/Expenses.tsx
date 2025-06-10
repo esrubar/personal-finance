@@ -10,12 +10,13 @@ export const Expenses: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
-  const { expenses, loading, error } = useExpenses();
+  const { expenses, loading, error } = useExpenses(refreshKey);
   const { deleteExpense, loading: deleting } = useDeleteExpense();
 
   const columns = [
     { title: "Amount", dataIndex: "amount", key: "amount" },
     { title: "Category", dataIndex: ["category", "name"], key: "category" },
+    { title: "Date", dataIndex: ["auditable", "createdAt"], key: "createdAt" },
     {
       title: "Actions",
       key: "actions",
@@ -75,7 +76,7 @@ export const Expenses: React.FC = () => {
         columns={columns}
         dataSource={expenses}
         loading={loading}
-        rowKey="id"
+        rowKey="_id"
         pagination={false}
       />
       <Modal

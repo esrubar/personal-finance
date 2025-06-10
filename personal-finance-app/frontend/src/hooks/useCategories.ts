@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import * as categoryDataSource from '../data/categoryDataSource';
 import type { Category } from '../models/category';
 
-export function useCategories() {
+export function useCategories(refreshKey?: number) {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -13,7 +13,7 @@ export function useCategories() {
       .then(setCategories)
       .catch(setError)
       .finally(() => setLoading(false));
-  }, []);
+  }, [refreshKey]);
 
   return { categories, loading, error };
 }

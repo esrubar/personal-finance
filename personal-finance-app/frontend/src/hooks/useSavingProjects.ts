@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import * as savingProjectDataSource from '../data/savingProjectDataSource';
 import type { SavingProject } from '../models/savingProject';
 
-export function useSavingProjects() {
+export function useSavingProjects(refreshKey?: number) {
   const [savingProjects, setSavingProjects] = useState<SavingProject[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -13,7 +13,7 @@ export function useSavingProjects() {
       .then(setSavingProjects)
       .catch(setError)
       .finally(() => setLoading(false));
-  }, []);
+  }, [refreshKey]);
 
   return { savingProjects, loading, error };
 }

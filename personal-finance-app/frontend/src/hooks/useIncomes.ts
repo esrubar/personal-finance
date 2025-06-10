@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import * as incomeDataSource from '../data/incomeDataSource';
 import type { Income } from '../models/income';
 
-export function useIncomes() {
+export function useIncomes(refreshKey?: number) {
   const [incomes, setIncomes] = useState<Income[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -13,7 +13,7 @@ export function useIncomes() {
       .then(setIncomes)
       .catch(setError)
       .finally(() => setLoading(false));
-  }, []);
+  }, [refreshKey]);
 
   return { incomes, loading, error };
 }

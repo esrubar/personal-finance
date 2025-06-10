@@ -1,16 +1,16 @@
 import React, { useState } from "react";
 import { Button, Table, Space, Modal, message } from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
-import { useIncomes } from "../hooks/useIncomes";
-import { useDeleteIncome } from "../hooks/useIncomeMutations";
-import type { Income } from "../models/income";
 import IncomeForm from "../components/IncomeForm";
+import type { Income } from "../models/income";
+import { useDeleteIncome } from "../hooks/useIncomeMutations";
+import { useIncomes } from "../hooks/useIncomes";
 
 export const Incomes: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingIncome, setEditingIncome] = useState<Income | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
-  const { incomes, loading, error } = useIncomes();
+  const { incomes, loading, error } = useIncomes(refreshKey);
   const { deleteIncome, loading: deleting } = useDeleteIncome();
 
   const columns = [
@@ -75,7 +75,7 @@ export const Incomes: React.FC = () => {
         columns={columns}
         dataSource={incomes}
         loading={loading}
-        rowKey="id"
+        rowKey="_id"
         pagination={false}
       />
       <Modal
@@ -83,7 +83,6 @@ export const Incomes: React.FC = () => {
         onCancel={handleCloseModal}
         footer={null}
         title={editingIncome ? "Edit Income" : "Add Income"}
-        destroyOnClose
       >
         <IncomeForm
           initialData={editingIncome || undefined}

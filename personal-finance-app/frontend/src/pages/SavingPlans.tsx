@@ -11,7 +11,8 @@ export const SavingPlans: React.FC = () => {
   const [editingProject, setEditingProject] = useState<SavingProject | null>(
     null,
   );
-  const { savingProjects, loading, error } = useSavingProjects();
+  const [refreshKey, setRefreshKey] = useState(0);
+  const { savingProjects, loading, error } = useSavingProjects(refreshKey);
   const { deleteSavingProject, loading: deleting } = useDeleteSavingProject();
 
   const columns = [
@@ -39,6 +40,7 @@ export const SavingPlans: React.FC = () => {
               try {
                 await deleteSavingProject(record._id);
                 message.success("Saving project deleted");
+                setRefreshKey((prev) => prev + 1);
               } catch (err) {
                 message.error(
                   err instanceof Error ? err.message : "Error deleting project",
@@ -59,6 +61,7 @@ export const SavingPlans: React.FC = () => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setEditingProject(null);
+    setRefreshKey((prev) => prev + 1);
   };
 
   return (
@@ -75,7 +78,7 @@ export const SavingPlans: React.FC = () => {
         columns={columns}
         dataSource={savingProjects}
         loading={loading}
-        rowKey="id"
+        rowKey="_id"
         pagination={false}
       />
       <Modal

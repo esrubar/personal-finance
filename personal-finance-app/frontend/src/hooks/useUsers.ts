@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import * as userDataSource from '../data/userDataSource';
 import type { User } from '../models/user';
 
-export function useUsers() {
+export function useUsers(refreshKey?: number) {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -13,7 +13,7 @@ export function useUsers() {
       .then(setUsers)
       .catch(setError)
       .finally(() => setLoading(false));
-  }, []);
+  }, [refreshKey]);
 
   return { users, loading, error };
 }

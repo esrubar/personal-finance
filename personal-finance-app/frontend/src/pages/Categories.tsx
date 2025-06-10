@@ -9,7 +9,7 @@ import CategoryForm from "../components/CategoryForm";
 export const Categories: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
-  const { categories, loading, error } = useCategories();
+  const { categories, loading, error } = useCategories(refreshKey);
   const { deleteCategory, loading: deleting } = useDeleteCategory();
 
   const columns = [
@@ -76,7 +76,7 @@ export const Categories: React.FC = () => {
         columns={columns}
         dataSource={categories}
         loading={loading}
-        rowKey="id"
+        rowKey="_id"
         pagination={false}
       />
       <Modal

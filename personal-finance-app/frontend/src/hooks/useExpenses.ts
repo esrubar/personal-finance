@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import * as expenseDataSource from '../data/expenseDataSource';
 import type { Expense } from '../models/expense';
 
-export function useExpenses() {
+export function useExpenses(refreshKey?: number) {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -13,7 +13,7 @@ export function useExpenses() {
       .then(setExpenses)
       .catch(setError)
       .finally(() => setLoading(false));
-  }, []);
+  }, [refreshKey]);
 
   return { expenses, loading, error };
 }

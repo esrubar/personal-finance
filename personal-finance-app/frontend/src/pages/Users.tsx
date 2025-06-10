@@ -10,13 +10,8 @@ export const Users: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
-  const { users, loading, error } = useUsers();
+  const { users, loading, error } = useUsers(refreshKey);
   const { deleteUser, loading: deleting } = useDeleteUser();
-
-  // Refrescar usuarios tras crear/editar
-  useEffect(() => {
-    // No hace falta nada aquí, useUsers ya obtiene los datos
-  }, [refreshKey]);
 
   const columns = [
     { title: "Name", dataIndex: "name", key: "name" },
