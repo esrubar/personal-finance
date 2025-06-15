@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Button, Table, Space, Modal, message } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import { useUsers } from "../hooks/useUsers";
