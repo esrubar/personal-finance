@@ -4,6 +4,8 @@ const expenseSchema =  new mongoose.Schema(
   {
     amount: { type: Number, required: true },
     category: { type: Schema.Types.ObjectId, ref: 'Category', required: true },
+    transactionDate: { type: Date },
+    description: { type: String},
     auditable: {
       type: {
         createdAt: { type: Date, required: true, default: Date.now },

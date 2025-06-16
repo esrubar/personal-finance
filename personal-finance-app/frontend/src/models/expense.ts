@@ -5,5 +5,7 @@ export interface Expense {
   _id: string;
   amount: number;
   category: Category;
+  transactionDate?: Date;
+  description?: string;
   auditable: Auditable;
 }
