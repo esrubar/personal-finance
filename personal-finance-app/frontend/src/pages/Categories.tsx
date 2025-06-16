@@ -9,6 +9,7 @@ import CategoryForm from "../components/CategoryForm";
 export const Categories: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [refreshKey, setRefreshKey] = useState(0);
   const { categories, loading, error } = useCategories(refreshKey);
   const { deleteCategory, loading: deleting } = useDeleteCategory();
 
@@ -37,6 +38,7 @@ export const Categories: React.FC = () => {
                 if (record._id) {
                   await deleteCategory(record._id);
                   message.success("Category deleted");
+                  setRefreshKey((prev) => prev + 1);
                 }
               } catch (err) {
                 message.error(
@@ -60,6 +62,7 @@ export const Categories: React.FC = () => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setEditingCategory(null);
+    setRefreshKey((prev) => prev + 1);
   };
 
   return (
