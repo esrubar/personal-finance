@@ -5,6 +5,8 @@ import {
   useUpdateExpense,
 } from "../hooks/useExpenseMutations";
 import { useCategories } from "../hooks/useCategories";
+import { DatePicker } from "antd";
+import dayjs from "dayjs";
 
 interface ExpenseFormProps {
   initialData?: Expense;
@@ -16,6 +18,10 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
   onSuccess,
 }) => {
   const [amount, setAmount] = useState(initialData?.amount || 0);
+  const [description, setDescription] = useState(initialData?.description);
+  const [transactionDate, setTransactionDate] = useState(
+    initialData?.transactionDate ? dayjs(initialData.transactionDate) : undefined
+  );  
   const [categoryId, setCategoryId] = useState(
     initialData?.category?._id || "",
   );
@@ -30,6 +36,8 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
     if (initialData) {
       setAmount(initialData.amount);
       setCategoryId(initialData.category?._id || "");
+      setDescription(initialData.description);
+      setTransactionDate(initialData.transactionDate ? dayjs(initialData.transactionDate) : undefined);
     }
   }, [initialData]);
 
@@ -42,11 +50,15 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
         await updateExpense(initialData._id, {
           ...initialData,
           amount,
+          description,
+          transactionDate: transactionDate ? transactionDate.toDate() : undefined,
           category: { ...initialData.category, _id: categoryId },
         });
       } else {
         await createExpense({
           amount,
+          description,
+          transactionDate,
           category: { _id: categoryId, name: "" },
         } as Expense);
       }
@@ -69,6 +81,24 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
           onChange={(e) => setAmount(Number(e.target.value))}
           required
         />
+      </div>
+      <div>
+        <label htmlFor="description">Description:</label>
+        <input
+          id="description"
+          type="text"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+        />
+      </div>
+      <div>
+        <label htmlFor="transactionDate">Date:</label>
+        <DatePicker
+            id="transactionDate"
+            value={transactionDate}
+            onChange={(date) => setTransactionDate(date)}
+            format="DD/MM/YYYY"
+          />
       </div>
       <div>
         <label htmlFor="category">Category:</label>
