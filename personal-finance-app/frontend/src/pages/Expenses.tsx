@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { Button, Table, Space, Modal, message } from "antd";
+import { Button, Table, Space, Modal, message, Tag } from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useExpenses } from "../hooks/useExpenses";
 import { useDeleteExpense } from "../hooks/useExpenseMutations";
 import type { Expense } from "../models/expense";
 import ExpenseForm from "../components/ExpenseForm";
+import { getColorForCategory } from "../utils/getCategoryColors";
 
 export const Expenses: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -14,9 +15,28 @@ export const Expenses: React.FC = () => {
   const { deleteExpense, loading: deleting } = useDeleteExpense();
 
   const columns = [
-    { title: "Amount", dataIndex: "amount", key: "amount" },
-    { title: "Category", dataIndex: ["category", "name"], key: "category" },
-    { title: "Date", dataIndex: ["auditable", "createdAt"], key: "createdAt" },
+    {
+      title: "Amount",
+      dataIndex: "amount",
+      key: "amount",
+      render: (amount: number) => `${amount.toFixed(2)} €`,
+    },
+
+    { title: "Description", dataIndex: "description", key: "description" },
+    {
+      title: "Category",
+      dataIndex: ["category", "name"],
+      key: "category",
+      render: (name: string) => (
+        <Tag color={getColorForCategory(name)}>{name}</Tag>
+      ),
+    },
+    {
+      title: "Date",
+      dataIndex: ["auditable", "createdAt"],
+      key: "createdAt",
+      render: (date: string) => new Date(date).toLocaleDateString(),
+    },
     {
       title: "Actions",
       key: "actions",
