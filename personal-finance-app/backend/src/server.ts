@@ -6,9 +6,9 @@ import dotenv from 'dotenv';
 // Importa tus rutas reales
 import expenseRoutes from './routes/expense.routes';
 import categoryRoutes from './routes/category.routes';
-import auditableRoutes from './routes/auditable.routes';
 import savingProjectRoutes from './routes/savingProject.routes'
 import userRoutes from './routes/user.routes'
+import categoryBudgetRoutes from './routes/categoryBudget.routes';
 
 dotenv.config();
 
@@ -36,6 +36,7 @@ app.use('/api/expenses', expenseRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/saving-projects', savingProjectRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/categoryBudgets', categoryBudgetRoutes);
 
 // Exporta el app para usar en tests
 export default app;
