@@ -33,9 +33,12 @@ export const Expenses: React.FC = () => {
     },
     {
       title: "Date",
-      dataIndex: ["auditable", "createdAt"],
-      key: "createdAt",
-      render: (date: string) => new Date(date).toLocaleDateString(),
+      key: "date",
+      render: (_: any, record: Expense) => {
+        const dateToShow =
+          record.transactionDate ?? record.auditable?.createdAt;
+        return new Date(dateToShow).toLocaleDateString();
+      },
     },
     {
       title: "Actions",
