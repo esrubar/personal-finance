@@ -3,8 +3,8 @@ import type {CategoryBudget} from "../models/categoryBudget.ts";
 
 const API_URL = '/api/categoryBudgets';
 
-export const getCategoryBudget = async (month: number, year: number): Promise<CategoryBudget> => {
-    const { data } = await axios.get<CategoryBudget>(`${API_URL}/${month}/${year}`);
+export const getCategoryBudgets = async (month: number, year: number): Promise<CategoryBudget[]> => {
+    const { data } = await axios.get<CategoryBudget[]>(`${API_URL}/${month}/${year}`);
     return data;
 };
 

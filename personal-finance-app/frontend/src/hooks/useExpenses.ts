@@ -34,3 +34,19 @@ export function useExpense(id: string) {
 
   return { expense, loading, error };
 }
+
+export function useMensualExpenses(refreshKey?: number) {
+  const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+
+  useEffect(() => {
+    setLoading(true);
+    expenseDataSource.getMensualExpenses()
+        .then(setExpenses)
+        .catch(setError)
+        .finally(() => setLoading(false));
+  }, [refreshKey]);
+
+  return { expenses, loading, error };
+}

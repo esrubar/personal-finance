@@ -10,5 +10,5 @@ export const create = async (data: any) => {
   };
 
   export const getByMonthAndYear = async (month: Number, year: Number) => {
-    return await categoryBudgetModel.find({ month, year });     
+    return categoryBudgetModel.find({month, year});     
   }

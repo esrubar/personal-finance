@@ -13,6 +13,11 @@ export const getExpense = async (id: string): Promise<Expense> => {
   return data;
 };
 
+export const getMensualExpenses = async (): Promise<Expense[]> => {
+  const { data } = await axios.get<Expense[]>(`${API_URL}/getMensualExpenses`);
+  return data;
+};
+
 export const createExpense = async (expense: Expense): Promise<Expense> => {
   const { data } = await axios.post<Expense>(API_URL, expense);
   return data;
