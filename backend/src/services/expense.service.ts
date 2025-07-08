@@ -23,3 +23,45 @@ export const updateExpense = async (id: string, data: any) => {
 }
 
 export const deleteExpense = async (id: string) => await expenseModel.findByIdAndDelete(id);
+
+export async function getByMonthAndYearGroupedByCategory() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth();
+
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0, 23, 59, 59, 999);
+    return expenseModel.aggregate([
+        {
+            $match: {
+                'auditable.createdBy': "Estela",
+                transactionDate: { $gte: firstDay, $lte: lastDay }
+            }
+        },
+        {
+            $group: {
+                _id: '$category',
+                totalAmount: { $sum: '$amount' }
+            }
+        },
+        {
+            $lookup: {
+                from: 'categories',
+                localField: '_id',
+                foreignField: '_id',
+                as: 'category'
+            }
+        },
+        {
+            $unwind: '$category'
+        },
+        {
+            $project: {
+                _id: 0,
+                categoryId: '$_id',
+                categoryName: '$category.name',
+                totalAmount: 1
+            }
+        }
+    ]);
+}

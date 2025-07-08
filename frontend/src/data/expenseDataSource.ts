@@ -26,3 +26,8 @@ export const updateExpense = async (id: string, expense: Expense): Promise<Expen
 export const deleteExpense = async (id: string): Promise<void> => {
   await axios.delete(`${API_URL}/${id}`);
 };
+
+export const getMensualExpenses = async (): Promise<Expense[]> => {
+  const { data } = await axios.get<Expense[]>(`${API_URL}/getMensualExpenses`);
+  return data;
+};

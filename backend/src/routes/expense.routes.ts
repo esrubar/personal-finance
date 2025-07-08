@@ -9,5 +9,6 @@ router.get('/:id', ExpenseController.getById);
 router.post('/', ExpenseController.create);
 router.put('/:id', ExpenseController.update);
 router.delete('/:id', ExpenseController.remove);
+router.get('/getMensualExpenses', ExpenseController.getByMonthAndYearGroupedByCategory);
 
 export default router;

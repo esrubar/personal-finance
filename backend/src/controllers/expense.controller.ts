@@ -25,3 +25,10 @@ export const remove = async (req: Request, res: Response) => {
   await expenseService.deleteExpense(req.params.id);
   res.sendStatus(204);
 };
+
+export const getByMonthAndYearGroupedByCategory = async (req: Request, res: Response) => {
+  const expenses = await expenseService.getByMonthAndYearGroupedByCategory();
+  console.log(expenses);
+  res.json(expenses);
+};
+
