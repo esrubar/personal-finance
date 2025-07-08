@@ -1,34 +1,43 @@
-import React from 'react';
-import { Card, Row, Col, Statistic } from 'antd';
+import React, {useEffect, useState} from 'react';
+import {useMensualExpenses} from "../hooks/useExpenses.ts";
+import {useCategoryBudget} from "../hooks/useCategoryBudgets.ts";
+import {getColorForCategory} from "../utils/getCategoryColors.ts";
+import {CategoryBudgetCard} from "../components/CategoryBudgetCard.tsx";
+
+export interface CategoryData {
+  categoryName: string;
+  categoryColor: string;
+  budgetAmount: number;
+  spentAmount: number;
+}
 
 export const Overview: React.FC = () => {
-  return (
-    <Row gutter={[16, 16]}>
-      <Col span={24}>
-        <Card title="Overview">
-          <Row gutter={16}>
-            <Col span={12}>
-              <Statistic title="Balance" value={5500} prefix="$" />
-            </Col>
-            <Col span={12}>
-              <Statistic title="Resel. Balance" value={5200} prefix="$" />
-            </Col>
-          </Row>
-          <Row gutter={16} style={{ marginTop: 20 }}>
-            <Col span={12}>
-              <Card style={{ backgroundColor: '#e6fffb' }}>
-                <Statistic title="Income" value={3000} prefix="$" />
-              </Card>
-            </Col>
-            <Col span={12}>
-              <Card style={{ backgroundColor: '#fff1f0' }}>
-                <Statistic title="Expenses" value={1200} prefix="$" />
-              </Card>
-            </Col>
-          </Row>
-          {/* Aquí podrías insertar un gráfico con Chart.js o Recharts */}
-        </Card>
-      </Col>
-    </Row>
-  );
+  const [refreshKey] = useState(0);
+  const { expenses } = useMensualExpenses(refreshKey);
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth();
+  const { categoryBudgets } = useCategoryBudget(year, month);
+  const [comparisonMensualExpenses, setcomparisonMensualExpenses] = useState<CategoryData[]>([]);
+
+  useEffect(() => {
+    let list: CategoryData[] = [];
+    expenses.forEach(e =>
+    {
+      let cb = categoryBudgets.find(c => c.categoryId === e.category._id);
+      list.push({
+        categoryName: e.category.name,
+        budgetAmount: cb?.budgetAmount ?? 0,
+        spentAmount: e.amount,
+        categoryColor: getColorForCategory(e.category.name)
+      })
+    })
+    setcomparisonMensualExpenses(list);
+  }, [])
+  return (<>
+        <h1>Dashboard</h1>
+        <div style={{padding: 24}}>
+          <CategoryBudgetCard data={comparisonMensualExpenses}/>
+        </div>
+      </>);
 };
