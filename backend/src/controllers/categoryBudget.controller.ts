@@ -7,8 +7,8 @@ export const create = async (req: Request, res: Response) => {
 }
 
 export const getByMonthAndYear = async (req: Request, res: Response) => {
-    const categoryBudget = await categoryBudgetService.getByMonthAndYear(
+    const categoryBudgets = await categoryBudgetService.getByMonthAndYear(
         parseInt(req.params.month), 
         parseInt(req.params.year));
-      res.status(201).json(categoryBudget);
+      res.status(201).json(categoryBudgets);
   }
