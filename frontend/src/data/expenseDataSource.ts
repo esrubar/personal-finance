@@ -1,5 +1,5 @@
 import axios from '../api/axios';
-import type { Expense } from '../models/expense';
+import type { Expense, MensualExpense } from '../models/expense';
 
 const API_URL = '/api/expenses';
 
@@ -27,7 +27,7 @@ export const deleteExpense = async (id: string): Promise<void> => {
   await axios.delete(`${API_URL}/${id}`);
 };
 
-export const getMensualExpenses = async (): Promise<Expense[]> => {
-  const { data } = await axios.get<Expense[]>(`${API_URL}/getMensualExpenses`);
+export const getMensualExpenses = async (): Promise<MensualExpense[]> => {
+  const { data } = await axios.get<MensualExpense[]>(`${API_URL}/getMensualExpenses`);
   return data;
 };

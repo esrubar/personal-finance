@@ -32,7 +32,6 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
     setLoading(true);
     setError(null);
     try {
-      debugger;
       if (initialData && initialData._id) {
         await updateCategory(initialData._id, { ...initialData, name });
       } else {

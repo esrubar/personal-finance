@@ -9,3 +9,9 @@ export interface Expense {
   description?: string;
   auditable: Auditable;
 }
+
+export interface MensualExpense {
+  categoryId: string;
+  totalAmount: number;
+  categoryName: string;
+}

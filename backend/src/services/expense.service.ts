@@ -1,3 +1,4 @@
+import { ExpenseDTO, MensualExpenseDTO } from "../dtos/ExpenseDTO";
 import expenseModel from "../models/expense.model";
 import { createAuditable, updateAuditable } from "./auditable.service"
 
@@ -24,44 +25,51 @@ export const updateExpense = async (id: string, data: any) => {
 
 export const deleteExpense = async (id: string) => await expenseModel.findByIdAndDelete(id);
 
-export async function getByMonthAndYearGroupedByCategory() {
+export async function getMensualExpenses(): Promise<MensualExpenseDTO[]> {
     const now = new Date();
     const year = now.getFullYear();
     const month = now.getMonth();
 
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0, 23, 59, 59, 999);
-    return expenseModel.aggregate([
-        {
-            $match: {
-                'auditable.createdBy': "Estela",
-                transactionDate: { $gte: firstDay, $lte: lastDay }
-            }
-        },
-        {
-            $group: {
-                _id: '$category',
-                totalAmount: { $sum: '$amount' }
-            }
-        },
-        {
-            $lookup: {
-                from: 'categories',
-                localField: '_id',
-                foreignField: '_id',
-                as: 'category'
-            }
-        },
-        {
-            $unwind: '$category'
-        },
-        {
-            $project: {
-                _id: 0,
-                categoryId: '$_id',
-                categoryName: '$category.name',
-                totalAmount: 1
-            }
+    let expenses = await expenseModel.aggregate([
+    // 1. Filtra los gastos creados por "system" y en el rango de fechas indicado
+    {
+        $match: {
+            'auditable.createdBy': "system",
+            transactionDate: { $gte: firstDay, $lte: lastDay }
         }
-    ]);
+    },
+    // 2. Hace un "join" con la colección 'categories' para obtener los datos de la categoría
+    {
+        $lookup: {
+            from: 'categories',
+            localField: 'category',
+            foreignField: '_id',
+            as: 'category'
+        }
+    },
+    // 3. Convierte el array 'category' en un objeto para facilitar el acceso a sus campos
+    {
+        $unwind: '$category'
+    },
+    // 4. Agrupa por categoría y suma los montos
+    {
+        $group: {
+            _id: '$category._id',
+            categoryName: { $first: '$category.name' },
+            totalAmount: { $sum: '$amount' }
+        }
+    },
+    // 5. Da formato al resultado final
+    {
+        $project: {
+            _id: 0,
+            categoryId: '$_id',
+            categoryName: 1,
+            totalAmount: 1
+        }
+    }
+]);
+    return expenses;
 }

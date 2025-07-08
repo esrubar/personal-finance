@@ -13,27 +13,29 @@ export interface CategoryData {
 
 export const Overview: React.FC = () => {
   const [refreshKey] = useState(0);
-  const { expenses } = useMensualExpenses(refreshKey);
   const now = new Date();
   const year = now.getFullYear();
-  const month = now.getMonth();
-  const { categoryBudgets } = useCategoryBudget(year, month);
+  const month = now.getMonth() + 1; // Months are 0-indexed in JavaScript, so we add 1 to match the expected format
   const [comparisonMensualExpenses, setcomparisonMensualExpenses] = useState<CategoryData[]>([]);
 
+  const { expenses } = useMensualExpenses(refreshKey);
+  const { categoryBudgets } = useCategoryBudget(month, year);
+
   useEffect(() => {
-    let list: CategoryData[] = [];
-    expenses.forEach(e =>
-    {
-      let cb = categoryBudgets.find(c => c.categoryId === e.category._id);
-      list.push({
-        categoryName: e.category.name,
-        budgetAmount: cb?.budgetAmount ?? 0,
-        spentAmount: e.amount,
-        categoryColor: getColorForCategory(e.category.name)
-      })
-    })
-    setcomparisonMensualExpenses(list);
-  }, [])
+  let list: CategoryData[] = [];
+  if (!expenses || !categoryBudgets) return;
+  expenses.forEach(e => {
+    let cb = categoryBudgets.find(c => c.categoryId === e.categoryId);
+    list.push({
+      categoryName: e.categoryName,
+      budgetAmount: cb?.budgetAmount ?? 0,
+      spentAmount: e.totalAmount,
+      categoryColor: getColorForCategory(e.categoryName)
+    });
+  });
+  setcomparisonMensualExpenses(list);
+}, [expenses, categoryBudgets]);
+
   return (<>
         <h1>Dashboard</h1>
         <div style={{padding: 24}}>

@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 const CategoryBudgetSchema = new mongoose.Schema({
-  cateogryId: { type: String, required: true },
+  categoryId: { type: String, required: true },
   month: { type: Number, required: true },
   year: { type: Number, required: true },
   budgetAmount: { type: Number, required: true },

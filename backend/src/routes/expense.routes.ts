@@ -4,11 +4,11 @@ import * as ExpenseController from '../controllers/expense.controller';
 
 const router = Router();
 
+router.get('/getMensualExpenses', ExpenseController.getMensualExpenses);
 router.get('/', ExpenseController.getAll);
 router.get('/:id', ExpenseController.getById);
 router.post('/', ExpenseController.create);
 router.put('/:id', ExpenseController.update);
 router.delete('/:id', ExpenseController.remove);
-router.get('/getMensualExpenses', ExpenseController.getByMonthAndYearGroupedByCategory);
 
 export default router;

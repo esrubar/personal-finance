@@ -6,7 +6,7 @@ export const create = async (data: any) => {
       ...data,
       auditable: createAuditable(),
     };
-    return await categoryBudgetData.create(categoryBudgetData);
+    return await categoryBudgetModel.create(categoryBudgetData);
   };
 
   export const getByMonthAndYear = async (month: Number, year: Number) => {

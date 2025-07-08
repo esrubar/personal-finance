@@ -3,7 +3,7 @@ import * as categoryBudgetService from '../services/categoryBudget.service';
 
 export const create = async (req: Request, res: Response) => {
   const categoryBudget = await categoryBudgetService.create(req.body);
-    res.status(201).json(categoryBudget);
+  res.status(201).json(categoryBudget);
 }
 
 export const getByMonthAndYear = async (req: Request, res: Response) => {

@@ -13,6 +13,7 @@ import { Overview } from './pages/Overview';
 import { Incomes } from './pages/Incomes';
 import { Expenses } from './pages/Expenses';
 import { SavingPlans } from './pages/SavingPlans';
+import { CategoryBudgets } from './pages/CategoryBudgets';
 
 const { Sider, Content } = Layout;
 
@@ -40,6 +41,9 @@ const App: React.FC = () => {
             <Menu.Item key="users" icon={<BarChartOutlined />}>
               <Link to="/users">Users</Link>
             </Menu.Item>
+            <Menu.Item key="category-budgets" icon={<BarChartOutlined />}>
+              <Link to="/category-budgets">Category Budgets</Link>
+            </Menu.Item>
           </Menu>
         </Sider>
         <Layout>
@@ -52,6 +56,7 @@ const App: React.FC = () => {
                 <Route path="/saving-plans" element={<SavingPlans />} />
                 <Route path="/categories" element={<Categories />} />
                 <Route path="/users" element={<Users />} />
+                <Route path="/category-budgets" element={<CategoryBudgets />} />
               </Routes>
             </div>
           </Content>

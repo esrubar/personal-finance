@@ -8,7 +8,7 @@ export const getCategoryBudgets = async (month: number, year: number): Promise<C
     return data;
 };
 
-export const createCategoryBudgets = async (categoryBudget: CategoryBudget): Promise<CategoryBudget[]> => {
+export const createCategoryBudget = async (categoryBudget: CategoryBudget): Promise<CategoryBudget[]> => {
     const { data } = await axios.post<CategoryBudget[]>(API_URL, categoryBudget);
     return data;
 };

@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import * as expenseService from '../services/expense.service';
+import { MensualExpenseDTO } from '../dtos/ExpenseDTO';
 
 export const create = async (req: Request, res: Response) => {
   const expense = await expenseService.createExpense(req.body);
@@ -26,8 +27,8 @@ export const remove = async (req: Request, res: Response) => {
   res.sendStatus(204);
 };
 
-export const getByMonthAndYearGroupedByCategory = async (req: Request, res: Response) => {
-  const expenses = await expenseService.getByMonthAndYearGroupedByCategory();
+export const getMensualExpenses = async (req: Request, res: Response) => {
+  const expenses: MensualExpenseDTO[] = await expenseService.getMensualExpenses();
   console.log(expenses);
   res.json(expenses);
 };

@@ -7,3 +7,9 @@ export interface ExpenseDTO {
   category: CategoryDTO;
   auditable: AuditableDTO;
 }
+
+export interface MensualExpenseDTO {
+  categoryId: string;
+  totalAmount: number;
+  CategoryName: string;
+}
