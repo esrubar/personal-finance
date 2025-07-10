@@ -3,7 +3,7 @@ import * as categoryBudgetDataSource from '../data/categoryBudgetDataSource.ts';
 import type { CategoryBudget } from '../models/categoryBudget.ts';
 
 
-export function useCategoryBudget(month: number, year: number) {
+export function useCategoryBudgetsByMonthAndYear(month: number, year: number) {
     const [categoryBudgets, setCategoryBudgets] = useState<CategoryBudget[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
@@ -11,11 +11,27 @@ export function useCategoryBudget(month: number, year: number) {
     useEffect(() => {
         if (!month || !year) return;
         setLoading(true);
-        categoryBudgetDataSource.getCategoryBudgets(month, year)
+        categoryBudgetDataSource.getCategoryBudgetsByMonthAndYear(month, year)
             .then(setCategoryBudgets)
             .catch(setError)
             .finally(() => setLoading(false));
     }, [month, year]);
+
+    return { categoryBudgets, loading, error };
+}
+
+export function useAllCategoryBudgets(refreshKey?: number) {
+    const [categoryBudgets, setCategoryBudgets] = useState<CategoryBudget[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<Error | null>(null);
+
+    useEffect(() => {
+        setLoading(true);
+        categoryBudgetDataSource.getAllCategoryBudgets()
+            .then(setCategoryBudgets)
+            .catch(setError)
+            .finally(() => setLoading(false));
+    }, [refreshKey]);
 
     return { categoryBudgets, loading, error };
 }

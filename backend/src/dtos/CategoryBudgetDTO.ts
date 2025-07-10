@@ -1,7 +1,9 @@
-import { AuditableDTO } from './AuditableDTO';
 
 export interface CategoryBudgetDTO {
   id: string;
-  name: string;
-  auditable: AuditableDTO;
+  categoryId: string;
+  month: number;
+  year: number;
+  budgetAmount: number;
+  categoryName?: string;
 }

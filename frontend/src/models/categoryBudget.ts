@@ -7,4 +7,5 @@ export interface CategoryBudget {
     year: number;
     budgetAmount: number;
     auditable?: Auditable;
+    categoryName?: string;
 }

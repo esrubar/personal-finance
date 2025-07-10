@@ -29,7 +29,6 @@ export const remove = async (req: Request, res: Response) => {
 
 export const getMensualExpenses = async (req: Request, res: Response) => {
   const expenses: MensualExpenseDTO[] = await expenseService.getMensualExpenses();
-  console.log(expenses);
   res.json(expenses);
 };
 

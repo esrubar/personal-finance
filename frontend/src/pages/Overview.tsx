@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useMensualExpenses} from "../hooks/useExpenses.ts";
-import {useCategoryBudget} from "../hooks/useCategoryBudgets.ts";
+import {useCategoryBudgetsByMonthAndYear} from "../hooks/useCategoryBudgets.ts";
 import {getColorForCategory} from "../utils/getCategoryColors.ts";
 import {CategoryBudgetCard} from "../components/CategoryBudgetCard.tsx";
 
@@ -19,7 +19,7 @@ export const Overview: React.FC = () => {
   const [comparisonMensualExpenses, setcomparisonMensualExpenses] = useState<CategoryData[]>([]);
 
   const { expenses } = useMensualExpenses(refreshKey);
-  const { categoryBudgets } = useCategoryBudget(month, year);
+  const { categoryBudgets } = useCategoryBudgetsByMonthAndYear(month, year);
 
   useEffect(() => {
   let list: CategoryData[] = [];

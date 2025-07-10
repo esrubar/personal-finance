@@ -12,3 +12,8 @@ export const getByMonthAndYear = async (req: Request, res: Response) => {
         parseInt(req.params.year));
       res.status(201).json(categoryBudgets);
   }
+
+  export const getAll = async (req: Request, res: Response) => {
+    const categoryBudgets = await categoryBudgetService.getAll();
+    res.status(200).json(categoryBudgets);
+  }
