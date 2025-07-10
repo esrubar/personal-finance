@@ -11,7 +11,7 @@ export const createExpense = async (data: any) => {
 } 
 
 export const getExpenses = async () => { 
-    return await expenseModel.find().populate('category', 'name');
+    return await expenseModel.find().populate('category', 'name').sort({ transactionDate: -1 });
 }
 export const getExpenseById = async (id: string) => await expenseModel.findById(id);
 

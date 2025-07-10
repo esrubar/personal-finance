@@ -9,7 +9,7 @@ export const createCategory = async (data: any) => {
     return await Category.create(categoryData);
   };
 
-export const getCategories = async () => await Category.find();
+export const getCategories = async () => await Category.find().sort({ name: 1});;
 export const getCategoryById = async (id: string) => await Category.findById(id);
 
 export const updateCategory = async (id: string, data: any) => {
