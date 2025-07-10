@@ -12,7 +12,7 @@ export const CategoryBudgetCard: React.FC<Props> = ({ data }) => {
     return (
         <Card title="Gastos por Categoría vs Presupuesto">
             {data.map((item) => {
-                const percent = Math.min((item.spentAmount / item.budgetAmount) * 100, 100);
+                const percent = Math.round(item.spentAmount / item.budgetAmount * 1000) / 100;
                 const isOver = item.spentAmount > item.budgetAmount;
 
                 return (

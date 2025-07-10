@@ -69,6 +69,10 @@ export async function getMensualExpenses(): Promise<MensualExpenseDTO[]> {
             categoryName: 1,
             totalAmount: 1
         }
+    },
+    // 6. Ordena por categoryName ascendente
+    {
+        $sort: { categoryName: 1 }
     }
 ]);
     return expenses;
