@@ -7,6 +7,7 @@ import savingProjectRoutes from "./routes/savingProject.routes";
 import userRoutes from "./routes/user.routes";
 import categoryBudgetRoutes from "./routes/categoryBudget.routes";
 import incomeRoutes from "./routes/income.routes";
+import importTransactionRoutes from "./routes/importTransaction.routes";
 import connectDB from "./config/db";
 
 config();
@@ -39,5 +40,6 @@ app.use('/api/saving-projects', savingProjectRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/categoryBudgets', categoryBudgetRoutes);
 app.use('/api/incomes', incomeRoutes);
+app.use('/api/import', importTransactionRoutes);
 
 export default app;
