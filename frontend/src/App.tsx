@@ -14,7 +14,7 @@ import { Incomes } from './pages/Incomes';
 import { Expenses } from './pages/Expenses';
 import { SavingPlans } from './pages/SavingPlans';
 import { CategoryBudgets } from './pages/CategoryBudgets';
-import UploadTransactions from './pages/UploadTransactions';
+import { TransactionPage } from './pages/TransactionPage';
 
 const { Sider, Content } = Layout;
 
@@ -61,7 +61,7 @@ const App: React.FC = () => {
                 <Route path="/categories" element={<Categories />} />
                 <Route path="/users" element={<Users />} />
                 <Route path="/category-budgets" element={<CategoryBudgets />} />
-                <Route path="/upload-transactions" element={<UploadTransactions />} />
+                <Route path="/upload-transactions" element={<TransactionPage />} />
               </Routes>
             </div>
           </Content>

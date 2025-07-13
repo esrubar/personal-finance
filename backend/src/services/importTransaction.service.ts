@@ -1,13 +1,5 @@
 import XLSX from "xlsx";
-
-export interface BankTransaction {
-    date: string | null;
-    description: string;
-    amount: number | null;
-    currency: string | null;
-    type: "charge" | "deposit" | null;
-    raw: string[];
-}
+import { BankTransaction } from "../dtos/bankTransaction";
 
 export const parseRowToTransaction = (row: string[]): BankTransaction => {
     const isDate = (str: string) => /^\d{2}\/\d{2}\/\d{4}$/.test(str);

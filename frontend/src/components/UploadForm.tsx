@@ -7,23 +7,7 @@ import type { UploadProps } from "antd";
 export const UploadForm: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
 
-  const handleUpload = async () => {
-    if (!file) return;
-
-    const formData = new FormData();
-    formData.append("file", file);
-
-    const res = await fetch("http://localhost:3000/api/import", {
-      method: "POST",
-      body: formData,
-    });
-
-    if (res.ok) {
-      message.success("Transacciones importadas correctamente");
-    } else {
-      message.error("Error al importar transacciones");
-    }
-  };
+  
 
   const props: UploadProps = {
     beforeUpload: (file) => {
