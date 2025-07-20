@@ -37,31 +37,42 @@ export const parseRowToTransaction = (row: string[]): BankTransaction => {
     };
 };
 
-export const extractValidTransactionsFromExcel = (buffer: Buffer): BankTransaction[] => {
-    const workbook = XLSX.read(buffer, { type: "buffer" });
-    const sheet = workbook.Sheets[workbook.SheetNames[0]];
-    const rawData = XLSX.utils.sheet_to_json<Record<string, any>>(sheet);
+export const extractValidTransactionsFromExcel = (fileBuffer: Buffer): BankTransaction[] => {
+    const workbook = XLSX.read(fileBuffer, { type: 'buffer' });
+    const sheetName = workbook.SheetNames[0];
+    const sheet = workbook.Sheets[sheetName];
 
-    const palabrasClave = ["FECHA", "SALDO", "CONCEPTO", "OBSERVACIONES", "IBAN"];
+    // Leer todas las filas como arrays
+    const allRows: any[][] = XLSX.utils.sheet_to_json(sheet, {
+        header: 1,
+        blankrows: false,
+    });
 
-    const indexPrimeraTransaccion = (rawData as Record<string, any>[]).findIndex((row) =>
-        Object.values(row).some((value) => {
-            const str = String(value).toUpperCase();
-            return str.includes("/") && !palabrasClave.some((p) => str.includes(p));
-        })
-    );
+    // Detectar primera fila "interesante"
+    const isValidRow = (row: any[]) => {
+        const nonEmptyCells = row.filter(cell => cell !== undefined && cell !== null && String(cell).trim() !== '');
+        const hasDate = nonEmptyCells.some(cell => {
+            const parsed = new Date(cell);
+            return !isNaN(parsed.getTime());
+        });
 
-    if (indexPrimeraTransaccion === -1) {
-        throw new Error("No se encontraron transacciones válidas");
+        return nonEmptyCells.length >= 3 && hasDate;
+    };
+
+    const firstValidIndex = allRows.findIndex(isValidRow);
+    if (firstValidIndex === -1) {
+        console.error("No se encontraron filas válidas en el archivo.");
+        return [];
     }
 
-    const data = rawData.slice(indexPrimeraTransaccion);
+    // Quedarse solo con las filas a partir de la válida
+    const dataRows = allRows.slice(firstValidIndex);
 
-    const transactions: BankTransaction[] = data.map((row) => {
+    const transactions: BankTransaction[] = dataRows.map((row) => {
         const allValues = Object.values(row).map((v) => String(v));
         return parseRowToTransaction(allValues);
     });
     console.log("Transacciones extraídas:", transactions);
 
     return transactions;
-};
+}

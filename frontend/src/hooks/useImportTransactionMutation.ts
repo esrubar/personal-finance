@@ -1,30 +1,22 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import * as importTransactionDataSource from '../data/importTransactionDataSource';
-import type { BankTransaction } from "../models/bankTransaction";
 
-export function useImportTransaction(formData: FormData) {
+export function useImportTransaction() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-  const [transactions, setTransactions] = useState<BankTransaction[]>([]);
 
-  useEffect(() => {
-    if (!formData) return;
+  const fetchTransactions = async (formData: FormData) => {
     setLoading(true);
     setError(null);
     try {
-      importTransactionDataSource
-        .importTransactions(formData)
-        .then(setTransactions)
-        .catch(setError)
-        .finally(() => setLoading(false));
-
+      const data = await importTransactionDataSource.importTransactions(formData);
+      return data;
     } catch (err: any) {
       setError(err);
       throw err;
     } finally {
       setLoading(false);
     }
-  }, [formData]);
-
-  return { transactions, loading, error };
+  }
+  return { fetchTransactions, loading, error };
 }

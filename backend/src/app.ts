@@ -40,6 +40,6 @@ app.use('/api/saving-projects', savingProjectRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/categoryBudgets', categoryBudgetRoutes);
 app.use('/api/incomes', incomeRoutes);
-app.use('/api/import', importTransactionRoutes);
+app.use('/api/import-transactions', importTransactionRoutes);
 
 export default app;

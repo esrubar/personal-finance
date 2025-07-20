@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import * as importTransactionService from '../services/importTransaction.service';
+import { BankTransaction } from "../dtos/bankTransaction";
 
 
 export const importTransactions = async (req: Request, res: Response) => {
@@ -11,11 +12,8 @@ export const importTransactions = async (req: Request, res: Response) => {
     }
 
     const transactions = importTransactionService.extractValidTransactionsFromExcel(buffer);
-
-    // Aquí podrías guardarlos en base de datos si quieres
-    // await TransactionModel.insertMany(transactions);
-
-    res.status(200).json({ message: "Importación correcta", count: transactions.length, data: transactions });
+    res.json(transactions);
+    
   } catch (error: any) {
     console.error("Error al importar transacciones:", error);
     res.status(400).json({ message: error.message || "Error procesando archivo" });
