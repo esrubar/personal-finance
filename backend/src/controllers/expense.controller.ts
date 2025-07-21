@@ -7,6 +7,11 @@ export const create = async (req: Request, res: Response) => {
   res.status(201).json(expense);
 };
 
+export const createMany = async (req: Request, res: Response) => {
+  const expenses = await expenseService.createExpenses(req.body);
+  res.status(201).json(expenses);
+};
+
 export const getAll = async (_req: Request, res: Response) => {
   const expenses = await expenseService.getExpenses();
   res.json(expenses);

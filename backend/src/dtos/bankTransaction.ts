@@ -3,6 +3,6 @@ export interface BankTransaction {
   description: string;
   amount: number | null;
   currency: string | null;
-  type: 'charge' | 'deposit' | null;
+  type: 'income' | 'expense' | null;
   raw: string[];
 }

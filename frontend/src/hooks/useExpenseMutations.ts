@@ -23,6 +23,27 @@ export function useCreateExpense() {
   return { createExpense, loading, error };
 }
 
+export function useCreateExpenses() {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+
+  const createExpenses = async (expenses: Expense[]) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const result = await expenseDataSource.createExpenses(expenses);
+      return result;
+    } catch (err: any) {
+      setError(err);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { createExpenses, loading, error };
+}
+
 export function useUpdateExpense() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);

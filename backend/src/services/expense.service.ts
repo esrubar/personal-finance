@@ -10,6 +10,14 @@ export const createExpense = async (data: any) => {
     return await expenseModel.create(expenseData);
 } 
 
+export const createExpenses = async (body: any) => {
+    const expenses = body.map((expense: any) => ({
+        ...expense,
+        auditable: createAuditable(),
+    }));
+    return await expenseModel.insertMany(expenses);
+}
+
 export const getExpenses = async () => { 
     return await expenseModel.find().populate('category', 'name').sort({ transactionDate: -1 });
 }

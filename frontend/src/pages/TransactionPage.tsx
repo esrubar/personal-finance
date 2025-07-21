@@ -4,6 +4,11 @@ import { UploadOutlined } from "@ant-design/icons";
 import type { BankTransaction } from "../models/bankTransaction";
 import { TransactionTable } from "../components/TransactionTable";
 import { useImportTransaction } from "../hooks/useImportTransactionMutation";
+import { useCreateExpenses } from "../hooks/useExpenseMutations";
+import { useCreateIncomes } from "../hooks/useIncomeMutations";
+import { createIncome, type Income } from "../models/income";
+import { createExpense, type Expense } from "../models/expense";
+import { useCategories } from "../hooks/useCategories";
 
 const { Title } = Typography;
 const { Content } = Layout;
@@ -11,7 +16,10 @@ const { Content } = Layout;
 export const TransactionPage: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
   const [transactions, setTransactions] = useState<BankTransaction[]>([]);
-  const {fetchTransactions} = useImportTransaction();
+  const { fetchTransactions } = useImportTransaction();
+  const { createExpenses } = useCreateExpenses();
+  const { createIncomes } = useCreateIncomes();
+  const { categories } = useCategories();
 
   const handleUpload = async () => {
     if (!file) return;
@@ -42,7 +50,40 @@ export const TransactionPage: React.FC = () => {
     );
     setTransactions(newData);
   };
-  
+
+  const handleSave = async () => {
+    const incomes: Income[] = [];
+    const expenses: Expense[] = [];
+
+    for (const tx of transactions) {
+      if (tx.type === "income") {
+
+        const income = createIncome(tx, tx.categoryId);
+        incomes.push(income);
+
+      } else if (tx.type === "expense") {
+        const expense = createExpense(tx, tx.categoryId);
+        expenses.push(expense);
+      }
+    }
+
+    try {
+      if (incomes.length > 0) {
+        await createIncomes(incomes);
+      }
+      if (expenses.length > 0) {
+        await createExpenses(expenses);
+      }
+      setTransactions([]);
+      console.log("Transactions saved successfully");
+    } catch (error) {
+      console.error("Error saving transactions:", error);
+    }
+      
+    console.log("Incomes to save:", incomes);
+    console.log("Expenses to save:", expenses);
+  }
+
 
   return (
     <Layout style={{ padding: "24px" }}>
@@ -62,10 +103,12 @@ export const TransactionPage: React.FC = () => {
         </Card>
       </Content>
       {transactions ?
-          <TransactionTable
-            transactions={transactions}
-            onDelete={handleDelete}
-            onChange={handleUpdate} /> : <></>}
+        <TransactionTable
+          transactions={transactions}
+          categories={categories}
+          onDelete={handleDelete}
+          onChange={handleUpdate} /> : <></>}
+          <Button onClick={handleSave}>Guardar todo</Button>
     </Layout>
   );
 };

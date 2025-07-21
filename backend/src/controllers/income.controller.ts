@@ -6,6 +6,12 @@ export const create = async (req: Request, res: Response) => {
   res.status(201).json(income);
 };
 
+export const createMany = async (req: Request, res: Response) => {
+  console.log("Creating multiple incomes:", req.body);
+  const incomes = await incomeService.createIncomes(req.body);
+  res.status(201).json(incomes);
+};
+
 export const getAll = async (_req: Request, res: Response) => {
   const income = await incomeService.getIncomes();
   res.json(income);

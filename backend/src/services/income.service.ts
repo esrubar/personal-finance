@@ -9,6 +9,15 @@ export const createIncome = async (data: any) => {
     return await incomeModel.create(incomeData);
 } 
 
+export const createIncomes = async (data: any) => {
+    console.log("Creating multiple incomes:", data);
+    const incomes = data.map((income: any) => ({
+        ...income,
+        auditable: createAuditable(),
+    }));
+    return await incomeModel.insertMany(incomes);
+} 
+
 export const getIncomes = async () => { 
     return await incomeModel.find().populate('category', 'name').sort({ transactionDate: -1 });
 }
@@ -23,4 +32,3 @@ export const updateIncome = async (id: string, data: any) => {
 }
 
 export const deleteIncome = async (id: string) => await incomeModel.findByIdAndDelete(id);
-

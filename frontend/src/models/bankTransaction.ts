@@ -1,8 +1,10 @@
+
 export interface BankTransaction {
-  date: string | null;
+  date: Date;
   description: string;
-  amount: number | null;
+  amount: number;
   currency: string | null;
-  type: 'charge' | 'deposit' | null;
+  type: 'income' | 'expense';
   raw: string[];
+  categoryId: string;
 }

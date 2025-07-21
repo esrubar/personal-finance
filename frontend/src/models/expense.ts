@@ -7,11 +7,22 @@ export interface Expense {
   category: Category;
   transactionDate?: Date;
   description?: string;
-  auditable: Auditable;
+  auditable?: Auditable;
 }
 
 export interface MensualExpense {
   categoryId: string;
   totalAmount: number;
   categoryName: string;
+}
+
+export const createExpense = (income: Omit<Expense, '_id' | 'auditable' | 'category'>, categoryId: string): Expense => {
+  const category =  { _id: categoryId, name: "" };
+  return {
+    _id: '',
+    amount: income.amount,
+    category: category,
+    transactionDate: income.transactionDate,
+    description: income.description
+  };
 }

@@ -18,6 +18,11 @@ export const createExpense = async (expense: Expense): Promise<Expense> => {
   return data;
 };
 
+export const createExpenses = async (expenses: Expense[]): Promise<Expense[]> => {
+  const { data } = await axios.post<Expense[]>(API_URL, expenses);
+  return data;
+};
+
 export const updateExpense = async (id: string, expense: Expense): Promise<Expense> => {
   const { data } = await axios.put<Expense>(`${API_URL}/${id}`, expense);
   return data;

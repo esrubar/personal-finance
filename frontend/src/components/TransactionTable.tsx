@@ -5,17 +5,19 @@ import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import type { BankTransaction } from '../models/bankTransaction';
 import { DeleteOutlined } from "@ant-design/icons";
+import type { Category } from '../models/category';
 
 const { Option } = Select;
 
 interface Props {
   transactions: BankTransaction[];
+  categories: Category[];
   onChange: (value: any, record: BankTransaction, field: keyof BankTransaction) => void;
   onDelete: (index: number) => void;
 }
 
-export const TransactionTable: React.FC<Props> = ({ transactions, onChange, onDelete }) => {
-
+export const TransactionTable: React.FC<Props> = ({ transactions, categories, onChange, onDelete }) => {
+    
   const columns: ColumnsType<BankTransaction> = [
     {
       title: 'Fecha',
@@ -52,18 +54,21 @@ export const TransactionTable: React.FC<Props> = ({ transactions, onChange, onDe
       ),
     },
     {
-      title: 'Moneda',
-      dataIndex: 'currency',
+      title: "Category",
+      dataIndex: ["category", "name"],
+      key: "category",
       render: (value, record) => (
         <Select
           value={value ?? undefined}
-          onChange={(val) => onChange(val, record, 'currency')}
+          onChange={(val) => onChange(val, record, 'category')}
           style={{ width: '100%' }}
           allowClear
         >
-          <Option value="EUR">EUR</Option>
-          <Option value="USD">USD</Option>
-          <Option value="GBP">GBP</Option>
+          {categories.map((cat) => (
+            <Option key={cat._id} value={cat._id}>
+              {cat.name}
+            </Option>
+          ))}
         </Select>
       ),
     },
@@ -77,8 +82,8 @@ export const TransactionTable: React.FC<Props> = ({ transactions, onChange, onDe
           style={{ width: '100%' }}
           allowClear
         >
-          <Option value="charge">Cargo</Option>
-          <Option value="deposit">Abono</Option>
+          <Option value="expense">Cargo</Option>
+          <Option value="income">Abono</Option>
         </Select>
       ),
     },
