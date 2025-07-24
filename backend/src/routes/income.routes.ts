@@ -4,6 +4,7 @@ import * as IncomeController from '../controllers/income.controller';
 
 const router = Router();
 
+router.post('/create-many', IncomeController.createMany);
 router.get('/', IncomeController.getAll);
 router.get('/:id', IncomeController.getById);
 router.post('/', IncomeController.create);
