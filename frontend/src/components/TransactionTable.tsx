@@ -55,12 +55,12 @@ export const TransactionTable: React.FC<Props> = ({ transactions, categories, on
     },
     {
       title: "Category",
-      dataIndex: ["category", "name"],
-      key: "category",
+      dataIndex: "categoryId",
+      key: "categoryId",
       render: (value, record) => (
         <Select
           value={value ?? undefined}
-          onChange={(val) => onChange(val, record, 'category')}
+          onChange={(val) => onChange(val, record, 'categoryId')}
           style={{ width: '100%' }}
           allowClear
         >

@@ -7,7 +7,6 @@ export const create = async (req: Request, res: Response) => {
 };
 
 export const createMany = async (req: Request, res: Response) => {
-  console.log("Creating multiple incomes:", req.body);
   const incomes = await incomeService.createIncomes(req.body);
   res.status(201).json(incomes);
 };

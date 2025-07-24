@@ -27,7 +27,6 @@ export const TransactionPage: React.FC = () => {
     const formData = new FormData();
     formData.append("file", file);
     const transactions = await fetchTransactions(formData);
-    console.log("Transactions imported:", transactions);
     setFile(null);
     if (transactions) setTransactions(transactions);
   };
@@ -40,7 +39,6 @@ export const TransactionPage: React.FC = () => {
   };
 
   const handleDelete = (index: number) => {
-    console.log("Deleting transaction at index:", index);
     setTransactions(prev => prev.filter((_, i) => i !== index));
   };
 
@@ -67,21 +65,13 @@ export const TransactionPage: React.FC = () => {
       }
     }
 
-    try {
-      if (incomes.length > 0) {
-        await createIncomes(incomes);
-      }
-      if (expenses.length > 0) {
-        await createExpenses(expenses);
-      }
-      setTransactions([]);
-      console.log("Transactions saved successfully");
-    } catch (error) {
-      console.error("Error saving transactions:", error);
+    if (incomes.length > 0) {
+      await createIncomes(incomes);
     }
-      
-    console.log("Incomes to save:", incomes);
-    console.log("Expenses to save:", expenses);
+    if (expenses.length > 0) {
+      await createExpenses(expenses);
+    }
+    setTransactions([]);
   }
 
 
@@ -108,7 +98,7 @@ export const TransactionPage: React.FC = () => {
           categories={categories}
           onDelete={handleDelete}
           onChange={handleUpdate} /> : <></>}
-          <Button onClick={handleSave}>Guardar todo</Button>
+      <Button onClick={handleSave}>Guardar todo</Button>
     </Layout>
   );
 };

@@ -26,11 +26,12 @@ export const parseRowToTransaction = (row: string[]): BankTransaction => {
     }
 
     const type = amount !== null ? (amount < 0 ? "expense" : "income") : null;
+    const absAmount = amount !== null ? Math.abs(amount) : null;
 
     return {
         date,
         description: descriptionParts.join(" ").trim(),
-        amount,
+        amount: absAmount,
         currency,
         type,
         raw: row,

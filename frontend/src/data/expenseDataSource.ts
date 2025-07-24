@@ -19,7 +19,7 @@ export const createExpense = async (expense: Expense): Promise<Expense> => {
 };
 
 export const createExpenses = async (expenses: Expense[]): Promise<Expense[]> => {
-  const { data } = await axios.post<Expense[]>(API_URL, expenses);
+  const { data } = await axios.post<Expense[]>(`${API_URL}/create-many`, expenses);
   return data;
 };
 

@@ -10,11 +10,25 @@ export const createIncome = async (data: any) => {
 } 
 
 export const createIncomes = async (data: any) => {
-    console.log("Creating multiple incomes:", data);
-    const incomes = data.map((income: any) => ({
-        ...income,
-        auditable: createAuditable(),
-    }));
+    const incomes = data.map((income: any, index: number) => {
+        const cleanedIncome = { ...income };
+
+        // Delete empty _id
+        if (!cleanedIncome._id || cleanedIncome._id === '') {
+            delete cleanedIncome._id;
+        }
+
+        // Validate category._id
+        if (!cleanedIncome.category || !cleanedIncome.category._id || cleanedIncome.category._id === '') {
+            throw new Error(`El gasto en la posición ${index} tiene un category._id vacío o inválido.`);
+        }
+
+        return {
+            ...cleanedIncome,
+            auditable: createAuditable(),
+        };
+    });
+
     return await incomeModel.insertMany(incomes);
 } 
 

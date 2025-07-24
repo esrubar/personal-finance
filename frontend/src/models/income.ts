@@ -1,8 +1,10 @@
+import dayjs from 'dayjs';
 import type { Auditable } from './auditable';
+import type { BankTransaction } from './bankTransaction';
 import type { Category } from './category';
 
 export interface Income {
-  _id: string;
+  _id?: string;
   amount: number;
   category: Category;
   transactionDate?: Date;
@@ -10,13 +12,12 @@ export interface Income {
   auditable?: Auditable;
 }
 
-export const createIncome = (income: Omit<Income, '_id' | 'auditable' | 'category'>, categoryId: string): Income => {
-  const category =  { _id: categoryId, name: "" };
+export const createIncome = (transaction: Omit<BankTransaction, '_id' | 'auditable' | 'category'>, categoryId: string): Income => {
+  const category = { _id: categoryId, name: "" };
   return {
-    _id: '',
-    amount: income.amount,
+    amount: transaction.amount,
     category: category,
-    transactionDate: income.transactionDate,
-    description: income.description
+    transactionDate: transaction.date ? dayjs(transaction.date, "DD/MM/YYYY").toDate() : undefined,
+    description: transaction.description
   };
 }
