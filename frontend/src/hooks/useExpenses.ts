@@ -1,19 +1,23 @@
 import { useState, useEffect } from 'react';
 import * as expenseDataSource from '../data/expenseDataSource';
 import type { Expense, MensualExpense } from '../models/expense';
+import type {FilteredExpenseParams} from "../models/filteredExpenseParams.ts";
+import type {PaginatedResponse} from "../models/paginatedResponse.ts";
 
-export function useExpenses(refreshKey?: number) {
-  const [expenses, setExpenses] = useState<Expense[]>([]);
+export function useExpenses(params: FilteredExpenseParams, refreshKey?: number) {
+  const [expenses, setExpenses] = useState<PaginatedResponse<Expense>>();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     setLoading(true);
-    expenseDataSource.getExpenses()
-      .then(setExpenses)
-      .catch(setError)
-      .finally(() => setLoading(false));
-  }, [refreshKey]);
+    expenseDataSource.getExpenses(params)
+        .then((res) => {
+          setExpenses(res);
+        })
+        .catch(setError)
+        .finally(() => setLoading(false));
+  }, [params, refreshKey]);
 
   return { expenses, loading, error };
 }
