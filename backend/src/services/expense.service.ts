@@ -1,6 +1,9 @@
 import { ExpenseDTO, MensualExpenseDTO } from "../dtos/ExpenseDTO";
 import expenseModel from "../models/expense.model";
 import { createAuditable, updateAuditable } from "./auditable.service"
+import {FilteredExpenseQuery} from "../dtos/filtered-expense-query.dto";
+import {PaginatedResponse} from "../dtos/paginated-response.dto";
+import {paginateWithFilters} from "../utils/paginateWithFilters";
 
 export const createExpense = async (data: any) => {
     const expenseData = {
@@ -33,9 +36,31 @@ export const createExpenses = async (body: ExpenseDTO[]) => {
     return await expenseModel.insertMany(expenses);
 }
 
-export const getExpenses = async () => {
-    return await expenseModel.find().populate('category', 'name').sort({ transactionDate: -1 });
-}
+export const getFilteredExpenses = async (params: Partial<FilteredExpenseQuery>) => {
+    const filters = new FilteredExpenseQuery(params);
+    const baseQuery = {};
+
+    const result = await paginateWithFilters(
+        expenseModel,
+        baseQuery,
+        {
+            page: filters.page,
+            limit: filters.limit,
+            categoryId: filters.categoryId,
+            year: filters.year,
+            month: filters.month,
+            sortBy: 'transactionDate',
+            sortDirection: 'desc',
+        }
+    );
+
+    return new PaginatedResponse({
+        data: result.data,
+        page: result.page,
+        limit: result.limit,
+        total: result.total,
+    });
+};
 export const getExpenseById = async (id: string) => await expenseModel.findById(id);
 
 export const updateExpense = async (id: string, data: any) => {

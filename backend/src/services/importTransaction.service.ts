@@ -73,7 +73,6 @@ export const extractValidTransactionsFromExcel = (fileBuffer: Buffer): BankTrans
         const allValues = Object.values(row).map((v) => String(v));
         return parseRowToTransaction(allValues);
     });
-    console.log("Transacciones extraídas:", transactions);
 
     return transactions;
 }

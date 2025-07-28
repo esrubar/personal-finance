@@ -6,7 +6,7 @@ const router = Router();
 
 router.get('/getMensualExpenses', ExpenseController.getMensualExpenses);
 router.post('/create-many', ExpenseController.createMany);
-router.get('/', ExpenseController.getAll);
+router.get('/', ExpenseController.getFiltered);
 router.get('/:id', ExpenseController.getById);
 router.post('/', ExpenseController.create);
 router.put('/:id', ExpenseController.update);

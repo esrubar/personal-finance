@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import * as expenseService from '../services/expense.service';
 import { MensualExpenseDTO } from '../dtos/ExpenseDTO';
+import {getFilteredExpenses} from "../services/expense.service";
 
 export const create = async (req: Request, res: Response) => {
   const expense = await expenseService.createExpense(req.body);
@@ -12,9 +13,9 @@ export const createMany = async (req: Request, res: Response) => {
   res.status(201).json(expenses);
 };
 
-export const getAll = async (_req: Request, res: Response) => {
-  const expenses = await expenseService.getExpenses();
-  res.json(expenses);
+export const getFiltered = async (req: Request, res: Response) => {
+  const paginated = await getFilteredExpenses(req.query);
+  res.json(paginated);
 };
 
 export const getById = async (req: Request, res: Response) => {
