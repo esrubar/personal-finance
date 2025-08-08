@@ -1,6 +1,6 @@
-import React, {useEffect, useMemo, useState} from "react";
-import {Button, Table, Space, Modal, message, Tag, type TablePaginationConfig} from "antd";
-import {EditOutlined, DeleteOutlined} from "@ant-design/icons";
+import React, { useMemo, useState} from "react";
+import {Button, message, Modal, Space, Table, type TablePaginationConfig, Tag} from "antd";
+import {DeleteOutlined, EditOutlined} from "@ant-design/icons";
 import {useExpenses} from "../hooks/useExpenses";
 import {useDeleteExpense} from "../hooks/useExpenseMutations";
 import type {Expense} from "../models/expense";
@@ -8,6 +8,8 @@ import ExpenseForm from "../components/ExpenseForm";
 import {getColorForCategory} from "../utils/getCategoryColors";
 import type {FilterValue} from "antd/es/table/interface";
 import {useCategories} from "../hooks/useCategories.ts";
+import {months, years} from "../utils/constants.ts";
+import type {ExpenseFilter} from "../models/expenseFilter.ts";
 
 export const Expenses: React.FC = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -15,7 +17,7 @@ export const Expenses: React.FC = () => {
     const [refreshKey, setRefreshKey] = useState(0);
     const {deleteExpense, loading: deleting} = useDeleteExpense();
     const [pagination, setPagination] = useState({current: 1, pageSize: 10});
-    const [filters, setFilters] = useState({categoryId: undefined, month: undefined, year: undefined});
+    const [filters, setFilters] = useState<ExpenseFilter>({categoryId: undefined, month: undefined, year: undefined});
 
     const params = useMemo(() => ({
         page: pagination.current,
@@ -44,9 +46,6 @@ export const Expenses: React.FC = () => {
         setFilters(newFilters);
     };
 
-    useEffect(() => {
-        console.log(expenses);
-    })
     const columns = [
         {
             title: "Amount",
@@ -61,7 +60,7 @@ export const Expenses: React.FC = () => {
             key: "category",
             filters: categories.map(c => ({
                 text: <Tag color={getColorForCategory(c.name)}>{c.name}</Tag>,
-                value: c._id
+                value: c._id!
             })),
             filterMultiple: false,
             render: (name: string) => (
@@ -69,34 +68,20 @@ export const Expenses: React.FC = () => {
             ),
         },
         {
-            title: "Year",
-            key: "year",
-            filters: [
-                {text: "2024", value: 2024},
-                {text: "2025", value: 2025},
-            ],
-            filterMultiple: false,
-            render: (_: any, record: any) => new Date(record.transactionDate).getFullYear(),
-        },
-        {
             title: "Month",
             key: "month",
-            filters: [
-                { text: "Enero", value: 1 },
-                { text: "Febrero", value: 2 },
-                { text: "Marzo", value: 3 },
-                { text: "Abril", value: 4 },
-                { text: "Mayo", value: 5 },
-                { text: "Junio", value: 6 },
-                { text: "Julio", value: 7 },
-                { text: "Agosto", value: 8 },
-                { text: "Septiembre", value: 9 },
-                { text: "Octubre", value: 10 },
-                { text: "Noviembre", value: 11 },
-                { text: "Diciembre", value: 12 },
-            ],
+            filters: months,
             filterMultiple: false,
+            filteredValue: expenses?.usedMonth !== undefined ? [expenses?.usedMonth] : null,
             render: (_: any, record: any) => new Date(record.transactionDate).getMonth() + 1,
+        },
+        {
+            title: "Year",
+            key: "year",
+            filters: years,
+            filterMultiple: false,
+            filteredValue: expenses?.usedYear !== undefined ? [expenses?.usedYear] : null,
+            render: (_: any, record: any) => new Date(record.transactionDate).getFullYear(),
         },
         {
             title: "Date",
@@ -178,7 +163,7 @@ export const Expenses: React.FC = () => {
                 onCancel={handleCloseModal}
                 footer={null}
                 title={editingExpense ? "Edit Expense" : "Add Expense"}
-                destroyOnClose
+                destroyOnHidden={true}
             >
                 <ExpenseForm
                     initialData={editingExpense || undefined}

@@ -4,4 +4,7 @@ export interface PaginatedResponse<T> {
     limit: number;
     total: number;
     totalPages: number;
+    totalAmount: number;
+    usedMonth: number;
+    usedYear: number;
 }

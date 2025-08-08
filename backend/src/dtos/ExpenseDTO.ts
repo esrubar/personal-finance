@@ -6,6 +6,8 @@ export interface ExpenseDTO {
   amount: number;
   category: CategoryDTO;
   auditable?: AuditableDTO;
+  transactionDate?: Date;
+  description?: string;
 }
 
 export interface MensualExpenseDTO {

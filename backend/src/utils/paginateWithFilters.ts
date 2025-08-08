@@ -11,7 +11,7 @@ interface PaginationOptions {
     sortDirection?: 'asc' | 'desc';
 }
 
-export const paginateWithFilters = async <T>(
+export const paginateWithFilters = async <T extends { amount: number }>(
     model: Model<T>,
     baseQuery: Record<string, any>,
     options: PaginationOptions
@@ -28,25 +28,44 @@ export const paginateWithFilters = async <T>(
 
     const skip = (page - 1) * limit;
 
-    // Construir filtro de fecha por mes y año
-    if (year && month) {
-        const startDate = dayjs(`${year}-${month}-01`).startOf('month').toDate();
-        const endDate = dayjs(startDate).endOf('month').toDate();
-        baseQuery['transactionDate'] = { $gte: startDate, $lte: endDate };
-    }
-    
-    // Filtrar por categoría
+    const currentYear = dayjs().year();
+    const currentMonth = dayjs().month() + 1;
+
+    const usedYear = year ?? currentYear;
+    const usedMonth = month ?? currentMonth;
+
+    const startDate = dayjs(`${usedYear}-${usedMonth}-01`).startOf('month').toDate();
+    const endDate = dayjs(startDate).endOf('month').toDate();
+
+    const dateFilter = {$gte: startDate, $lte: endDate};
+
+    const fullQuery: Record<string, any> = {
+        ...baseQuery,
+        transactionDate: dateFilter,
+    };
+
     if (categoryId) {
-        baseQuery['category'] = new Types.ObjectId(categoryId);
+        fullQuery['category'] = new Types.ObjectId(categoryId);
     }
 
-    const total = await model.countDocuments(baseQuery);
+    // Total de documentos
+    const total = await model.countDocuments(fullQuery);
+
+    // Consulta paginada
     const data = await model
-        .find(baseQuery)
+        .find(fullQuery)
         .skip(skip)
         .limit(limit)
-        .sort({ [sortBy]: sortDirection === 'asc' ? 1 : -1 })
+        .sort({[sortBy]: sortDirection === 'asc' ? 1 : -1})
         .populate('category', 'name');
+
+    // Total gastado en el mes/año (sin paginar)
+    const totalAmountResult = await model.aggregate([
+        {$match: fullQuery},
+        {$group: {_id: null, totalAmount: {$sum: "$amount"}}},
+    ]);
+
+    const totalAmount = totalAmountResult[0]?.totalAmount ?? 0;
 
     return {
         data,
@@ -54,5 +73,8 @@ export const paginateWithFilters = async <T>(
         limit,
         total,
         totalPages: Math.ceil(total / limit),
+        totalAmount,
+        usedMonth,
+        usedYear,
     };
 };

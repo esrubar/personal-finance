@@ -1,6 +1,6 @@
-import { ExpenseDTO, MensualExpenseDTO } from "../dtos/ExpenseDTO";
+import {ExpenseDTO, MensualExpenseDTO} from "../dtos/ExpenseDTO";
 import expenseModel from "../models/expense.model";
-import { createAuditable, updateAuditable } from "./auditable.service"
+import {createAuditable, updateAuditable} from "./auditable.service"
 import {FilteredExpenseQuery} from "../dtos/filtered-expense-query.dto";
 import {PaginatedResponse} from "../dtos/paginated-response.dto";
 import {paginateWithFilters} from "../utils/paginateWithFilters";
@@ -15,7 +15,7 @@ export const createExpense = async (data: any) => {
 
 export const createExpenses = async (body: ExpenseDTO[]) => {
     const expenses = body.map((expense: any, index: number) => {
-        const cleanedExpense = { ...expense };
+        const cleanedExpense = {...expense};
 
         // Delete empty _id
         if (!cleanedExpense._id || cleanedExpense._id === '') {
@@ -53,12 +53,15 @@ export const getFilteredExpenses = async (params: Partial<FilteredExpenseQuery>)
             sortDirection: 'desc',
         }
     );
-
+    
     return new PaginatedResponse({
         data: result.data,
         page: result.page,
         limit: result.limit,
         total: result.total,
+        totalAmount: result.totalAmount,
+        usedMonth: result.usedMonth,
+        usedYear: result.usedYear
     });
 };
 export const getExpenseById = async (id: string) => await expenseModel.findById(id);
@@ -68,7 +71,7 @@ export const updateExpense = async (id: string, data: any) => {
         ...data,
         auditable: updateAuditable(data.auditable),
     };
-    return await expenseModel.findByIdAndUpdate(id, expenseData, { new: true });
+    return await expenseModel.findByIdAndUpdate(id, expenseData, {new: true});
 }
 
 export const deleteExpense = async (id: string) => await expenseModel.findByIdAndDelete(id);
@@ -85,7 +88,7 @@ export async function getMensualExpenses(): Promise<MensualExpenseDTO[]> {
         {
             $match: {
                 'auditable.createdBy': "system",
-                transactionDate: { $gte: firstDay, $lte: lastDay }
+                transactionDate: {$gte: firstDay, $lte: lastDay}
             }
         },
         // 2. Hace un "join" con la colección 'categories' para obtener los datos de la categoría
@@ -105,8 +108,8 @@ export async function getMensualExpenses(): Promise<MensualExpenseDTO[]> {
         {
             $group: {
                 _id: '$category._id',
-                categoryName: { $first: '$category.name' },
-                totalAmount: { $sum: '$amount' }
+                categoryName: {$first: '$category.name'},
+                totalAmount: {$sum: '$amount'}
             }
         },
         // 5. Da formato al resultado final
@@ -120,8 +123,14 @@ export async function getMensualExpenses(): Promise<MensualExpenseDTO[]> {
         },
         // 6. Ordena por categoryName ascendente
         {
-            $sort: { categoryName: 1 }
+            $sort: {categoryName: 1}
         }
     ]);
     return expenses;
+}
+
+export async function calculateMensualAmount(amounts: number[]): Promise<number> {
+    let totalAmount = 0;
+    amounts.forEach(amount => totalAmount += amount);
+    return totalAmount;
 }

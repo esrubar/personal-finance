@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Layout, Card, Typography, Upload, Button, type UploadProps, Space } from "antd";
+import { Layout, Card, Typography, Upload, Button, type UploadProps } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import type { BankTransaction } from "../models/bankTransaction";
 import { TransactionTable } from "../components/TransactionTable";
@@ -7,7 +7,7 @@ import { useImportTransaction } from "../hooks/useImportTransactionMutation";
 import { useCreateExpenses } from "../hooks/useExpenseMutations";
 import { useCreateIncomes } from "../hooks/useIncomeMutations";
 import { createIncome, type Income } from "../models/income";
-import { createExpense, type Expense } from "../models/expense";
+import { createExpenseFromTransaction, type Expense } from "../models/expense";
 import { useCategories } from "../hooks/useCategories";
 
 const { Title } = Typography;
@@ -60,7 +60,7 @@ export const TransactionPage: React.FC = () => {
         incomes.push(income);
 
       } else if (tx.type === "expense") {
-        const expense = createExpense(tx, tx.categoryId);
+        const expense = createExpenseFromTransaction(tx, tx.categoryId);
         expenses.push(expense);
       }
     }

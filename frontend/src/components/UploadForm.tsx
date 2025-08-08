@@ -4,7 +4,7 @@ import { Upload, Button, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import type { UploadProps } from "antd";
 
-const UploadTransactions: React.FC = () => {
+export const UploadTransactions: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
 
   const handleUpload = async () => {
@@ -43,5 +43,3 @@ const UploadTransactions: React.FC = () => {
     </>
   );
 };
-
-export default UploadTransactions;

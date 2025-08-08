@@ -18,7 +18,12 @@ export interface MensualExpense {
   categoryName: string;
 }
 
-export const createExpense = (transaction
+export interface ExpensesSummary {
+  expenses: Expense[];
+  totalAmount: number;
+}
+
+export const createExpenseFromTransaction = (transaction
   : Omit<BankTransaction, '_id' | 'auditable' | 'category'>, categoryId: string): Expense => {
   const category = { _id: categoryId, name: "" };
   return {
