@@ -65,7 +65,7 @@ export const paginateWithFilters = async <T extends { amount: number }>(
         {$group: {_id: null, totalAmount: {$sum: "$amount"}}},
     ]);
 
-    const totalAmount = totalAmountResult[0]?.totalAmount ?? 0;
+    const totalAmount = +(totalAmountResult[0]?.totalAmount ?? 0).toFixed(2);
 
     return {
         data,

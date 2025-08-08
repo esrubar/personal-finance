@@ -4,6 +4,7 @@ import {createAuditable, updateAuditable} from "./auditable.service"
 import {FilteredExpenseQuery} from "../dtos/filtered-expense-query.dto";
 import {PaginatedResponse} from "../dtos/paginated-response.dto";
 import {paginateWithFilters} from "../utils/paginateWithFilters";
+import dayjs from "dayjs";
 
 export const createExpense = async (data: any) => {
     const expenseData = {
@@ -129,8 +130,26 @@ export async function getMensualExpenses(): Promise<MensualExpenseDTO[]> {
     return expenses;
 }
 
-export async function calculateMensualAmount(amounts: number[]): Promise<number> {
-    let totalAmount = 0;
-    amounts.forEach(amount => totalAmount += amount);
-    return totalAmount;
+export const getTotalAmountForMonth = async (year: number, month: number) => {
+    const currentYear = dayjs().year();
+    const currentMonth = dayjs().month() + 1;
+
+    const usedYear = year ?? currentYear;
+    const usedMonth = month ?? currentMonth;
+
+    const startDate = dayjs(`${usedYear}-${usedMonth}-01`).startOf('month').toDate();
+    const endDate = dayjs(startDate).endOf('month').toDate();
+
+    const dateFilter = {$gte: startDate, $lte: endDate};
+
+    const fullQuery: Record<string, any> = {
+        transactionDate: dateFilter,
+    };
+    
+    const totalAmountResult = await expenseModel.aggregate([
+        {$match: fullQuery},
+        {$group: {_id: null, totalAmount: {$sum: "$amount"}}},
+    ]);
+
+    return +(totalAmountResult[0]?.totalAmount ?? 0).toFixed(2);
 }

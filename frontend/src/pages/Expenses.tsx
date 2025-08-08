@@ -1,5 +1,5 @@
 import React, { useMemo, useState} from "react";
-import {Button, message, Modal, Space, Table, type TablePaginationConfig, Tag} from "antd";
+import {Button, message, Modal, Space, Statistic, Table, type TablePaginationConfig, Tag} from "antd";
 import {DeleteOutlined, EditOutlined} from "@ant-design/icons";
 import {useExpenses} from "../hooks/useExpenses";
 import {useDeleteExpense} from "../hooks/useExpenseMutations";
@@ -10,6 +10,7 @@ import type {FilterValue} from "antd/es/table/interface";
 import {useCategories} from "../hooks/useCategories.ts";
 import {months, years} from "../utils/constants.ts";
 import type {ExpenseFilter} from "../models/expenseFilter.ts";
+import {getMonthNameCapitalized} from "../utils/dateUtils.ts";
 
 export const Expenses: React.FC = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -146,6 +147,9 @@ export const Expenses: React.FC = () => {
             >
                 + Add Expense
             </Button>
+            <Statistic 
+                title={`Total ${!!expenses ? getMonthNameCapitalized(expenses.usedMonth) : ""}`} 
+                value={`${expenses?.totalAmount} €`} />
             <Table
                 columns={columns}
                 dataSource={expenses?.data}
