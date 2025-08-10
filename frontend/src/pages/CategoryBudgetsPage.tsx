@@ -4,7 +4,7 @@ import { CategoryBudgetFrom } from "../components/CategoryBudgetForm";
 import { useAllCategoryBudgets } from "../hooks/useCategoryBudgets";
 import { getColorForCategory } from "../utils/getCategoryColors";
 
-export const CategoryBudgets: React.FC = () => {
+export const CategoryBudgetsPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
   const { categoryBudgets, loading, error} = useAllCategoryBudgets(refreshKey);

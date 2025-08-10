@@ -1,29 +1,29 @@
 import React, { useState } from "react";
 import { Button, Table, Space, Modal, message } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
-import { useCategories } from "../hooks/useCategories";
-import { useDeleteCategory } from "../hooks/useCategoryMutations";
-import type { Category } from "../models/category";
-import CategoryForm from "../components/CategoryForm";
+import { useUsers } from "../hooks/useUsers";
+import { useDeleteUser } from "../hooks/useUserMutations";
+import type { User } from "../models/user";
+import UserForm from "../components/UserForm";
 
-export const Categories: React.FC = () => {
+export const UsersPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [editingUser, setEditingUser] = useState<User | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
-  const { categories, loading, error } = useCategories(refreshKey);
-  const { deleteCategory, loading: deleting } = useDeleteCategory();
+  const { users, loading, error } = useUsers(refreshKey);
+  const { deleteUser, loading: deleting } = useDeleteUser();
 
   const columns = [
     { title: "Name", dataIndex: "name", key: "name" },
     {
       title: "Actions",
       key: "actions",
-      render: (_: unknown, record: Category) => (
+      render: (_: unknown, record: User) => (
         <Space>
           <Button
             type="link"
             onClick={() => {
-              setEditingCategory(record);
+              setEditingUser(record);
               setIsModalOpen(true);
             }}
           >
@@ -35,16 +35,11 @@ export const Categories: React.FC = () => {
             loading={deleting}
             onClick={async () => {
               try {
-                if (record._id) {
-                  await deleteCategory(record._id);
-                  message.success("Category deleted");
-                  setRefreshKey((prev) => prev + 1);
-                }
+                await deleteUser(record._id);
+                message.success("User deleted");
               } catch (err) {
                 message.error(
-                  err instanceof Error
-                    ? err.message
-                    : "Error deleting category",
+                  err instanceof Error ? err.message : "Error deleting user",
                 );
               }
             }}
@@ -56,42 +51,44 @@ export const Categories: React.FC = () => {
   ];
 
   const handleOpenModal = () => {
-    setEditingCategory(null);
+    setEditingUser(null);
     setIsModalOpen(true);
   };
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setEditingCategory(null);
-    setRefreshKey((prev) => prev + 1);
+    setEditingUser(null);
   };
 
   return (
     <>
-      <h2>Categories</h2>
+      <h2>Users</h2>
       <Button
         type="primary"
         style={{ marginBottom: 16 }}
         onClick={handleOpenModal}
       >
-        + Category
+        + User
       </Button>
       <Table
         columns={columns}
-        dataSource={categories}
+        dataSource={users}
         loading={loading}
-        rowKey="_id"
+        rowKey="id"
         pagination={false}
       />
       <Modal
         open={isModalOpen}
         onCancel={handleCloseModal}
         footer={null}
-        title={editingCategory ? "Edit Category" : "Add Category"}
+        title={editingUser ? "Edit User" : "Add User"}
         destroyOnClose
       >
-        <CategoryForm
-          initialData={editingCategory || undefined}
-          onSuccess={handleCloseModal}
+        <UserForm
+          initialData={editingUser || undefined}
+          onSuccess={() => {
+            handleCloseModal();
+            setRefreshKey((prev) => prev + 1);
+          }}
         />
       </Modal>
       {error && <div style={{ color: "red" }}>{error.message}</div>}

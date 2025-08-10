@@ -1,19 +1,19 @@
 import { Routes, Route } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
-import { Expenses } from "./pages/Expenses";
-import { Categories } from "./pages/Categories";
-import { Incomes } from "./pages/Incomes";
-import { SavingPlans } from "./pages/SavingPlans";
-import { Users } from "./pages/Users";
+import { ExpensesPage } from "./pages/ExpensesPage.tsx";
+import { CategoriesPage } from "./pages/CategoriesPage.tsx";
+import { IncomesPage } from "./pages/IncomesPage.tsx";
+import { SavingPlansPage } from "./pages/SavingPlansPage.tsx";
+import { UsersPage } from "./pages/UsersPage.tsx";
 
 const AppRoutes = () => (
   <Routes>
     <Route path="/" element={<Dashboard />} />
-    <Route path="/expenses" element={<Expenses />} />
-    <Route path="/income" element={<Incomes />} />
-    <Route path="/categories" element={<Categories />} />
-    <Route path="/savings" element={<SavingPlans />} />
-    <Route path="/users" element={<Users />} />
+    <Route path="/expenses" element={<ExpensesPage />} />
+    <Route path="/income" element={<IncomesPage />} />
+    <Route path="/categories" element={<CategoriesPage />} />
+    <Route path="/savings" element={<SavingPlansPage />} />
+    <Route path="/users" element={<UsersPage />} />
   </Routes>
 );
 

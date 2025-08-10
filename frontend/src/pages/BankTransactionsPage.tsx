@@ -13,7 +13,7 @@ import { useCategories } from "../hooks/useCategories";
 const { Title } = Typography;
 const { Content } = Layout;
 
-export const TransactionPage: React.FC = () => {
+export const BankTransactionsPage: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
   const [transactions, setTransactions] = useState<BankTransaction[]>([]);
   const { fetchTransactions } = useImportTransaction();

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, Progress, Typography, Row, Col, Tag } from 'antd';
-import type {CategoryData} from "../pages/Overview.tsx";
+import type {CategoryData} from "../pages/OverviewPage.tsx";
 
 const { Text } = Typography;
 

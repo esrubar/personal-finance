@@ -1,50 +1,53 @@
 import React, { useState } from "react";
 import { Button, Table, Space, Modal, message } from "antd";
-import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
-import IncomeForm from "../components/IncomeForm";
-import type { Income } from "../models/income";
-import { useDeleteIncome } from "../hooks/useIncomeMutations";
-import { useIncomes } from "../hooks/useIncomes";
+import { DeleteOutlined } from "@ant-design/icons";
+import SavingProjectForm from "../components/SavingProjectForm";
+import { useSavingProjects } from "../hooks/useSavingProjects";
+import { useDeleteSavingProject } from "../hooks/useSavingProjectMutations";
+import type { SavingProject } from "../models/savingProject";
 
-export const Incomes: React.FC = () => {
+export const SavingPlansPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingIncome, setEditingIncome] = useState<Income | null>(null);
+  const [editingProject, setEditingProject] = useState<SavingProject | null>(
+    null,
+  );
   const [refreshKey, setRefreshKey] = useState(0);
-  const { incomes, loading, error } = useIncomes(refreshKey);
-  const { deleteIncome, loading: deleting } = useDeleteIncome();
+  const { savingProjects, loading, error } = useSavingProjects(refreshKey);
+  const { deleteSavingProject, loading: deleting } = useDeleteSavingProject();
 
   const columns = [
+    { title: "ID", dataIndex: "id", key: "id" },
     { title: "Amount", dataIndex: "amount", key: "amount" },
-    { title: "Source", dataIndex: "source", key: "source" },
     {
       title: "Actions",
       key: "actions",
-      render: (_: unknown, record: Income) => (
+      render: (_: unknown, record: SavingProject) => (
         <Space>
           <Button
             type="link"
-            icon={<EditOutlined />}
             onClick={() => {
-              setEditingIncome(record);
+              setEditingProject(record);
               setIsModalOpen(true);
             }}
-          />
+          >
+            Edit
+          </Button>
           <Button
             type="link"
             danger
             loading={deleting}
-            icon={<DeleteOutlined />}
             onClick={async () => {
               try {
-                await deleteIncome(record._id);
-                message.success("Income deleted");
+                await deleteSavingProject(record._id);
+                message.success("Saving project deleted");
                 setRefreshKey((prev) => prev + 1);
               } catch (err) {
                 message.error(
-                  err instanceof Error ? err.message : "Error deleting income",
+                  err instanceof Error ? err.message : "Error deleting project",
                 );
               }
             }}
+            icon={<DeleteOutlined />}
           />
         </Space>
       ),
@@ -52,28 +55,28 @@ export const Incomes: React.FC = () => {
   ];
 
   const handleOpenModal = () => {
-    setEditingIncome(null);
+    setEditingProject(null);
     setIsModalOpen(true);
   };
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setEditingIncome(null);
+    setEditingProject(null);
     setRefreshKey((prev) => prev + 1);
   };
 
   return (
     <>
-      <h2>Incomes</h2>
+      <h2>Saving Plans</h2>
       <Button
         type="primary"
         style={{ marginBottom: 16 }}
         onClick={handleOpenModal}
       >
-        + Add Income
+        + Add Saving Plan
       </Button>
       <Table
         columns={columns}
-        dataSource={incomes}
+        dataSource={savingProjects}
         loading={loading}
         rowKey="_id"
         pagination={false}
@@ -82,10 +85,11 @@ export const Incomes: React.FC = () => {
         open={isModalOpen}
         onCancel={handleCloseModal}
         footer={null}
-        title={editingIncome ? "Edit Income" : "Add Income"}
+        title={editingProject ? "Edit Saving Project" : "Add Saving Project"}
+        destroyOnClose
       >
-        <IncomeForm
-          initialData={editingIncome || undefined}
+        <SavingProjectForm
+          initialData={editingProject || undefined}
           onSuccess={handleCloseModal}
         />
       </Modal>

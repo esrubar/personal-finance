@@ -1,32 +1,29 @@
 import React, { useState } from "react";
 import { Button, Table, Space, Modal, message } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
-import SavingProjectForm from "../components/SavingProjectForm";
-import { useSavingProjects } from "../hooks/useSavingProjects";
-import { useDeleteSavingProject } from "../hooks/useSavingProjectMutations";
-import type { SavingProject } from "../models/savingProject";
+import { useCategories } from "../hooks/useCategories";
+import { useDeleteCategory } from "../hooks/useCategoryMutations";
+import type { Category } from "../models/category";
+import CategoryForm from "../components/CategoryForm";
 
-export const SavingPlans: React.FC = () => {
+export const CategoriesPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingProject, setEditingProject] = useState<SavingProject | null>(
-    null,
-  );
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
-  const { savingProjects, loading, error } = useSavingProjects(refreshKey);
-  const { deleteSavingProject, loading: deleting } = useDeleteSavingProject();
+  const { categories, loading, error } = useCategories(refreshKey);
+  const { deleteCategory, loading: deleting } = useDeleteCategory();
 
   const columns = [
-    { title: "ID", dataIndex: "id", key: "id" },
-    { title: "Amount", dataIndex: "amount", key: "amount" },
+    { title: "Name", dataIndex: "name", key: "name" },
     {
       title: "Actions",
       key: "actions",
-      render: (_: unknown, record: SavingProject) => (
+      render: (_: unknown, record: Category) => (
         <Space>
           <Button
             type="link"
             onClick={() => {
-              setEditingProject(record);
+              setEditingCategory(record);
               setIsModalOpen(true);
             }}
           >
@@ -38,12 +35,16 @@ export const SavingPlans: React.FC = () => {
             loading={deleting}
             onClick={async () => {
               try {
-                await deleteSavingProject(record._id);
-                message.success("Saving project deleted");
-                setRefreshKey((prev) => prev + 1);
+                if (record._id) {
+                  await deleteCategory(record._id);
+                  message.success("Category deleted");
+                  setRefreshKey((prev) => prev + 1);
+                }
               } catch (err) {
                 message.error(
-                  err instanceof Error ? err.message : "Error deleting project",
+                  err instanceof Error
+                    ? err.message
+                    : "Error deleting category",
                 );
               }
             }}
@@ -55,28 +56,28 @@ export const SavingPlans: React.FC = () => {
   ];
 
   const handleOpenModal = () => {
-    setEditingProject(null);
+    setEditingCategory(null);
     setIsModalOpen(true);
   };
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setEditingProject(null);
+    setEditingCategory(null);
     setRefreshKey((prev) => prev + 1);
   };
 
   return (
     <>
-      <h2>Saving Plans</h2>
+      <h2>Categories</h2>
       <Button
         type="primary"
         style={{ marginBottom: 16 }}
         onClick={handleOpenModal}
       >
-        + Add Saving Plan
+        + Category
       </Button>
       <Table
         columns={columns}
-        dataSource={savingProjects}
+        dataSource={categories}
         loading={loading}
         rowKey="_id"
         pagination={false}
@@ -85,11 +86,11 @@ export const SavingPlans: React.FC = () => {
         open={isModalOpen}
         onCancel={handleCloseModal}
         footer={null}
-        title={editingProject ? "Edit Saving Project" : "Add Saving Project"}
+        title={editingCategory ? "Edit Category" : "Add Category"}
         destroyOnClose
       >
-        <SavingProjectForm
-          initialData={editingProject || undefined}
+        <CategoryForm
+          initialData={editingCategory || undefined}
           onSuccess={handleCloseModal}
         />
       </Modal>

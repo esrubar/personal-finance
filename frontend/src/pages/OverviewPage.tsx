@@ -11,7 +11,7 @@ export interface CategoryData {
   spentAmount: number;
 }
 
-export const Overview: React.FC = () => {
+export const OverviewPage: React.FC = () => {
   const [refreshKey] = useState(0);
   const now = new Date();
   const year = now.getFullYear();

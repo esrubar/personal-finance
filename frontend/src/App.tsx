@@ -7,14 +7,14 @@ import {
   BarChartOutlined,
 } from '@ant-design/icons';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import { Categories } from './pages/Categories';
-import { Users } from './pages/Users';
-import { Overview } from './pages/Overview';
-import { Incomes } from './pages/Incomes';
-import { Expenses } from './pages/Expenses';
-import { SavingPlans } from './pages/SavingPlans';
-import { CategoryBudgets } from './pages/CategoryBudgets';
-import { TransactionPage } from './pages/TransactionPage';
+import { CategoriesPage } from './pages/CategoriesPage.tsx';
+import { UsersPage } from './pages/UsersPage.tsx';
+import { OverviewPage } from './pages/OverviewPage.tsx';
+import { IncomesPage } from './pages/IncomesPage.tsx';
+import { ExpensesPage } from './pages/ExpensesPage.tsx';
+import { SavingPlansPage } from './pages/SavingPlansPage.tsx';
+import { CategoryBudgetsPage } from './pages/CategoryBudgetsPage.tsx';
+import { BankTransactionsPage } from './pages/BankTransactionsPage.tsx';
 
 const { Sider, Content } = Layout;
 
@@ -54,14 +54,14 @@ const App: React.FC = () => {
           <Content style={{ margin: '24px 16px 0' }}>
             <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
               <Routes>
-                <Route path="/" element={<Overview />} />
-                <Route path="/incomes" element={<Incomes />} />
-                <Route path="/expenses" element={<Expenses />} />
-                <Route path="/saving-plans" element={<SavingPlans />} />
-                <Route path="/categories" element={<Categories />} />
-                <Route path="/users" element={<Users />} />
-                <Route path="/category-budgets" element={<CategoryBudgets />} />
-                <Route path="/upload-transactions" element={<TransactionPage />} />
+                <Route path="/" element={<OverviewPage />} />
+                <Route path="/incomes" element={<IncomesPage />} />
+                <Route path="/expenses" element={<ExpensesPage />} />
+                <Route path="/saving-plans" element={<SavingPlansPage />} />
+                <Route path="/categories" element={<CategoriesPage />} />
+                <Route path="/users" element={<UsersPage />} />
+                <Route path="/category-budgets" element={<CategoryBudgetsPage />} />
+                <Route path="/upload-transactions" element={<BankTransactionsPage />} />
               </Routes>
             </div>
           </Content>

@@ -12,7 +12,7 @@ import {months, years} from "../utils/constants.ts";
 import type {ExpenseFilter} from "../models/expenseFilter.ts";
 import {getMonthNameCapitalized} from "../utils/dateUtils.ts";
 
-export const Expenses: React.FC = () => {
+export const ExpensesPage: React.FC = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
     const [refreshKey, setRefreshKey] = useState(0);
