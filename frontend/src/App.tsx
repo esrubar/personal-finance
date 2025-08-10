@@ -15,6 +15,7 @@ import { ExpensesPage } from './pages/ExpensesPage.tsx';
 import { SavingPlansPage } from './pages/SavingPlansPage.tsx';
 import { CategoryBudgetsPage } from './pages/CategoryBudgetsPage.tsx';
 import { BankTransactionsPage } from './pages/BankTransactionsPage.tsx';
+import {MonthlyPlanPage} from "./pages/MonthlyPlanPage.tsx";
 
 const { Sider, Content } = Layout;
 
@@ -26,6 +27,9 @@ const App: React.FC = () => {
           <Menu theme="dark" mode="inline" defaultSelectedKeys={['overview']}>
             <Menu.Item key="overview" icon={<PieChartOutlined />}>
               <Link to="/">Overview</Link>
+            </Menu.Item>
+            <Menu.Item key="monthly-plan" icon={<PieChartOutlined />}>
+              <Link to="/monthly-plan">Monthly Plan</Link>
             </Menu.Item>
             <Menu.Item key="incomes" icon={<DollarOutlined />}>
               <Link to="/incomes">Incomes</Link>
@@ -55,6 +59,7 @@ const App: React.FC = () => {
             <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
               <Routes>
                 <Route path="/" element={<OverviewPage />} />
+                <Route path="/monthly-plan" element={<MonthlyPlanPage />} />
                 <Route path="/incomes" element={<IncomesPage />} />
                 <Route path="/expenses" element={<ExpensesPage />} />
                 <Route path="/saving-plans" element={<SavingPlansPage />} />
