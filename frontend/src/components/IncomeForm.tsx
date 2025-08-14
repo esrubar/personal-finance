@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import type { Income } from "../models/income";
-import { useCreateIncome, useUpdateIncome } from "../hooks/useIncomeMutations";
+import { useUpdateIncome } from "../hooks/useIncomeMutations";
 
 interface IncomeFormProps {
   initialData?: Income;
@@ -9,17 +9,15 @@ interface IncomeFormProps {
 
 const IncomeForm: React.FC<IncomeFormProps> = ({ initialData, onSuccess }) => {
   const [amount, setAmount] = useState(initialData?.amount || 0);
-  const [source, setSource] = useState(initialData?.source || "");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const { createIncome } = useCreateIncome();
+  //const { createIncome } = useCreateIncome();
   const { updateIncome } = useUpdateIncome();
 
   useEffect(() => {
     if (initialData) {
       setAmount(initialData.amount);
-      setSource(initialData.source);
     }
   }, [initialData]);
 
@@ -29,9 +27,9 @@ const IncomeForm: React.FC<IncomeFormProps> = ({ initialData, onSuccess }) => {
     setError(null);
     try {
       if (initialData && initialData._id) {
-        await updateIncome(initialData._id, { ...initialData, amount, source });
+        await updateIncome(initialData._id, { ...initialData, amount });
       } else {
-        await createIncome({ amount, source } as Income);
+        //await createIncome({ amount });
       }
       if (onSuccess) onSuccess();
     } catch (err: any) {
@@ -50,16 +48,6 @@ const IncomeForm: React.FC<IncomeFormProps> = ({ initialData, onSuccess }) => {
           type="number"
           value={amount}
           onChange={(e) => setAmount(Number(e.target.value))}
-          required
-        />
-      </div>
-      <div>
-        <label htmlFor="source">Source:</label>
-        <input
-          id="source"
-          type="text"
-          value={source}
-          onChange={(e) => setSource(e.target.value)}
           required
         />
       </div>

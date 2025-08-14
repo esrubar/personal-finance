@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import type { Category } from "../models/category";
 import { useCreateCategoryBudget } from "../hooks/useCategoryBudgetMutations";
 import { useCategories } from "../hooks/useCategories";
@@ -9,7 +9,6 @@ interface CategoryBudgetFromProps {
 }
 
 export const CategoryBudgetFrom: React.FC<CategoryBudgetFromProps> = ({
-  initialData,
   onSuccess,
 }) => {
   const [budgetAmount, setBudgetAmount] = useState(0);

@@ -36,7 +36,7 @@ export const IncomesPage: React.FC = () => {
             icon={<DeleteOutlined />}
             onClick={async () => {
               try {
-                await deleteIncome(record._id);
+                await deleteIncome(record._id!);
                 message.success("Income deleted");
                 setRefreshKey((prev) => prev + 1);
               } catch (err) {
