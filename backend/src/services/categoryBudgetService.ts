@@ -1,7 +1,7 @@
 import { CategoryBudgetDTO } from "../dtos/CategoryBudgetDTO";
-import categoryModel from "../models/category.model";
-import categoryBudgetModel from "../models/categoryBudget.model"
-import { createAuditable, updateAuditable } from "./auditable.service"
+import categoryModel from "../models/categoryModel";
+import categoryBudgetModel from "../models/categoryBudgetModel"
+import { createAuditable, updateAuditable } from "./auditableService"
 
   export const create = async (data: any) => {
     const categoryBudgetData = {

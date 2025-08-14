@@ -1,5 +1,5 @@
-import Category from '../models/category.model';
-import { createAuditable, updateAuditable } from './auditable.service'
+import Category from '../models/categoryModel';
+import { createAuditable, updateAuditable } from './auditableService'
 
 export const createCategory = async (data: any) => {
     const categoryData = {

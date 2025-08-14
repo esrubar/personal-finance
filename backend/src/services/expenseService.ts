@@ -1,9 +1,9 @@
 import {ExpenseDTO, MensualExpenseDTO} from "../dtos/ExpenseDTO";
-import expenseModel from "../models/expense.model";
-import {createAuditable, updateAuditable} from "./auditable.service"
-import {FilteredExpenseQuery} from "../dtos/filtered-expense-query.dto";
-import {PaginatedResponse} from "../dtos/paginated-response.dto";
+import {createAuditable, updateAuditable} from "./auditableService"
+import {FilteredExpenseQuery} from "../dtos/filteredExpensequeryDTO";
+import {PaginatedResponse} from "../dtos/paginatedResponseDTO";
 import {paginateWithFilters} from "../utils/paginateWithFilters";
+import expenseModel from "../models/expenseModel";
 import dayjs from "dayjs";
 
 export const createExpense = async (data: any) => {

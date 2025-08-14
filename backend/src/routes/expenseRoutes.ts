@@ -1,6 +1,6 @@
 // routes/expense.routes.ts
 import { Router } from 'express';
-import * as ExpenseController from '../controllers/expense.controller';
+import * as ExpenseController from '../controllers/expenseController';
 
 const router = Router();
 

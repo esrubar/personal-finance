@@ -1,5 +1,5 @@
-import incomeModel from "../models/income.model";
-import { createAuditable, updateAuditable } from "./auditable.service";
+import incomeModel from "../models/incomeModel";
+import { createAuditable, updateAuditable } from "./auditableService";
 
 export const createIncome = async (data: any) => {
     const incomeData = {

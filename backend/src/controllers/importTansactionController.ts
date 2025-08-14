@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import * as importTransactionService from '../services/importTransaction.service';
+import * as importTransactionService from '../services/importTransactionService';
 import { BankTransaction } from "../dtos/bankTransaction";
 
 

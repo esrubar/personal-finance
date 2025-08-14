@@ -1,5 +1,5 @@
-import User from '../models/user.model';
-import { createAuditable, updateAuditable } from './auditable.service'
+import User from '../models/userModel';
+import { createAuditable, updateAuditable } from './auditableService'
 
 export const createUser = async (data: any) => {
     const userData = {

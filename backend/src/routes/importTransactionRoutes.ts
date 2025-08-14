@@ -1,7 +1,7 @@
 // routes/import.routes.ts
 import { Router } from 'express';
 import multer from "multer";
-import * as importTransactionController from '../controllers/importTansaction.controller';
+import * as importTransactionController from '../controllers/importTansactionController';
 
 const router = Router();
 

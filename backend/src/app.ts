@@ -1,13 +1,13 @@
 import express, { json } from "express";
 import cors from "cors";
 import { config } from "dotenv";
-import expenseRoutes from "./routes/expense.routes";
-import categoryRoutes from "./routes/category.routes";
-import savingProjectRoutes from "./routes/savingProject.routes";
-import userRoutes from "./routes/user.routes";
-import categoryBudgetRoutes from "./routes/categoryBudget.routes";
-import incomeRoutes from "./routes/income.routes";
-import importTransactionRoutes from "./routes/importTransaction.routes";
+import expenseRoutes from "./routes/expenseRoutes";
+import categoryRoutes from "./routes/categoryRoutes";
+import savingProjectRoutes from "./routes/savingProjectRoutes";
+import userRoutes from "./routes/userRoutes";
+import categoryBudgetRoutes from "./routes/categoryBudgetRoutes";
+import incomeRoutes from "./routes/incomeRoutes";
+import importTransactionRoutes from "./routes/importTransactionRoutes";
 import connectDB from "./config/db";
 
 config();

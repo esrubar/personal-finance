@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import * as savingProjectService from '../services/savingProject.service';
+import * as savingProjectService from '../services/savingProjectService';
 
 export const create = async (req: Request, res: Response) => {
   const savingProject = await savingProjectService.createSavingProject(req.body);

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import * as categoryBudgetService from '../services/categoryBudget.service';
+import * as categoryBudgetService from '../services/categoryBudgetService';
 
 export const create = async (req: Request, res: Response) => {
   const categoryBudget = await categoryBudgetService.create(req.body);

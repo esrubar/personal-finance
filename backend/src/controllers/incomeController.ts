@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import * as incomeService from '../services/income.service';
+import * as incomeService from '../services/incomeService';
 
 export const create = async (req: Request, res: Response) => {
   const income = await incomeService.createIncome(req.body);

@@ -1,6 +1,6 @@
 // routes/income.routes.ts
 import { Router } from 'express';
-import * as IncomeController from '../controllers/income.controller';
+import * as IncomeController from '../controllers/incomeController';
 
 const router = Router();
 
