@@ -25,6 +25,7 @@ const corsOptions = {
         "https://personal-finance-backend-csxjr8eya-esrubar-projects.vercel.app",
         "http://localhost:3000",
         "http://localhost:5173",
+        "https://personal-finance-backend-ten.vercel.app"
     ],
     methods: "GET,POST,PUT,DELETE,OPTIONS",
     allowedHeaders: "Content-Type,Authorization",
