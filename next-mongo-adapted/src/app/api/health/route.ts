@@ -1,6 +1,8 @@
 import {connectDB} from "@config/db";
 import {NextRequest, NextResponse} from "next/server";
 import {LoginDto} from "@dtos/user.dto";
+import {login} from "@services/auth.service";
+import {signJWT} from "@utils/jwt";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -14,8 +16,16 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { name, password } = LoginDto.parse(body);
     console.log("Body", name, password);
+    const user = await login(name, password);
+    console.log(user);
+
+    const token = signJWT({ sub: user.id, name: user.name });
+    console.log("token:", token);
+    const res = NextResponse.json({ user });
+    console.log(res);
+    res.cookies.set("token", token, { httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production", path: "/", maxAge: 60*60*24*7 });
+    return res;
     
-  return NextResponse.json({ status: "ok", env: process.env.MONGODB_URI, db: "connected" });
   } catch (e: any) {
     return NextResponse.json({ error: e.message ?? "Bad Request" }, { status: 400 });
   }
