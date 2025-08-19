@@ -6,7 +6,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-export async function GET(req: NextRequest) {
+export async function POST(req: NextRequest) {
   try {
   console.log("Revalidate");
   await connectDB();
