@@ -9,6 +9,7 @@ import { signJWT } from "@utils/jwt";
 
 export async function POST(req: NextRequest) {
   try {
+    console.log("Primera linea");
     const body = await req.json();
     const { name, password } = LoginDto.parse(body);
 
