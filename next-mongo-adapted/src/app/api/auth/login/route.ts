@@ -8,7 +8,6 @@ import { LoginDto } from "@dtos/user.dto";
 import { signJWT } from "@utils/jwt";
 
 export async function POST(req: NextRequest) {
-  console.log(process.env.MONGODB_URI, process.env.JWT_SECRET)
   try {
     console.log("Primera linea");
     const body = await req.json();
