@@ -14,4 +14,4 @@ const SavingsProjectSchema = new mongoose.Schema({
   },
 });
 
-export default mongoose.model('SavingProject', SavingsProjectSchema);
+export default mongoose.models.SavingProject || mongoose.model("SavingProject", SavingsProjectSchema);

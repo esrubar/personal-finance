@@ -6,7 +6,7 @@ import {
   WalletOutlined,
   BarChartOutlined,
 } from "@ant-design/icons";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {BrowserRouter as Router, Routes, Route, Link} from "react-router-dom";
 import { useAuth } from "./hooks/useAuth";
 import { LoginPage } from "./pages/LoginPage";
 import { CategoriesPage } from "./pages/CategoriesPage";
@@ -30,38 +30,38 @@ const App: React.FC = () => {
 
   if (loading) return <div>Cargando...</div>;
 
-  return (
+  return (  
       <Router>
         {logged ? (
             <Layout style={{ minHeight: "100vh" }}>
               <Sider breakpoint="lg" collapsedWidth="0">
                 <Menu theme="dark" mode="inline" defaultSelectedKeys={["overview"]}>
                   <Menu.Item key="overview" icon={<PieChartOutlined />}>
-                    Overview
+                    <Link to="/">Overview</Link>
                   </Menu.Item>
                   <Menu.Item key="monthly-plan" icon={<PieChartOutlined />}>
-                    Monthly Plan
+                    <Link to="/monthly-plan">Monthly Plan</Link>
                   </Menu.Item>
                   <Menu.Item key="incomes" icon={<DollarOutlined />}>
-                    Incomes
+                    <Link to="/incomes">Incomes</Link>
                   </Menu.Item>
                   <Menu.Item key="expenses" icon={<WalletOutlined />}>
-                    Expenses
+                    <Link to="/expenses">Expenses</Link>
                   </Menu.Item>
                   <Menu.Item key="saving-plans" icon={<BarChartOutlined />}>
-                    Saving Plans
+                    <Link to="/saving-plans">Saving Plans</Link>
                   </Menu.Item>
                   <Menu.Item key="categories" icon={<BarChartOutlined />}>
-                    Categories
+                    <Link to="/categories">Categories</Link>
                   </Menu.Item>
                   <Menu.Item key="users" icon={<BarChartOutlined />}>
-                    Users
+                    <Link to="/users">Users</Link>
                   </Menu.Item>
                   <Menu.Item key="category-budgets" icon={<BarChartOutlined />}>
-                    Category Budgets
+                    <Link to="/category-budgets">Category Budgets</Link>
                   </Menu.Item>
                   <Menu.Item key="upload-transactions" icon={<BarChartOutlined />}>
-                    Upload Transactions
+                    <Link to="/upload-transactions">Upload Transactions</Link>
                   </Menu.Item>
                 </Menu>
               </Sider>

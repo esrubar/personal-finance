@@ -15,4 +15,4 @@ const CategoryBudgetSchema = new mongoose.Schema({
     required: true,
   },
 });
-export default mongoose.model('CategoryBudget', CategoryBudgetSchema);
+export default mongoose.models.CategoryBudget || mongoose.model("CategoryBudget", CategoryBudgetSchema);
