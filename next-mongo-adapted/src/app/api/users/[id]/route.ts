@@ -16,7 +16,7 @@ export async function GET(_: NextRequest, { params }: Ctx) {
     await connectDB();
     const item = await getUser(params.id);
     if (!item) return toProblem(404, "Not found");
-    return Response.json({ _id: item._id, name: item.name, auditable: item.auditable });
+    return Response.json(item);
   } catch (e: any) {
     return toProblem(500, e.message ?? "Internal error");
   }
