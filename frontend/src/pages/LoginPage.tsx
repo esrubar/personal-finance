@@ -43,6 +43,8 @@ export function LoginPage() {
                 background: "#f0f2f5",
             }}
         >
+            <h1>{process.env.VITE_API_URL}</h1>
+            <h1>{import.meta.env.VITE_API_URL}</h1>
             <Card style={{ width: 400, padding: 24, boxShadow: "0 4px 12px rgba(0,0,0,0.15)" }}>
                 <div style={{ textAlign: "center", marginBottom: 24 }}>
                     <Title level={3}>Iniciar Sesión</Title>
