@@ -9,7 +9,7 @@ import { signJWT } from "@utils/jwt";
 
 const allowedOrigins = {
   development: "http://localhost:5173",
-  production: "https://tu-frontend-en-produccion.vercel.app",
+  production: "https://personal-finance-frontend-six.vercel.app",
   test: "http://localhost:5173",
 };
 
