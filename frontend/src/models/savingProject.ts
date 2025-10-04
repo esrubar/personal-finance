@@ -1,4 +1,4 @@
-import type { Auditable } from "./auditable";
+import type { Auditable } from './auditable';
 
 export interface SavingProject {
   _id: string;

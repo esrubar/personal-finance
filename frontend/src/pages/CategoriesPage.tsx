@@ -1,10 +1,10 @@
-import React, { useState } from "react";
-import { Button, Table, Space, Modal, message } from "antd";
-import { DeleteOutlined } from "@ant-design/icons";
-import { useCategories } from "../hooks/useCategories";
-import { useDeleteCategory } from "../hooks/useCategoryMutations";
-import type { Category } from "../models/category";
-import CategoryForm from "../components/CategoryForm";
+import React, { useState } from 'react';
+import { Button, Table, Space, Modal, message } from 'antd';
+import { DeleteOutlined } from '@ant-design/icons';
+import { useCategories } from '../hooks/useCategories';
+import { useDeleteCategory } from '../hooks/useCategoryMutations';
+import type { Category } from '../models/category';
+import CategoryForm from '../components/CategoryForm';
 
 export const CategoriesPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -14,10 +14,10 @@ export const CategoriesPage: React.FC = () => {
   const { deleteCategory, loading: deleting } = useDeleteCategory();
 
   const columns = [
-    { title: "Name", dataIndex: "name", key: "name" },
+    { title: 'Name', dataIndex: 'name', key: 'name' },
     {
-      title: "Actions",
-      key: "actions",
+      title: 'Actions',
+      key: 'actions',
       render: (_: unknown, record: Category) => (
         <Space>
           <Button
@@ -37,15 +37,11 @@ export const CategoriesPage: React.FC = () => {
               try {
                 if (record._id) {
                   await deleteCategory(record._id);
-                  message.success("Category deleted");
+                  message.success('Category deleted');
                   setRefreshKey((prev) => prev + 1);
                 }
               } catch (err) {
-                message.error(
-                  err instanceof Error
-                    ? err.message
-                    : "Error deleting category",
-                );
+                message.error(err instanceof Error ? err.message : 'Error deleting category');
               }
             }}
             icon={<DeleteOutlined />}
@@ -68,11 +64,7 @@ export const CategoriesPage: React.FC = () => {
   return (
     <>
       <h2>Categories</h2>
-      <Button
-        type="primary"
-        style={{ marginBottom: 16 }}
-        onClick={handleOpenModal}
-      >
+      <Button type="primary" style={{ marginBottom: 16 }} onClick={handleOpenModal}>
         + Category
       </Button>
       <Table
@@ -86,15 +78,12 @@ export const CategoriesPage: React.FC = () => {
         open={isModalOpen}
         onCancel={handleCloseModal}
         footer={null}
-        title={editingCategory ? "Edit Category" : "Add Category"}
+        title={editingCategory ? 'Edit Category' : 'Add Category'}
         destroyOnClose
       >
-        <CategoryForm
-          initialData={editingCategory || undefined}
-          onSuccess={handleCloseModal}
-        />
+        <CategoryForm initialData={editingCategory || undefined} onSuccess={handleCloseModal} />
       </Modal>
-      {error && <div style={{ color: "red" }}>{error.message}</div>}
+      {error && <div style={{ color: 'red' }}>{error.message}</div>}
     </>
   );
 };

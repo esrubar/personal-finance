@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/layout.scss';
 
@@ -19,9 +19,7 @@ export default function SiderBar({ children }: SiderBarProps) {
           <Link to="/users">Usuarios</Link>
         </nav>
       </aside>
-      <main className="content">
-        {children}
-      </main>
+      <main className="content">{children}</main>
     </div>
   );
 }

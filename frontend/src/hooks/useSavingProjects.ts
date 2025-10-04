@@ -9,7 +9,8 @@ export function useSavingProjects(refreshKey?: number) {
 
   useEffect(() => {
     setLoading(true);
-    savingProjectDataSource.getSavingProjects()
+    savingProjectDataSource
+      .getSavingProjects()
       .then(setSavingProjects)
       .catch(setError)
       .finally(() => setLoading(false));
@@ -26,7 +27,8 @@ export function useSavingProject(id: string) {
   useEffect(() => {
     if (!id) return;
     setLoading(true);
-    savingProjectDataSource.getSavingProject(id)
+    savingProjectDataSource
+      .getSavingProject(id)
       .then(setSavingProject)
       .catch(setError)
       .finally(() => setLoading(false));

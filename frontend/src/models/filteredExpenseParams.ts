@@ -1,7 +1,7 @@
 export interface FilteredExpenseParams {
-    page: number;
-    pageSize: number;
-    categoryId?: string;
-    month?: number;
-    year?: number;
+  page: number;
+  pageSize: number;
+  categoryId?: string;
+  month?: number;
+  year?: number;
 }

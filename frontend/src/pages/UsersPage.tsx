@@ -1,10 +1,10 @@
-import React, { useState } from "react";
-import { Button, Table, Space, Modal, message } from "antd";
-import { DeleteOutlined } from "@ant-design/icons";
-import { useUsers } from "../hooks/useUsers";
-import { useDeleteUser } from "../hooks/useUserMutations";
-import type { User } from "../models/user";
-import UserForm from "../components/UserForm";
+import React, { useState } from 'react';
+import { Button, Table, Space, Modal, message } from 'antd';
+import { DeleteOutlined } from '@ant-design/icons';
+import { useUsers } from '../hooks/useUsers';
+import { useDeleteUser } from '../hooks/useUserMutations';
+import type { User } from '../models/user';
+import UserForm from '../components/UserForm';
 
 export const UsersPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -14,10 +14,10 @@ export const UsersPage: React.FC = () => {
   const { deleteUser, loading: deleting } = useDeleteUser();
 
   const columns = [
-    { title: "Name", dataIndex: "name", key: "name" },
+    { title: 'Name', dataIndex: 'name', key: 'name' },
     {
-      title: "Actions",
-      key: "actions",
+      title: 'Actions',
+      key: 'actions',
       render: (_: unknown, record: User) => (
         <Space>
           <Button
@@ -36,11 +36,9 @@ export const UsersPage: React.FC = () => {
             onClick={async () => {
               try {
                 await deleteUser(record._id);
-                message.success("User deleted");
+                message.success('User deleted');
               } catch (err) {
-                message.error(
-                  err instanceof Error ? err.message : "Error deleting user",
-                );
+                message.error(err instanceof Error ? err.message : 'Error deleting user');
               }
             }}
             icon={<DeleteOutlined />}
@@ -62,11 +60,7 @@ export const UsersPage: React.FC = () => {
   return (
     <>
       <h2>Users</h2>
-      <Button
-        type="primary"
-        style={{ marginBottom: 16 }}
-        onClick={handleOpenModal}
-      >
+      <Button type="primary" style={{ marginBottom: 16 }} onClick={handleOpenModal}>
         + User
       </Button>
       <Table
@@ -80,7 +74,7 @@ export const UsersPage: React.FC = () => {
         open={isModalOpen}
         onCancel={handleCloseModal}
         footer={null}
-        title={editingUser ? "Edit User" : "Add User"}
+        title={editingUser ? 'Edit User' : 'Add User'}
         destroyOnClose
       >
         <UserForm
@@ -91,7 +85,7 @@ export const UsersPage: React.FC = () => {
           }}
         />
       </Modal>
-      {error && <div style={{ color: "red" }}>{error.message}</div>}
+      {error && <div style={{ color: 'red' }}>{error.message}</div>}
     </>
   );
 };

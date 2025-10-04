@@ -1,17 +1,14 @@
 import axios from '../api/axios';
 import type { Expense, MensualExpense } from '../models/expense';
-import type {FilteredExpenseParams} from "../models/filteredExpenseParams.ts";
-import type {PaginatedResponse} from "../models/paginatedResponse.ts";
+import type { FilteredExpenseParams } from '../models/filteredExpenseParams.ts';
+import type { PaginatedResponse } from '../models/paginatedResponse.ts';
 
 const API_URL = '/api/expenses';
 
 export const getExpenses = async (
-    params: FilteredExpenseParams
+  params: FilteredExpenseParams
 ): Promise<PaginatedResponse<Expense>> => {
-  const { data } = await axios.get<PaginatedResponse<Expense>>(
-      API_URL,
-      { params }
-  );
+  const { data } = await axios.get<PaginatedResponse<Expense>>(API_URL, { params });
   return data;
 };
 

@@ -12,12 +12,15 @@ export interface Income {
   auditable?: Auditable;
 }
 
-export const createIncome = (transaction: Omit<BankTransaction, '_id' | 'auditable' | 'category'>, categoryId: string): Income => {
-  const category = { _id: categoryId, name: "" };
+export const createIncome = (
+  transaction: Omit<BankTransaction, '_id' | 'auditable' | 'category'>,
+  categoryId: string
+): Income => {
+  const category = { _id: categoryId, name: '' };
   return {
     amount: transaction.amount,
     category: category,
-    transactionDate: transaction.date ? dayjs(transaction.date, "DD/MM/YYYY").toDate() : undefined,
-    description: transaction.description
+    transactionDate: transaction.date ? dayjs(transaction.date, 'DD/MM/YYYY').toDate() : undefined,
+    description: transaction.description,
   };
-}
+};

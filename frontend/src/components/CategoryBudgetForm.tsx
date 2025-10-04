@@ -1,20 +1,18 @@
-import React, { useState } from "react";
-import type { Category } from "../models/category";
-import { useCreateCategoryBudget } from "../hooks/useCategoryBudgetMutations";
-import { useCategories } from "../hooks/useCategories";
+import React, { useState } from 'react';
+import type { Category } from '../models/category';
+import { useCreateCategoryBudget } from '../hooks/useCategoryBudgetMutations';
+import { useCategories } from '../hooks/useCategories';
 
 interface CategoryBudgetFromProps {
   initialData?: Category;
   onSuccess?: () => void;
 }
 
-export const CategoryBudgetFrom: React.FC<CategoryBudgetFromProps> = ({
-  onSuccess,
-}) => {
+export const CategoryBudgetFrom: React.FC<CategoryBudgetFromProps> = ({ onSuccess }) => {
   const [budgetAmount, setBudgetAmount] = useState(0);
   const [month, setMonth] = useState(0);
   const [year, setYear] = useState(0);
-   const [categoryId, setCategoryId] = useState("");
+  const [categoryId, setCategoryId] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -32,10 +30,10 @@ export const CategoryBudgetFrom: React.FC<CategoryBudgetFromProps> = ({
         year,
         categoryId,
       });
-      
+
       if (onSuccess) onSuccess();
     } catch (err: any) {
-      setError(err.message || "Error saving category");
+      setError(err.message || 'Error saving category');
     } finally {
       setLoading(false);
     }
@@ -43,7 +41,7 @@ export const CategoryBudgetFrom: React.FC<CategoryBudgetFromProps> = ({
 
   return (
     <form onSubmit={handleSubmit}>
-       <div>
+      <div>
         <label htmlFor="amount">Amount:</label>
         <input
           id="amount"
@@ -86,9 +84,9 @@ export const CategoryBudgetFrom: React.FC<CategoryBudgetFromProps> = ({
           ))}
         </select>
       </div>
-      {error && <div style={{ color: "red" }}>{error}</div>}
+      {error && <div style={{ color: 'red' }}>{error}</div>}
       <button type="submit" disabled={loading}>
-        {"Create"} Expense
+        {'Create'} Expense
       </button>
     </form>
   );

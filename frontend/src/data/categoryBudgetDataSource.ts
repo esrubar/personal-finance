@@ -1,19 +1,24 @@
-import axios from "../api/axios.ts";
-import type { CategoryBudget } from "../models/categoryBudget.ts";
+import axios from '../api/axios.ts';
+import type { CategoryBudget } from '../models/categoryBudget.ts';
 
 const API_URL = '/api/categoryBudgets';
 
-export const getCategoryBudgetsByMonthAndYear = async (month: number, year: number): Promise<CategoryBudget[]> => {
-    const { data } = await axios.get<CategoryBudget[]>(`${API_URL}/${month}/${year}`);
-    return data;
+export const getCategoryBudgetsByMonthAndYear = async (
+  month: number,
+  year: number
+): Promise<CategoryBudget[]> => {
+  const { data } = await axios.get<CategoryBudget[]>(`${API_URL}/${month}/${year}`);
+  return data;
 };
 
-export const createCategoryBudget = async (categoryBudget: CategoryBudget): Promise<CategoryBudget[]> => {
-    const { data } = await axios.post<CategoryBudget[]>(API_URL, categoryBudget);
-    return data;
+export const createCategoryBudget = async (
+  categoryBudget: CategoryBudget
+): Promise<CategoryBudget[]> => {
+  const { data } = await axios.post<CategoryBudget[]>(API_URL, categoryBudget);
+  return data;
 };
 
 export const getAllCategoryBudgets = async (): Promise<CategoryBudget[]> => {
-    const { data } = await axios.get<CategoryBudget[]>(API_URL);
-    return data;
-}
+  const { data } = await axios.get<CategoryBudget[]>(API_URL);
+  return data;
+};

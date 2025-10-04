@@ -9,7 +9,8 @@ export function useCategories(refreshKey?: number) {
 
   useEffect(() => {
     setLoading(true);
-    categoryDataSource.getCategories()
+    categoryDataSource
+      .getCategories()
       .then(setCategories)
       .catch(setError)
       .finally(() => setLoading(false));
@@ -26,7 +27,8 @@ export function useCategory(id: string) {
   useEffect(() => {
     if (!id) return;
     setLoading(true);
-    categoryDataSource.getCategory(id)
+    categoryDataSource
+      .getCategory(id)
       .then(setCategory)
       .catch(setError)
       .finally(() => setLoading(false));

@@ -1,4 +1,3 @@
-
 export interface BankTransaction {
   date: Date;
   description: string;

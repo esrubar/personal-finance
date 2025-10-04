@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import * as expenseDataSource from '../data/expenseDataSource';
 import type { Expense, MensualExpense } from '../models/expense';
-import type {FilteredExpenseParams} from "../models/filteredExpenseParams.ts";
-import type {PaginatedResponse} from "../models/paginatedResponse.ts";
+import type { FilteredExpenseParams } from '../models/filteredExpenseParams.ts';
+import type { PaginatedResponse } from '../models/paginatedResponse.ts';
 
 export function useExpenses(params: FilteredExpenseParams, refreshKey?: number) {
   const [expenses, setExpenses] = useState<PaginatedResponse<Expense>>();
@@ -11,16 +11,16 @@ export function useExpenses(params: FilteredExpenseParams, refreshKey?: number) 
 
   useEffect(() => {
     setLoading(true);
-    expenseDataSource.getExpenses(params)
-        .then((res) => {
-          setExpenses(res);
-          console.log(res);
-
-        })
-        .catch(setError)
-        .finally(() => setLoading(false));
+    expenseDataSource
+      .getExpenses(params)
+      .then((res) => {
+        setExpenses(res);
+        console.log(res);
+      })
+      .catch(setError)
+      .finally(() => setLoading(false));
   }, [params, refreshKey]);
-  
+
   return { expenses, loading, error };
 }
 
@@ -32,7 +32,8 @@ export function useExpense(id: string) {
   useEffect(() => {
     if (!id) return;
     setLoading(true);
-    expenseDataSource.getExpense(id)
+    expenseDataSource
+      .getExpense(id)
       .then(setExpense)
       .catch(setError)
       .finally(() => setLoading(false));
@@ -48,10 +49,11 @@ export function useMensualExpenses(refreshKey?: number) {
 
   useEffect(() => {
     setLoading(true);
-    expenseDataSource.getMensualExpenses()
-        .then(setExpenses)
-        .catch(setError)
-        .finally(() => setLoading(false));
+    expenseDataSource
+      .getMensualExpenses()
+      .then(setExpenses)
+      .catch(setError)
+      .finally(() => setLoading(false));
   }, [refreshKey]);
 
   return { expenses, loading, error };

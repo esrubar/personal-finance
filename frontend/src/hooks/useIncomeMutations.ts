@@ -41,7 +41,7 @@ export function useCreateIncomes() {
     }
   };
 
-  return { createIncomes , loading, error };
+  return { createIncomes, loading, error };
 }
 
 export function useUpdateIncome() {

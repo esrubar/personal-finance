@@ -9,7 +9,8 @@ export function useUsers(refreshKey?: number) {
 
   useEffect(() => {
     setLoading(true);
-    userDataSource.getUsers()
+    userDataSource
+      .getUsers()
       .then(setUsers)
       .catch(setError)
       .finally(() => setLoading(false));
@@ -26,7 +27,8 @@ export function useUser(id: string) {
   useEffect(() => {
     if (!id) return;
     setLoading(true);
-    userDataSource.getUser(id)
+    userDataSource
+      .getUser(id)
       .then(setUser)
       .catch(setError)
       .finally(() => setLoading(false));

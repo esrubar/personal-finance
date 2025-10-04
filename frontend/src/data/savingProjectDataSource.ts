@@ -18,7 +18,10 @@ export const createSavingProject = async (savingProject: SavingProject): Promise
   return data;
 };
 
-export const updateSavingProject = async (id: string, savingProject: SavingProject): Promise<SavingProject> => {
+export const updateSavingProject = async (
+  id: string,
+  savingProject: SavingProject
+): Promise<SavingProject> => {
   const { data } = await axios.put<SavingProject>(`${API_URL}/${id}`, savingProject);
   return data;
 };

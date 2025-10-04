@@ -9,7 +9,8 @@ export function useIncomes(refreshKey?: number) {
 
   useEffect(() => {
     setLoading(true);
-    incomeDataSource.getIncomes()
+    incomeDataSource
+      .getIncomes()
       .then(setIncomes)
       .catch(setError)
       .finally(() => setLoading(false));
@@ -26,7 +27,8 @@ export function useIncome(id: string) {
   useEffect(() => {
     if (!id) return;
     setLoading(true);
-    incomeDataSource.getIncome(id)
+    incomeDataSource
+      .getIncome(id)
       .then(setIncome)
       .catch(setError)
       .finally(() => setLoading(false));

@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import type { User } from "../models/user";
-import { useCreateUser, useUpdateUser } from "../hooks/useUserMutations";
+import React, { useState, useEffect } from 'react';
+import type { User } from '../models/user';
+import { useCreateUser, useUpdateUser } from '../hooks/useUserMutations';
 
 interface UserFormProps {
   initialData?: User;
@@ -8,8 +8,8 @@ interface UserFormProps {
 }
 
 const UserForm: React.FC<UserFormProps> = ({ initialData, onSuccess }) => {
-  const [name, setName] = useState(initialData?.name || "");
-  const [password, setPassword] = useState("");
+  const [name, setName] = useState(initialData?.name || '');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -34,7 +34,7 @@ const UserForm: React.FC<UserFormProps> = ({ initialData, onSuccess }) => {
       }
       if (onSuccess) onSuccess();
     } catch (err: any) {
-      setError(err.message || "Error saving user");
+      setError(err.message || 'Error saving user');
     } finally {
       setLoading(false);
     }
@@ -64,9 +64,9 @@ const UserForm: React.FC<UserFormProps> = ({ initialData, onSuccess }) => {
           />
         </div>
       )}
-      {error && <div style={{ color: "red" }}>{error}</div>}
+      {error && <div style={{ color: 'red' }}>{error}</div>}
       <button type="submit" disabled={loading}>
-        {initialData ? "Update" : "Create"} User
+        {initialData ? 'Update' : 'Create'} User
       </button>
     </form>
   );

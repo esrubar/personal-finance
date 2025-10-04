@@ -1,20 +1,14 @@
-import React, { useState, useEffect } from "react";
-import type { Category } from "../models/category";
-import {
-  useCreateCategory,
-  useUpdateCategory,
-} from "../hooks/useCategoryMutations";
+import React, { useState, useEffect } from 'react';
+import type { Category } from '../models/category';
+import { useCreateCategory, useUpdateCategory } from '../hooks/useCategoryMutations';
 
 interface CategoryFormProps {
   initialData?: Category;
   onSuccess?: () => void;
 }
 
-const CategoryForm: React.FC<CategoryFormProps> = ({
-  initialData,
-  onSuccess,
-}) => {
-  const [name, setName] = useState(initialData?.name || "");
+const CategoryForm: React.FC<CategoryFormProps> = ({ initialData, onSuccess }) => {
+  const [name, setName] = useState(initialData?.name || '');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -39,7 +33,7 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
       }
       if (onSuccess) onSuccess();
     } catch (err: any) {
-      setError(err.message || "Error saving category");
+      setError(err.message || 'Error saving category');
     } finally {
       setLoading(false);
     }
@@ -57,9 +51,9 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
           required
         />
       </div>
-      {error && <div style={{ color: "red" }}>{error}</div>}
+      {error && <div style={{ color: 'red' }}>{error}</div>}
       <button type="submit" disabled={loading}>
-        {initialData ? "Update" : "Create"} Category
+        {initialData ? 'Update' : 'Create'} Category
       </button>
     </form>
   );

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 import * as importTransactionDataSource from '../data/importTransactionDataSource';
 
 export function useImportTransaction() {
@@ -17,6 +17,6 @@ export function useImportTransaction() {
     } finally {
       setLoading(false);
     }
-  }
+  };
   return { fetchTransactions, loading, error };
 }
