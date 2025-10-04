@@ -3,6 +3,12 @@ import cors from "cors";
 import { config } from "dotenv";
 import userRoutes from "./routes/userRoutes";
 import connectDB from "./config/db";
+import expenseRoutes from "./routes/expenseRoutes";
+import categoryRoutes from "./routes/categoryRoutes";
+import savingProjectRoutes from "./routes/savingProjectRoutes";
+import categoryBudgetRoutes from "./routes/categoryBudgetRoutes";
+import incomeRoutes from "./routes/incomeRoutes";
+import importTransactionRoutes from "./routes/importTransactionRoutes";
 
 config();
 
@@ -34,5 +40,11 @@ app.get("/test", (req: any, res: any) => {
 
 // Rutas
 app.use('/api/users', userRoutes);
+app.use('/api/expenses', expenseRoutes);
+app.use('/api/categories', categoryRoutes);
+app.use('/api/saving-projects', savingProjectRoutes);
+app.use('/api/categoryBudgets', categoryBudgetRoutes);
+app.use('/api/incomes', incomeRoutes);
+app.use('/api/import-transactions', importTransactionRoutes);
 
 export default app;
