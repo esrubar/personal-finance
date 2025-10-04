@@ -15,7 +15,8 @@ connectDB();
 app.use(json());
 const corsOptions = {
     origin: [
-        "https://personal-finance-app-coral.vercel.app/",
+        "https://personal-finance-app-coral.vercel.app",
+        "https://personal-finance-frontend-six.vercel.app",
         "http://localhost:3000",
         "http://localhost:5173",
     ],
