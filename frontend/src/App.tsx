@@ -16,12 +16,14 @@ import { SavingPlansPage } from './pages/SavingPlansPage';
 import { CategoryBudgetsPage } from './pages/CategoryBudgetsPage';
 import { BankTransactionsPage } from './pages/BankTransactionsPage';
 import { MonthlyPlanPage } from './pages/MonthlyPlanPage';
+import {LoginPage} from "./pages/LoginPage.tsx";
 
 const { Sider, Content } = Layout;
 
 const App: React.FC = () => {
   return (
     <Router>
+      
       <Layout style={{ minHeight: '100vh' }}>
         <Sider breakpoint="lg" collapsedWidth="0">
           <Menu theme="dark" mode="inline" defaultSelectedKeys={['overview']}>
@@ -67,11 +69,13 @@ const App: React.FC = () => {
                 <Route path="/users" element={<UsersPage />} />
                 <Route path="/category-budgets" element={<CategoryBudgetsPage />} />
                 <Route path="/upload-transactions" element={<BankTransactionsPage />} />
+                <Route path="/login" element={<LoginPage />} />
               </Routes>
             </div>
           </Content>
         </Layout>
       </Layout>
+      
     </Router>
   );
 };
