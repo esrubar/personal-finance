@@ -9,6 +9,7 @@ import savingProjectRoutes from "./routes/savingProjectRoutes";
 import categoryBudgetRoutes from "./routes/categoryBudgetRoutes";
 import incomeRoutes from "./routes/incomeRoutes";
 import importTransactionRoutes from "./routes/importTransactionRoutes";
+import {UserRepository} from "./repositories/userRepository";
 
 config();
 
@@ -37,6 +38,32 @@ app.use(cors(corsOptions));
 app.get("/test", (req: any, res: any) => {
     res.json({ message: "CORS configurado correctamente!" });
 });
+
+app.post("/login", async (req: any, res: any) => {
+    const { name, password } = req.body;
+    try {
+        const user = await UserRepository.login(name, password);
+        res.send(user);
+    } catch (error: any) {
+        res.status(401).send(error.message);
+    }
+    
+    //diferentes interfaces para el usuario
+    // la información publica y la privada. El password no hay que enviarlo.
+});
+app.post("/register", async (req: any, res: any) => {
+    const { name, password } = req.body;
+    try {
+        const user = await UserRepository.create(name, password)
+        res.send(user);
+    } catch (e: any) {
+        res.status(400).send(e.message)
+    }
+});
+app.post("/logout", (req: any, res: any) => { });
+app.post("/protected", (req: any, res: any) => { });
+
+
 
 // Rutas
 app.use('/api/users', userRoutes);
