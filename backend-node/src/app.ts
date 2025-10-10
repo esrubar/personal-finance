@@ -13,6 +13,7 @@ import {UserRepository} from "./repositories/userRepository";
 import jwt from 'jsonwebtoken'
 import cookieParser from 'cookie-parser'
 import {authMiddleware} from "./middlewares/middleware";
+import authRoutes from "./routes/authRoutes";
 
 config();
 
@@ -89,6 +90,7 @@ app.post("/protected", authMiddleware, (req: any, res: any) => {
 });
 
 // Rutas
+app.use('/api/auth', authRoutes)
 app.use('/api/users', userRoutes);
 app.use('/api/expenses', expenseRoutes);
 app.use('/api/categories', categoryRoutes);

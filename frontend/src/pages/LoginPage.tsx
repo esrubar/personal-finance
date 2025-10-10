@@ -10,22 +10,15 @@ export function LoginPage() {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const { login } = useLogin();
-
-
+    
     const onFinish = async (values: { name: string; password: string }) => {
         setLoading(true);
         try {
-            await login(values);
-
-
-            // Guardar token en cookie
-            //document.cookie = `token=${data.token}; path=/; max-age=${60 * 60 * 24 * 7}`;
-
-            message.success("Login correcto ✅");
-
-            // Redirigir a la raíz
-            navigate("/");
-
+            const result = await login(values);
+            if (result)
+            {
+                navigate("/");
+            }
         } catch (err: any) {
             message.error(err.message);
         } finally {
