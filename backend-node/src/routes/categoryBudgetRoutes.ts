@@ -1,10 +1,11 @@
 import { Router } from 'express';
 import * as controller from '../controllers/categoryBudgetController';
+import {authMiddleware} from "../middlewares/middleware";
 
 const router = Router();
 
-router.post('/', controller.create);
-router.get('/:month/:year', controller.getByMonthAndYear);
-router.get('/', controller.getAll);
+router.post('/', authMiddleware, controller.create);
+router.get('/:month/:year', authMiddleware, controller.getByMonthAndYear);
+router.get('/', authMiddleware, controller.getAll);
 
 export default router;

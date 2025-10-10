@@ -4,29 +4,43 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "ts-node src/index.ts"
+    "start": "ts-node src/index.ts",
+    "dev": "ts-node --watch src/index.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/cookie-parser": "^1.4.9",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/multer": "^2.0.0",
     "@types/node": "^24.6.1",
+    "standard": "^17.1.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   },
   "dependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.45.0",
+    "@typescript-eslint/parser": "^8.45.0",
+    "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
+    "cookieparser": "^0.1.0",
     "cors": "^2.8.5",
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.18",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "html-pdf": "^3.0.1",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.7.0",
     "multer": "^2.0.2",
     "xlsx": "^0.18.5"
+  },
+  "eslintConfig": {
+    "extends": "standard"
   }
 }

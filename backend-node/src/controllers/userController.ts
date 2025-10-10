@@ -6,7 +6,7 @@ export const create = async (req: Request, res: Response) => {
   res.status(201).json(user);
 };
 
-export const getAll = async (_req: Request, res: Response) => {
+export const getAll = async (req: Request, res: Response) => {
   const users = await userService.getUsers();
   res.json(users);
 };

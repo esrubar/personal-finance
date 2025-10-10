@@ -15,7 +15,6 @@ export function useExpenses(params: FilteredExpenseParams, refreshKey?: number) 
       .getExpenses(params)
       .then((res) => {
         setExpenses(res);
-        console.log(res);
       })
       .catch(setError)
       .finally(() => setLoading(false));
