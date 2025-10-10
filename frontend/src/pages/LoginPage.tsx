@@ -17,7 +17,7 @@ export function LoginPage() {
             const result = await login(values);
             if (result)
             {
-                navigate("/");
+                navigate("/overview");
             }
         } catch (err: any) {
             message.error(err.message);

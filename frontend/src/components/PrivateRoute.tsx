@@ -6,6 +6,6 @@ export const PrivateRoute = ({ children }: { children: any }) => {
     const navigate = useNavigate();
 
     if (isAuthenticated === null) return <div>Loading...</div>;
-    if (!isAuthenticated) return navigate("/login");
+    if (!isAuthenticated) return navigate("/");
     return children;
 };

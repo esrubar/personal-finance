@@ -26,7 +26,7 @@ const App: React.FC = () => {
   return (
       <Router>
         <Routes>
-          <Route path="/login" element={<LoginPage />} />
+          <Route path="/" element={<LoginPage />} />
           <Route
               path="/*"
               element={
@@ -35,7 +35,7 @@ const App: React.FC = () => {
                     <Sider breakpoint="lg" collapsedWidth="0">
                       <Menu theme="dark" mode="inline" defaultSelectedKeys={['overview']}>
                         <Menu.Item key="overview" icon={<PieChartOutlined />}>
-                          <Link to="/">Overview</Link>
+                          <Link to="/overview">Overview</Link>
                         </Menu.Item>
                         <Menu.Item key="monthly-plan" icon={<PieChartOutlined />}>
                           <Link to="/monthly-plan">Monthly Plan</Link>
@@ -71,7 +71,7 @@ const App: React.FC = () => {
                       <Content style={{ margin: '24px 16px 0' }}>
                         <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
                           <Routes>
-                            <Route path="/" element={<OverviewPage />} />
+                            <Route path="/overview" element={<OverviewPage />} />
                             <Route path="/monthly-plan" element={<MonthlyPlanPage />} />
                             <Route path="/incomes" element={<IncomesPage />} />
                             <Route path="/expenses" element={<ExpensesPage />} />
