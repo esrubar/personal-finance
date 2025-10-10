@@ -61,7 +61,7 @@ app.post("/login", async (req: any, res: any) => {
             .cookie('access_token', token, {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === "production",
-                sameSite: 'strict',
+                sameSite: 'none',
             })
             .send(user);
     } catch (error: any) {
