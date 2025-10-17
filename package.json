@@ -2,7 +2,7 @@
   "name": "personal-finance-app",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"yarn --cwd frontend dev\" \"yarn --cwd backend dev\""
+    "dev": "concurrently \"yarn --cwd frontend dev\" \"yarn --cwd backend-node start\""
   },
   "devDependencies": {
     "concurrently": "^9.1.2"
