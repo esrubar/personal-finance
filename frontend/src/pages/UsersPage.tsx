@@ -1,12 +1,11 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Table, Space, Modal, message } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 import { useUsers } from '../hooks/useUsers';
 import { useDeleteUser } from '../hooks/useUserMutations';
 import type { User } from '../models/user';
 import UserForm from '../components/UserForm';
-import * as loginDataSource from "../data/loginDataSource.ts";
-
+import * as loginDataSource from '../data/loginDataSource.ts';
 
 export const UsersPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -15,9 +14,9 @@ export const UsersPage: React.FC = () => {
   const { users, loading, error } = useUsers(refreshKey);
   const { deleteUser, loading: deleting } = useDeleteUser();
 
-    useEffect(() => {
-        loginDataSource.protectedEndpoint().then(r => console.log(r));
-    }, []);
+  useEffect(() => {
+    loginDataSource.protectedEndpoint().then((r) => console.log(r));
+  }, []);
 
   const columns = [
     { title: 'Name', dataIndex: 'name', key: 'name' },

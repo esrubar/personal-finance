@@ -77,6 +77,26 @@ export const TransactionTable: React.FC<Props> = ({
       ),
     },
     {
+      title: 'linked Expense',
+      dataIndex: 'linkedExpenseId',
+      key: 'linkedExpenseId',
+      render: (value, record) => (
+        <Select
+          value={value ?? undefined}
+          onChange={(val) => onChange(val, record, 'linkedExpenseId')}
+          allowClear
+        >
+          {transactions
+            .filter((transaction) => transaction.type === 'expense')
+            .map((transaction) => (
+              <Option key={transaction.tempId} value={transaction.tempId}>
+                {transaction.description}
+              </Option>
+            ))}
+        </Select>
+      ),
+    },
+    {
       title: 'Tipo',
       dataIndex: 'type',
       render: (value, record) => (

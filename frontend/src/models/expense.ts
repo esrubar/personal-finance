@@ -10,6 +10,7 @@ export interface Expense {
   transactionDate?: Date;
   description?: string;
   auditable?: Auditable;
+  tempId?: string;
 }
 
 export interface MensualExpense {
@@ -33,5 +34,6 @@ export const createExpenseFromTransaction = (
     category: category,
     transactionDate: transaction.date ? dayjs(transaction.date, 'DD/MM/YYYY').toDate() : undefined,
     description: transaction.description,
+    tempId: transaction.tempId,
   };
 };

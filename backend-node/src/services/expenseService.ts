@@ -1,17 +1,17 @@
-import {ExpenseDTO, MensualExpenseDTO} from "../dtos/ExpenseDTO";
+import {ExpenseDTO, MensualExpenseDTO} from "../dtos/expenseDTO";
 import {createAuditable, updateAuditable} from "./auditableService"
 import {FilteredExpenseQuery} from "../dtos/filteredExpensequeryDTO";
 import {PaginatedResponse} from "../dtos/paginatedResponseDTO";
 import {paginateWithFilters} from "../utils/paginateWithFilters";
-import expenseModel from "../models/expenseModel";
 import dayjs from "dayjs";
+import {ExpenseModel} from "../models/expenseModel";
 
 export const createExpense = async (data: any, userName: string) => {
     const expenseData = {
         ...data,
         auditable: createAuditable(userName),
     }
-    return await expenseModel.create(expenseData);
+    return await ExpenseModel.create(expenseData);
 }
 
 export const createExpenses = async (body: ExpenseDTO[], userName: string) => {
@@ -34,7 +34,7 @@ export const createExpenses = async (body: ExpenseDTO[], userName: string) => {
         };
     });
 
-    return await expenseModel.insertMany(expenses);
+    return await ExpenseModel.insertMany(expenses);
 }
 
 export const getFilteredExpenses = async (params: Partial<FilteredExpenseQuery>, userName: string) => {
@@ -42,7 +42,7 @@ export const getFilteredExpenses = async (params: Partial<FilteredExpenseQuery>,
     const baseQuery = {};
 
     const result = await paginateWithFilters(
-        expenseModel,
+        ExpenseModel,
         baseQuery,
         {
             page: filters.page,
@@ -67,7 +67,7 @@ export const getFilteredExpenses = async (params: Partial<FilteredExpenseQuery>,
     });
 };
 export const getExpenseById = async (id: string, userName: string) => {
-    const expense = await expenseModel.findById(id);
+    const expense = await ExpenseModel.findById(id);
     if (expense?.auditable.createdBy !== userName) throw new Error("User is not allow to see the expense.");
 };
 
@@ -76,11 +76,11 @@ export const updateExpense = async (id: string, data: any, userName: string) => 
         ...data,
         auditable: updateAuditable(data.auditable, userName),
     };
-    return expenseModel.findByIdAndUpdate(id, expenseData, {new: true});
+    return ExpenseModel.findByIdAndUpdate(id, expenseData, {new: true});
 }
 
 export const deleteExpense = async (id: string, userName: string) => {
-    const expense = await expenseModel.findByIdAndDelete(id);
+    const expense = await ExpenseModel.findByIdAndDelete(id);
     if (!expense) {
         throw Error(`Expense with id ${id} not found`);
     }
@@ -96,7 +96,7 @@ export async function getMensualExpenses(userName: string): Promise<MensualExpen
 
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0, 23, 59, 59, 999);
-    let expenses = await expenseModel.aggregate([
+    let expenses = await ExpenseModel.aggregate([
         // 1. Filtra los gastos creados por "system" y en el rango de fechas indicado
         {
             $match: {
@@ -158,7 +158,7 @@ export const getTotalAmountForMonth = async (year: number, month: number) => {
         transactionDate: dateFilter,
     };
     
-    const totalAmountResult = await expenseModel.aggregate([
+    const totalAmountResult = await ExpenseModel.aggregate([
         {$match: fullQuery},
         {$group: {_id: null, totalAmount: {$sum: "$amount"}}},
     ]);

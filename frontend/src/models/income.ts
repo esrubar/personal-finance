@@ -10,9 +10,10 @@ export interface Income {
   transactionDate?: Date;
   description?: string;
   auditable?: Auditable;
+  linkedExpenseId?: string;
 }
 
-export const createIncome = (
+export const createIncomeFromTransaction = (
   transaction: Omit<BankTransaction, '_id' | 'auditable' | 'category'>,
   categoryId: string
 ): Income => {
@@ -22,5 +23,6 @@ export const createIncome = (
     category: category,
     transactionDate: transaction.date ? dayjs(transaction.date, 'DD/MM/YYYY').toDate() : undefined,
     description: transaction.description,
+    linkedExpenseId: transaction.linkedExpenseId,
   };
 };

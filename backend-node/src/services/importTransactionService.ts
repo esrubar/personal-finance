@@ -1,5 +1,6 @@
 import XLSX from "xlsx";
-import { BankTransaction } from "../dtos/bankTransaction";
+import {BankTransaction} from "../dtos/bankTransaction";
+import {randomUUID} from "crypto";
 
 export const parseRowToTransaction = (row: string[]): BankTransaction => {
     const isDate = (str: string) => /^\d{2}\/\d{2}\/\d{4}$/.test(str);
@@ -29,6 +30,7 @@ export const parseRowToTransaction = (row: string[]): BankTransaction => {
     const absAmount = amount !== null ? Math.abs(amount) : null;
 
     return {
+        tempId: randomUUID(),
         date,
         description: descriptionParts.join(" ").trim(),
         amount: absAmount,
@@ -69,10 +71,8 @@ export const extractValidTransactionsFromExcel = (fileBuffer: Buffer): BankTrans
     // Quedarse solo con las filas a partir de la válida
     const dataRows = allRows.slice(firstValidIndex);
 
-    const transactions: BankTransaction[] = dataRows.map((row) => {
+    return dataRows.map((row) => {
         const allValues = Object.values(row).map((v) => String(v));
         return parseRowToTransaction(allValues);
     });
-
-    return transactions;
 }

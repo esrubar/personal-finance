@@ -6,7 +6,7 @@ import { TransactionTable } from '../components/TransactionTable';
 import { useImportTransaction } from '../hooks/useImportTransactionMutation';
 import { useCreateExpenses } from '../hooks/useExpenseMutations';
 import { useCreateIncomes } from '../hooks/useIncomeMutations';
-import { createIncome, type Income } from '../models/income';
+import { createIncomeFromTransaction, type Income } from '../models/income';
 import { createExpenseFromTransaction, type Expense } from '../models/expense';
 import { useCategories } from '../hooks/useCategories';
 
@@ -43,9 +43,11 @@ export const BankTransactionsPage: React.FC = () => {
   };
 
   const handleUpdate = (value: any, record: BankTransaction, field: keyof BankTransaction) => {
+    console.log(field);
     const newData = transactions.map((item) =>
       item === record ? { ...item, [field]: value } : item
     );
+    console.log(newData);
     setTransactions(newData);
   };
 
@@ -55,20 +57,25 @@ export const BankTransactionsPage: React.FC = () => {
 
     for (const tx of transactions) {
       if (tx.type === 'income') {
-        const income = createIncome(tx, tx.categoryId);
+        const income = createIncomeFromTransaction(tx, tx.categoryId);
         incomes.push(income);
       } else if (tx.type === 'expense') {
         const expense = createExpenseFromTransaction(tx, tx.categoryId);
         expenses.push(expense);
       }
     }
+    console.log('expenses', expenses);
+    console.log('incomes', incomes);
 
-    if (incomes.length > 0) {
-      await createIncomes(incomes);
-    }
     if (expenses.length > 0) {
-      await createExpenses(expenses);
+      await createExpenses(expenses).then(async (expenses: Expense[]) => {
+        console.log('expenses created', expenses);
+        if (expenses && incomes.length > 0) {
+          await createIncomes(incomes);
+        }
+      });
     }
+
     setTransactions([]);
   };
 

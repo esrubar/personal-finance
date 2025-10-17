@@ -1,11 +1,13 @@
-import mongoose, { Schema } from 'mongoose';
+import mongoose, {Model, Schema} from 'mongoose';
+import {Expense} from "../types/expense";
 
-const expenseSchema =  new mongoose.Schema(
+const ExpenseSchema =  new mongoose.Schema(
   {
     amount: { type: Number, required: true },
     category: { type: Schema.Types.ObjectId, ref: 'Category', required: true },
     transactionDate: { type: Date },
-    description: { type: String},
+    description: { type: String}, 
+      tempId: { type: String },
     auditable: {
       type: {
         createdAt: { type: Date, required: true, default: Date.now },
@@ -18,4 +20,5 @@ const expenseSchema =  new mongoose.Schema(
   }
 );
 
-export default mongoose.model('Expense', expenseSchema);
+export const ExpenseModel: Model<Expense & Document> =
+    mongoose.models.Expense || mongoose.model<Expense & Document>("Expense", ExpenseSchema);

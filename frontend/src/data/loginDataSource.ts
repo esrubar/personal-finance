@@ -17,11 +17,11 @@ export const protectedEndpoint = async () => {
     withCredentials: true,
   });
   return data;
-}
+};
 
 export const getMe = async () => {
   const { data } = await axios.get('/api/auth/me', {
     withCredentials: true,
   });
   return data;
-}
+};
