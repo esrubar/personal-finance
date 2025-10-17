@@ -1,5 +1,5 @@
-import { AuditableDTO } from './AuditableDTO';
-import { CategoryDTO } from './CategoryDTO';
+import { AuditableDTO } from './auditableDTO';
+import { CategoryDTO } from './categoryDTO';
 
 export interface ExpenseDTO {
   id?: string;
@@ -8,6 +8,7 @@ export interface ExpenseDTO {
   auditable?: AuditableDTO;
   transactionDate?: Date;
   description?: string;
+  tempId?: string;
 }
 
 export interface MensualExpenseDTO {

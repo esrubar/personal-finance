@@ -1,17 +1,17 @@
-import {ExpenseDTO, MensualExpenseDTO} from "../dtos/ExpenseDTO";
+import {ExpenseDTO, MensualExpenseDTO} from "../dtos/expenseDTO";
 import {createAuditable, updateAuditable} from "./auditableService"
 import {FilteredExpenseQuery} from "../dtos/filteredExpensequeryDTO";
 import {PaginatedResponse} from "../dtos/paginatedResponseDTO";
 import {paginateWithFilters} from "../utils/paginateWithFilters";
-import expenseModel from "../models/expenseModel";
 import dayjs from "dayjs";
+import {ExpenseModel} from "../models/expenseModel";
 
 export const createExpense = async (data: any) => {
     const expenseData = {
         ...data,
         auditable: createAuditable(),
     }
-    return await expenseModel.create(expenseData);
+    return await ExpenseModel.create(expenseData);
 }
 
 export const createExpenses = async (body: ExpenseDTO[]) => {
@@ -34,7 +34,7 @@ export const createExpenses = async (body: ExpenseDTO[]) => {
         };
     });
 
-    return await expenseModel.insertMany(expenses);
+    return await ExpenseModel.insertMany(expenses);
 }
 
 export const getFilteredExpenses = async (params: Partial<FilteredExpenseQuery>) => {
@@ -42,7 +42,7 @@ export const getFilteredExpenses = async (params: Partial<FilteredExpenseQuery>)
     const baseQuery = {};
 
     const result = await paginateWithFilters(
-        expenseModel,
+        ExpenseModel,
         baseQuery,
         {
             page: filters.page,
@@ -65,17 +65,17 @@ export const getFilteredExpenses = async (params: Partial<FilteredExpenseQuery>)
         usedYear: result.usedYear
     });
 };
-export const getExpenseById = async (id: string) => await expenseModel.findById(id);
+export const getExpenseById = async (id: string) => await ExpenseModel.findById(id);
 
 export const updateExpense = async (id: string, data: any) => {
     const expenseData = {
         ...data,
         auditable: updateAuditable(data.auditable),
     };
-    return await expenseModel.findByIdAndUpdate(id, expenseData, {new: true});
+    return ExpenseModel.findByIdAndUpdate(id, expenseData, {new: true});
 }
 
-export const deleteExpense = async (id: string) => await expenseModel.findByIdAndDelete(id);
+export const deleteExpense = async (id: string) => await ExpenseModel.findByIdAndDelete(id);
 
 export async function getMensualExpenses(): Promise<MensualExpenseDTO[]> {
     const now = new Date();
@@ -84,7 +84,7 @@ export async function getMensualExpenses(): Promise<MensualExpenseDTO[]> {
 
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0, 23, 59, 59, 999);
-    let expenses = await expenseModel.aggregate([
+    let expenses = await ExpenseModel.aggregate([
         // 1. Filtra los gastos creados por "system" y en el rango de fechas indicado
         {
             $match: {
@@ -146,7 +146,7 @@ export const getTotalAmountForMonth = async (year: number, month: number) => {
         transactionDate: dateFilter,
     };
     
-    const totalAmountResult = await expenseModel.aggregate([
+    const totalAmountResult = await ExpenseModel.aggregate([
         {$match: fullQuery},
         {$group: {_id: null, totalAmount: {$sum: "$amount"}}},
     ]);

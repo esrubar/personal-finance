@@ -54,14 +54,14 @@ app.post("/login", async (req: any, res: any) => {
         const token = jwt.sign(
             {id: user.id, name: user.name},
             process.env.JWT_SECRET ?? "",
-            { expiresIn: "1h" }
+            { expiresIn: "7d" }
         );
         
         res
             .cookie('access_token', token, {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === "production",
-                sameSite: 'none',
+                sameSite: process.env.SAME_SITE,
             })
             .send(user);
     } catch (error: any) {
