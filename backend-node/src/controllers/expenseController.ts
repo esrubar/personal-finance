@@ -1,6 +1,6 @@
-import { Request, Response } from 'express';
+import {Request, Response} from 'express';
 import * as expenseService from '../services/expenseService';
-import { MensualExpenseDTO } from '../dtos/expenseDTO';
+import {MensualExpenseDTO} from '../dtos/expenseDTO';
 
 export const create = async (req: any, res: Response) => {
   const user = req.session.user;

@@ -1,5 +1,5 @@
 // routes/expense.routes.ts
-import { Router } from 'express';
+import {Router} from 'express';
 import * as ExpenseController from '../controllers/expenseController';
 import {authMiddleware} from "../middlewares/middleware";
 

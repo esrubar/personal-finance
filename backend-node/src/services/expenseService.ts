@@ -55,7 +55,7 @@ export const getFilteredExpenses = async (params: Partial<FilteredExpenseQuery>,
         },
         userName
     );
-    
+
     return new PaginatedResponse({
         data: result.data,
         page: result.page,
@@ -157,7 +157,7 @@ export const getTotalAmountForMonth = async (year: number, month: number) => {
     const fullQuery: Record<string, any> = {
         transactionDate: dateFilter,
     };
-    
+
     const totalAmountResult = await ExpenseModel.aggregate([
         {$match: fullQuery},
         {$group: {_id: null, totalAmount: {$sum: "$amount"}}},

@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import {Request, Response} from 'express';
 import * as categoryService from '../services/categoryService';
 
 export const create = async (req: any, res: Response) => {

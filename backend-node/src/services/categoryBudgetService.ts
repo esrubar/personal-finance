@@ -1,7 +1,7 @@
-import { CategoryBudgetDTO } from "../dtos/CategoryBudgetDTO";
+import {CategoryBudgetDTO} from "../dtos/CategoryBudgetDTO";
 import categoryModel from "../models/categoryModel";
 import categoryBudgetModel from "../models/categoryBudgetModel"
-import { createAuditable, updateAuditable } from "./auditableService"
+import {createAuditable} from "./auditableService"
 
   export const create = async (data: any, userName: string) => {
     const categoryBudgetData = {
@@ -9,7 +9,7 @@ import { createAuditable, updateAuditable } from "./auditableService"
       auditable: createAuditable(userName),
     };
     return await categoryBudgetModel.create(categoryBudgetData);
-  };
+};
 
   export const getByMonthAndYear = async (month: Number, year: Number, userName: string) => {
     return categoryBudgetModel
@@ -32,15 +32,15 @@ export const getAll = async (userName: string): Promise<CategoryBudgetDTO[]> => 
     return [];
   }
 
-  return categoryBudgets.map((x) => {
-    const category = categories.find(c => c._id.toString() === x.categoryId);
-    return {
-      id: x._id.toString(),
-      categoryId: x.categoryId,
-      month: x.month,
-      year: x.year,
-      budgetAmount: x.budgetAmount,
-      categoryName: category ? category.name : undefined,
-    };
-  });
+    return categoryBudgets.map((x) => {
+        const category = categories.find(c => c._id.toString() === x.categoryId);
+        return {
+            id: x._id.toString(),
+            categoryId: x.categoryId,
+            month: x.month,
+            year: x.year,
+            budgetAmount: x.budgetAmount,
+            categoryName: category ? category.name : undefined,
+        };
+    });
 }

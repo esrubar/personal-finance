@@ -41,7 +41,7 @@ export const parseRowToTransaction = (row: string[]): BankTransaction => {
 };
 
 export const extractValidTransactionsFromExcel = (fileBuffer: Buffer): BankTransaction[] => {
-    const workbook = XLSX.read(fileBuffer, { type: 'buffer' });
+    const workbook = XLSX.read(fileBuffer, {type: 'buffer'});
     const sheetName = workbook.SheetNames[0];
     const sheet = workbook.Sheets[sheetName];
 

@@ -1,4 +1,4 @@
-import { AuditableDTO } from './auditableDTO';
+import {AuditableDTO} from './auditableDTO';
 
 export interface CategoryDTO {
     id: string;

@@ -1,12 +1,12 @@
 // routes/import.routes.ts
-import { Router } from 'express';
+import {Router} from 'express';
 import multer from "multer";
 import * as importTransactionController from '../controllers/importTansactionController';
 import {authMiddleware} from "../middlewares/middleware";
 
 const router = Router();
 
-const upload = multer({ storage: multer.memoryStorage() });
+const upload = multer({storage: multer.memoryStorage()});
 
 router.post('/', authMiddleware, upload.single("file"), importTransactionController.importTransactions);
 

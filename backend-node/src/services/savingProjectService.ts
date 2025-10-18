@@ -1,5 +1,5 @@
 import savingsProjectModel from '../models/savingsProjectModel';
-import { createAuditable, updateAuditable } from "./auditableService"
+import {createAuditable, updateAuditable} from "./auditableService"
 
 export const createSavingProject = async (data: any, userName: string) => {
     const savingProjectData = {

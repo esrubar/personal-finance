@@ -1,10 +1,10 @@
 import Category from '../models/categoryModel';
-import { createAuditable, updateAuditable } from './auditableService'
+import {createAuditable, updateAuditable} from './auditableService'
 
 export const createCategory = async (data: any, userName: string) => {
     const categoryData = {
-      ...data,
-      auditable: createAuditable(),
+        ...data,
+        auditable: createAuditable(),
     };
     return await Category.create(categoryData, userName);
   };

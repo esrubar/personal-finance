@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import {Request, Response} from 'express';
 import * as categoryBudgetService from '../services/categoryBudgetService';
 
 export const create = async (req: any, res: Response) => {
@@ -20,4 +20,4 @@ export const getByMonthAndYear = async (req: any, res: Response) => {
     const user = req.session.user;
     const categoryBudgets = await categoryBudgetService.getAll(user.name);
     res.status(200).json(categoryBudgets);
-  }
+}
