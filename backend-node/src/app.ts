@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import { config } from "dotenv";
+import {config} from "dotenv";
 import userRoutes from "./routes/userRoutes";
 import connectDB from "./config/db";
 import expenseRoutes from "./routes/expenseRoutes";
@@ -42,21 +42,21 @@ app.use(cors(corsOptions));
 
 // Ruta de ejemplo
 app.get("/test", (req: any, res: any) => {
-    res.json({ message: "CORS configurado correctamente!" });
+    res.json({message: "CORS configurado correctamente!"});
 });
 
 app.post("/login", async (req: any, res: any) => {
-    const { name, password } = req.body;
+    const {name, password} = req.body;
     try {
         const user = await UserRepository.login(name, password);
-        if(!user) return res.status(401).json({})
-        
+        if (!user) return res.status(401).json({})
+
         const token = jwt.sign(
             {id: user.id, name: user.name},
             process.env.JWT_SECRET ?? "",
-            { expiresIn: "7d" }
+            {expiresIn: "7d"}
         );
-        
+
         res
             .cookie('access_token', token, {
                 httpOnly: true,
@@ -67,12 +67,12 @@ app.post("/login", async (req: any, res: any) => {
     } catch (error: any) {
         res.status(401).send(error.message);
     }
-    
+
     //diferentes interfaces para el usuario
     // la información publica y la privada. El password no hay que enviarlo.
 });
 app.post("/register", async (req: any, res: any) => {
-    const { name, password } = req.body;
+    const {name, password} = req.body;
     try {
         const user = await UserRepository.create(name, password)
         res.send(user);

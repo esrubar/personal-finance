@@ -1,4 +1,4 @@
-import { User, MinimalUser } from "../types/user";
+import {MinimalUser, User} from "../types/user";
 
 export function toMinimalUser(user: User): MinimalUser {
     return {

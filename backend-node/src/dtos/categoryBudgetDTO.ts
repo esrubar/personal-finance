@@ -1,9 +1,8 @@
-
 export interface CategoryBudgetDTO {
-  id: string;
-  categoryId: string;
-  month: number;
-  year: number;
-  budgetAmount: number;
-  categoryName?: string;
+    id: string;
+    categoryId: string;
+    month: number;
+    year: number;
+    budgetAmount: number;
+    categoryName?: string;
 }

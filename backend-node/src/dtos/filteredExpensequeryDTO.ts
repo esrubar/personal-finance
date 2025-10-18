@@ -37,7 +37,7 @@ export class FilteredExpenseQuery {
             const dayjs = require('dayjs');
             const start = dayjs(`${this.year}-${this.month}-01`).startOf('month').toDate();
             const end = dayjs(start).endOf('month').toDate();
-            query.date = { $gte: start, $lte: end };
+            query.date = {$gte: start, $lte: end};
         }
 
         return query;

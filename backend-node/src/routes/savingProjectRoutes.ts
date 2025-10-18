@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import {Router} from 'express';
 import * as controller from '../controllers/savingProjectController';
 import {authMiddleware} from "../middlewares/middleware";
 

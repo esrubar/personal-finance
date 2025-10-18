@@ -1,5 +1,5 @@
 import savingsProjectModel from '../models/savingsProjectModel';
-import { createAuditable, updateAuditable } from "./auditableService"
+import {createAuditable, updateAuditable} from "./auditableService"
 
 export const createSavingProject = async (data: any) => {
     const savingProjectData = {
@@ -17,7 +17,7 @@ export const updateSavingProject = async (id: string, data: any) => {
         ...data,
         auditable: updateAuditable(data.auditable),
     }
-    return await savingsProjectModel.findByIdAndUpdate(id, savingProjectData, { new: true });
+    return await savingsProjectModel.findByIdAndUpdate(id, savingProjectData, {new: true});
 }
 
 export const deleteSavingProject = async (id: string) => await savingsProjectModel.findByIdAndDelete(id);

@@ -1,5 +1,4 @@
-
-import { createAuditable, updateAuditable } from './auditableService'
+import {createAuditable, updateAuditable} from './auditableService'
 import {UserModel} from "../models/userModel";
 
 export const createUser = async (data: any) => {
@@ -18,7 +17,7 @@ export const updateUser = async (id: string, data: any) => {
         ...data,
         auditable: updateAuditable(data.auditable),
     };
-    return await UserModel.findByIdAndUpdate(id, data, { new: true });
+    return await UserModel.findByIdAndUpdate(id, data, {new: true});
 }
 
 export const deleteUser = async (id: string) => await UserModel.findByIdAndDelete(id);
