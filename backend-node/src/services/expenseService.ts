@@ -5,6 +5,7 @@ import {PaginatedResponse} from "../dtos/paginatedResponseDTO";
 import {paginateWithFilters} from "../utils/paginateWithFilters";
 import expenseModel from "../models/expenseModel";
 import dayjs from "dayjs";
+import {Schema} from "mongoose";
 
 export const createExpense = async (data: any) => {
     const expenseData = {
@@ -37,7 +38,7 @@ export const createExpenses = async (body: ExpenseDTO[]) => {
     return await expenseModel.insertMany(expenses);
 }
 
-export const getFilteredExpenses = async (params: Partial<FilteredExpenseQuery>) => {
+export const getFilteredExpenses = async (params: Partial<FilteredExpenseQuery>, userName: string) => {
     const filters = new FilteredExpenseQuery(params);
     const baseQuery = {};
 
@@ -52,7 +53,8 @@ export const getFilteredExpenses = async (params: Partial<FilteredExpenseQuery>)
             month: filters.month,
             sortBy: 'transactionDate',
             sortDirection: 'desc',
-        }
+        },
+        userName
     );
     
     return new PaginatedResponse({

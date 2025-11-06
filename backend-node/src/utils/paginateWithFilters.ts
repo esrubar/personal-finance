@@ -14,7 +14,8 @@ interface PaginationOptions {
 export const paginateWithFilters = async <T extends { amount: number }>(
     model: Model<T>,
     baseQuery: Record<string, any>,
-    options: PaginationOptions
+    options: PaginationOptions,
+    userName: string
 ) => {
     const {
         page = 1,
@@ -43,6 +44,7 @@ export const paginateWithFilters = async <T extends { amount: number }>(
         ...baseQuery,
         transactionDate: dateFilter,
     };
+    fullQuery['auditable.createdBy'] = userName;
 
     if (categoryId) {
         fullQuery['category'] = new Types.ObjectId(categoryId);
