@@ -2,11 +2,11 @@ export class Auditable {
   /**
    *
    */
-  constructor() {
+  constructor(userName?: string) {
     this.createdAt = new Date();
     this.updatedAt = new Date();
-    this.createdBy = 'system';
-    this.updatedBy = 'system';
+    this.createdBy = userName ?? 'admin';
+    this.updatedBy = userName ?? 'admin';
   }
   createdAt: Date;
   updatedAt: Date;

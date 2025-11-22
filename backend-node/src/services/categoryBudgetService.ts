@@ -3,21 +3,30 @@ import categoryModel from "../models/categoryModel";
 import categoryBudgetModel from "../models/categoryBudgetModel"
 import { createAuditable, updateAuditable } from "./auditableService"
 
-  export const create = async (data: any) => {
+  export const create = async (data: any, userName: string) => {
     const categoryBudgetData = {
       ...data,
-      auditable: createAuditable(),
+      auditable: createAuditable(userName),
     };
     return await categoryBudgetModel.create(categoryBudgetData);
   };
 
-  export const getByMonthAndYear = async (month: Number, year: Number) => {
-    return await categoryBudgetModel.find({ month, year });     
+  export const getByMonthAndYear = async (month: Number, year: Number, userName: string) => {
+    return categoryBudgetModel
+        .find({ 
+          month, 
+          year, 
+          "auditable.createdBy": userName 
+        });     
   }
 
-export const getAll = async (): Promise<CategoryBudgetDTO[]> => {
+export const getAll = async (userName: string): Promise<CategoryBudgetDTO[]> => {
   let categoryBudgets = await categoryBudgetModel.find();
-  let categories = await categoryModel.find({ _id: { $in: categoryBudgets.map(x => x.categoryId) } });
+  let categories = await categoryModel
+      .find({ 
+        _id: { $in: categoryBudgets.map(x => x.categoryId) },
+        "auditable.createdBy": userName
+      });
   
   if (!categoryBudgets || categoryBudgets.length === 0) {
     return [];

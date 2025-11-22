@@ -5,17 +5,16 @@ import {PaginatedResponse} from "../dtos/paginatedResponseDTO";
 import {paginateWithFilters} from "../utils/paginateWithFilters";
 import expenseModel from "../models/expenseModel";
 import dayjs from "dayjs";
-import {Schema} from "mongoose";
 
-export const createExpense = async (data: any) => {
+export const createExpense = async (data: any, userName: string) => {
     const expenseData = {
         ...data,
-        auditable: createAuditable(),
+        auditable: createAuditable(userName),
     }
     return await expenseModel.create(expenseData);
 }
 
-export const createExpenses = async (body: ExpenseDTO[]) => {
+export const createExpenses = async (body: ExpenseDTO[], userName: string) => {
     const expenses = body.map((expense: any, index: number) => {
         const cleanedExpense = {...expense};
 
@@ -31,7 +30,7 @@ export const createExpenses = async (body: ExpenseDTO[]) => {
 
         return {
             ...cleanedExpense,
-            auditable: createAuditable(),
+            auditable: createAuditable(userName),
         };
     });
 
@@ -67,19 +66,30 @@ export const getFilteredExpenses = async (params: Partial<FilteredExpenseQuery>,
         usedYear: result.usedYear
     });
 };
-export const getExpenseById = async (id: string) => await expenseModel.findById(id);
+export const getExpenseById = async (id: string, userName: string) => {
+    const expense = await expenseModel.findById(id);
+    if (expense?.auditable.createdBy !== userName) throw new Error("User is not allow to see the expense.");
+};
 
-export const updateExpense = async (id: string, data: any) => {
+export const updateExpense = async (id: string, data: any, userName: string) => {
     const expenseData = {
         ...data,
-        auditable: updateAuditable(data.auditable),
+        auditable: updateAuditable(data.auditable, userName),
     };
-    return await expenseModel.findByIdAndUpdate(id, expenseData, {new: true});
+    return expenseModel.findByIdAndUpdate(id, expenseData, {new: true});
 }
 
-export const deleteExpense = async (id: string) => await expenseModel.findByIdAndDelete(id);
+export const deleteExpense = async (id: string, userName: string) => {
+    const expense = await expenseModel.findByIdAndDelete(id);
+    if (!expense) {
+        throw Error(`Expense with id ${id} not found`);
+    }
+    if (expense.auditable.createdBy != userName) {
+        throw new Error("You dont have permission to delete this expense");
+    }
+}
 
-export async function getMensualExpenses(): Promise<MensualExpenseDTO[]> {
+export async function getMensualExpenses(userName: string): Promise<MensualExpenseDTO[]> {
     const now = new Date();
     const year = now.getFullYear();
     const month = now.getMonth();
