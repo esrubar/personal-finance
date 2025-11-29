@@ -1,6 +1,7 @@
 import {UserModel} from "../models/userModel";
 import bcrypt from 'bcrypt'
 import {toMinimalUser} from "../mappers/userMapper";
+import {createAuditable} from "../services/auditableService";
 
 export class UserRepository {
     static async create(name: string, password: string) {
@@ -9,18 +10,17 @@ export class UserRepository {
         Validation.password(password)
 
         //2. asegurarse que username no existe
-        const user = await UserModel.find({name})
+        const user = await UserModel.findOne({name})
         if (!!user) throw new Error('user already exists');
 
         //hash password
         const hashPassword = await bcrypt.hash(password, 10)
 
-        const newUser = await UserModel.create({
+        return await UserModel.create({
             name,
-            hashPassword
+            password: hashPassword,
+            auditable: createAuditable()
         });
-
-        return newUser
     }
 
     static async login(name: string, password: string) {
