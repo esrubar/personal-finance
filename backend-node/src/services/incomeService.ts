@@ -60,6 +60,38 @@ export const getIncomes = async (userName: string) => {
         "auditable.createdBy": userName
     }).populate('category', 'name').sort({ transactionDate: -1 });
 }
+
+export const getIncomesByLinkedExpense = async (expenseIds: string[]) => {
+    return IncomeModel.aggregate([
+        {
+            $match: {
+                linkedExpenseId: { $in: expenseIds }
+            }
+        },
+        {
+            $project: {
+                _id: { $toString: "$_id" },
+                linkedExpenseId: { $toString: "$linkedExpenseId" },
+                amount: 1,
+                description: 1
+            }
+        },
+        {
+            $group: {
+                _id: "$linkedExpenseId",
+                incomes: {
+                    $push: {
+                        _id: "$_id",
+                        description: "$description",
+                        amount: "$amount",
+                        linkedExpenseId: "$linkedExpenseId"
+                    }
+                }
+            }
+        }
+    ]);
+}
+
 export const getIncomesById = async (id: string, userName: string) => {
     const income = await IncomeModel.findById(id);
     if (!income) {

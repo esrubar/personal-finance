@@ -59,7 +59,8 @@ export const paginateWithFilters = async <T extends { amount: number }>(
         .skip(skip)
         .limit(limit)
         .sort({[sortBy]: sortDirection === 'asc' ? 1 : -1})
-        .populate('category', 'name');
+        .populate('category', 'name')
+        .lean();
 
     // Total gastado en el mes/año (sin paginar)
     const totalAmountResult = await model.aggregate([

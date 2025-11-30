@@ -2,6 +2,7 @@ import dayjs from 'dayjs';
 import type { Auditable } from './auditable';
 import type { BankTransaction } from './bankTransaction';
 import type { Category } from './category';
+import type {MinimalIncome} from "./income.ts";
 
 export interface Expense {
   _id?: string;
@@ -11,6 +12,7 @@ export interface Expense {
   description?: string;
   auditable?: Auditable;
   tempId?: string;
+  incomes?: MinimalIncome[];
 }
 
 export interface MensualExpense {

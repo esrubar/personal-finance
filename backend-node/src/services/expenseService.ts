@@ -5,6 +5,8 @@ import {PaginatedResponse} from "../dtos/paginatedResponseDTO";
 import {paginateWithFilters} from "../utils/paginateWithFilters";
 import dayjs from "dayjs";
 import {ExpenseModel} from "../models/expenseModel";
+import {getIncomesByLinkedExpense} from "./incomeService";
+import {Expense, ExpenseWithIncomes} from "../types/expense";
 
 export const createExpense = async (data: any, userName: string) => {
     const expenseData = {
@@ -37,35 +39,54 @@ export const createExpenses = async (body: ExpenseDTO[], userName: string) => {
     return await ExpenseModel.insertMany(expenses);
 }
 
-export const getFilteredExpenses = async (params: Partial<FilteredExpenseQuery>, userName: string) => {
+export const getFilteredExpenses = async (
+    params: Partial<FilteredExpenseQuery>,
+    userName: string
+) => {
     const filters = new FilteredExpenseQuery(params);
-    const baseQuery = {};
 
     const result = await paginateWithFilters(
         ExpenseModel,
-        baseQuery,
+        {},
         {
             page: filters.page,
             limit: filters.limit,
             categoryId: filters.categoryId,
             year: filters.year,
             month: filters.month,
-            sortBy: 'transactionDate',
-            sortDirection: 'desc',
+            sortBy: "transactionDate",
+            sortDirection: "desc",
         },
         userName
     );
 
+    const expenses = result.data;
+    
+    const expenseIds = expenses.map((x) => x._id);
+    const incomeGroups = await getIncomesByLinkedExpense(expenseIds);
+    
+    const incomeMap = new Map(
+        incomeGroups.map((g) => [g._id.toString(), g.incomes])
+    );
+
+    const enrichedExpenses = expenses.map((expense) => ({
+        ...expense,
+        incomes: incomeMap.get(expense._id.toString()) ?? [],
+    }));
+
+    const totalIncomeAmount = enrichedExpenses.reduce((acc, exp) =>
+            acc + exp.incomes.reduce((s: any, i: any) => s + i.amount, 0)
+        , 0);
+    
+    const netTotalAmount = result.totalAmount - totalIncomeAmount;
+
     return new PaginatedResponse({
-        data: result.data,
-        page: result.page,
-        limit: result.limit,
-        total: result.total,
-        totalAmount: result.totalAmount,
-        usedMonth: result.usedMonth,
-        usedYear: result.usedYear
+        ...result,
+        data: enrichedExpenses,
+        totalAmount: netTotalAmount,
     });
 };
+
 export const getExpenseById = async (id: string, userName: string) => {
     const expense = await ExpenseModel.findById(id);
     if (expense?.auditable.createdBy !== userName) throw new Error("User is not allow to see the expense.");

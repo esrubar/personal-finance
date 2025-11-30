@@ -17,6 +17,7 @@ export const createMany = async (req: any, res: Response) => {
 export const getFiltered = async (req: any, res: Response) => {
   const user = req.session.user;
   const paginated = await expenseService.getFilteredExpenses(req.query, user.name);
+ 
   res.json(paginated);
 };
 

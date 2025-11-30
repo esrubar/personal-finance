@@ -1,5 +1,6 @@
 import {AuditableDTO} from './auditableDTO';
 import {CategoryDTO} from './categoryDTO';
+import {Income, MinimalIncome} from "../types/income";
 
 export interface ExpenseDTO {
     id?: string;

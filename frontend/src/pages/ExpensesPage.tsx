@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, {useMemo, useState} from 'react';
 import {
   Button,
   message,
@@ -20,6 +20,7 @@ import { useCategories } from '../hooks/useCategories.ts';
 import { months, years } from '../utils/constants.ts';
 import type { ExpenseFilter } from '../models/expenseFilter.ts';
 import { getMonthNameCapitalized } from '../utils/dateUtils.ts';
+import type {MinimalIncome} from "../models/income.ts";
 
 export const ExpensesPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -147,6 +148,32 @@ export const ExpensesPage: React.FC = () => {
     },
   ];
 
+  const expandedRowRender = (expense: Expense) => {
+    if (!expense.incomes?.length) return <i>No hay ingresos vinculados</i>;
+
+    const incomeColumns = [
+        {
+          title: 'Amount',
+          dataIndex: 'amount',
+          render: (amount: number) => `${amount.toFixed(2)} €`
+        },
+        {
+        title: 'Description',
+        dataIndex: 'description',
+      },
+    ];
+
+    return (
+        <Table<MinimalIncome>
+            columns={incomeColumns}
+            dataSource={expense.incomes}
+            pagination={false}
+            rowKey="_id"
+            size="small"
+        />
+    );
+  };
+
   const handleOpenModal = () => {
     setEditingExpense(null);
     setIsModalOpen(true);
@@ -164,10 +191,10 @@ export const ExpensesPage: React.FC = () => {
         + Add Expense
       </Button>
       <Statistic
-        title={`Total ${!!expenses ? getMonthNameCapitalized(expenses.usedMonth) : ''}`}
+        title={`Total ${expenses ? getMonthNameCapitalized(expenses.usedMonth) : ''}`}
         value={`${expenses?.totalAmount} €`}
       />
-      <Table
+      <Table<Expense>
         columns={columns}
         dataSource={expenses?.data}
         loading={loading}
@@ -178,6 +205,9 @@ export const ExpensesPage: React.FC = () => {
         }}
         onChange={handleTableChange}
         rowKey="_id"
+        expandable={{
+          expandedRowRender,
+        }}
       />
       <Modal
         open={isModalOpen}

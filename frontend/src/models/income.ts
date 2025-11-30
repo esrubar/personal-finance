@@ -13,6 +13,13 @@ export interface Income {
   linkedExpenseId?: string;
 }
 
+export interface MinimalIncome {
+  _id: string;
+  amount: number;
+  description?: string;
+  linkedExpenseId?: string | null;
+}
+
 export const createIncomeFromTransaction = (
   transaction: Omit<BankTransaction, '_id' | 'auditable' | 'category'>,
   categoryId: string
