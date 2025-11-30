@@ -40,3 +40,8 @@ export const getMensualExpenses = async (): Promise<MensualExpense[]> => {
   const { data } = await axios.get<MensualExpense[]>(`${API_URL}/getMensualExpenses`);
   return data;
 };
+
+export const getExpensesByDescription = async (description: string): Promise<Expense[]> => {
+  const { data } = await axios.get<Expense[]>(`${API_URL}/byDescription/${description}`);
+  return data;
+};

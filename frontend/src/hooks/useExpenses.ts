@@ -57,3 +57,21 @@ export function useMensualExpenses(refreshKey?: number) {
 
   return { expenses, loading, error };
 }
+
+export function useExpensesByDescription(description: string) {
+  const [expense, setExpense] = useState<Expense[] | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+
+  useEffect(() => {
+    if (!description) return;
+    setLoading(true);
+    expenseDataSource
+        .getExpensesByDescription(description)
+        .then(setExpense)
+        .catch(setError)
+        .finally(() => setLoading(false));
+  }, [description]);
+
+  return { expense, loading, error };
+}

@@ -6,7 +6,6 @@ import {paginateWithFilters} from "../utils/paginateWithFilters";
 import dayjs from "dayjs";
 import {ExpenseModel} from "../models/expenseModel";
 import {getIncomesByLinkedExpense} from "./incomeService";
-import {Expense, ExpenseWithIncomes} from "../types/expense";
 
 export const createExpense = async (data: any, userName: string) => {
     const expenseData = {
@@ -117,7 +116,7 @@ export async function getMensualExpenses(userName: string): Promise<MensualExpen
 
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0, 23, 59, 59, 999);
-    let expenses = await ExpenseModel.aggregate([
+    return ExpenseModel.aggregate([
         // 1. Filtra los gastos creados por "system" y en el rango de fechas indicado
         {
             $match: {
@@ -160,7 +159,6 @@ export async function getMensualExpenses(userName: string): Promise<MensualExpen
             $sort: {categoryName: 1}
         }
     ]);
-    return expenses;
 }
 
 export const getTotalAmountForMonth = async (year: number, month: number) => {
@@ -185,4 +183,12 @@ export const getTotalAmountForMonth = async (year: number, month: number) => {
     ]);
 
     return +(totalAmountResult[0]?.totalAmount ?? 0).toFixed(2);
+}
+
+export const getExpensesByDescription =  async (userName: string, description: string)=>{
+    return ExpenseModel
+        .find({description, "auditable.createdBy": userName})
+        .populate('category', 'name')
+        .sort({ transactionDate: -1 })
+        .lean();
 }

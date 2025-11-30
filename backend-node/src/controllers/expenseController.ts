@@ -45,3 +45,8 @@ export const getMensualExpenses = async (req: any, res: Response) => {
   res.json(expenses);
 };
 
+export const getExpensesByDescription = async (req: any, res: Response) => {
+  const user = req.session.user;
+  const expense = await expenseService.getExpensesByDescription(req.params.description, user.name);
+  res.json(expense);
+}
