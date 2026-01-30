@@ -1,7 +1,8 @@
 import {createAuditable, updateAuditable} from "../auditable/auditableService";
 import {CategoryModel} from "./categoryModel";
+import {CategoryDocument} from "./category";
 
-export const createCategory = async (data: any, userName: string) => {
+export const createCategory = async (data: any, userName: string): Promise<CategoryDocument> => {
     const categoryData = {
         ...data,
         auditable: createAuditable(userName),
@@ -9,12 +10,12 @@ export const createCategory = async (data: any, userName: string) => {
     return await CategoryModel.create(categoryData);
   };
 
-export const getCategories = async (userName: string) => {
+export const getCategories = async (userName: string): Promise<CategoryDocument[]> => {
     return CategoryModel.find({
         "auditable.createdBy": userName
     }).sort({name: 1});
 }
-export const getCategoryById = async (id: string, userName: string) => {
+export const getCategoryById = async (id: string, userName: string): Promise<CategoryDocument> => {
     const category = await CategoryModel.findById(id);
     if (!category) {
         throw Error(`Category with id ${id} not found`);

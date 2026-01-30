@@ -1,4 +1,6 @@
 // Domain Interface
+import {HydratedDocument} from "mongoose";
+
 export interface Category {
     name: string;
     auditable: {
@@ -8,3 +10,5 @@ export interface Category {
         updatedBy: string;
     };
 }
+
+export type CategoryDocument = HydratedDocument<Category>;
