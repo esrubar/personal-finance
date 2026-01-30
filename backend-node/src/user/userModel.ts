@@ -1,6 +1,7 @@
 import mongoose, {Model} from 'mongoose';
 import {User} from "./user";
 
+// Schema
 const UserSchema = new mongoose.Schema({
     name: {type: String, required: true},
     password: {type: String, required: true},
@@ -11,9 +12,10 @@ const UserSchema = new mongoose.Schema({
             createdBy: {type: String, required: true},
             updatedBy: {type: String, required: true},
         },
-        required: true,
     },
 });
 
-export const UserModel: Model<User & Document> =
-    mongoose.models.User || mongoose.model<User & Document>("User", UserSchema);
+// Model (hot-reload safe)
+export const UserModel: Model<User> =
+    mongoose.models.User ??
+    mongoose.model<User>("User", UserSchema);
