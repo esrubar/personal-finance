@@ -1,4 +1,5 @@
-import mongoose from 'mongoose';
+import mongoose, {Model} from 'mongoose';
+import {SavingProject} from "./savingProject";
 
 const SavingsProjectSchema = new mongoose.Schema({
     amount: {type: Number, required: true},
@@ -10,8 +11,9 @@ const SavingsProjectSchema = new mongoose.Schema({
             createdBy: {type: String, required: true},
             updatedBy: {type: String, required: true},
         },
-        required: true,
     },
 });
 
-export default mongoose.model('SavingProject', SavingsProjectSchema);
+export const SavingProjectModel: Model<SavingProject> =
+    mongoose.models.SavingProject ??
+    mongoose.model<SavingProject>("SavingProject", SavingsProjectSchema);

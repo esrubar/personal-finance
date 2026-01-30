@@ -1,21 +1,21 @@
-import savingsProjectModel from './savingsProjectModel';
 import {createAuditable, updateAuditable} from "../auditable/auditableService";
+import {SavingProjectModel} from "./savingsProjectModel";
 
 export const createSavingProject = async (data: any, userName: string) => {
     const savingProjectData = {
         ...data,
         auditable: createAuditable(userName),
     }
-    return await savingsProjectModel.create(savingProjectData);
+    return await SavingProjectModel.create(savingProjectData);
 }
 
 export const getSavingProjects = async (userName: string) => {
-    await savingsProjectModel.find({
+    await SavingProjectModel.find({
         "auditable.createdBy": userName
     });
 }
 export const getSavingProjectById = async (id: string, userName: string) => {
-    const savingProject = await savingsProjectModel.findById(id);
+    const savingProject = await SavingProjectModel.findById(id);
     if (!savingProject) {
         throw Error(`Income with id ${id} not found`);
     }
@@ -30,11 +30,11 @@ export const updateSavingProject = async (id: string, data: any, userName: strin
         ...data,
         auditable: updateAuditable(data.auditable, userName),
     }
-    return savingsProjectModel.findByIdAndUpdate(id, savingProjectData, {new: true});
+    return SavingProjectModel.findByIdAndUpdate(id, savingProjectData, {new: true});
 }
 
 export const deleteSavingProject = async (id: string, userName: string) => {
-    const savingProject = await savingsProjectModel.findByIdAndDelete(id);
+    const savingProject = await SavingProjectModel.findByIdAndDelete(id);
     if (!savingProject) {
         throw Error(`Saving project with id ${id} not found`);
     }
