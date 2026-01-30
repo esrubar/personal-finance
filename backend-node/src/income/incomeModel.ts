@@ -20,5 +20,6 @@ const IncomeSchema = new mongoose.Schema(
     }
 );
 
-export const IncomeModel: Model<Income & Document> =
-    mongoose.models.Income || mongoose.model<Income & Document>("Income", IncomeSchema);
+export const IncomeModel: Model<Income> =
+    mongoose.models.Income ??
+    mongoose.model<Income>("Income", IncomeSchema);
