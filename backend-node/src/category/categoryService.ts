@@ -1,21 +1,21 @@
-import Category from './categoryModel';
 import {createAuditable, updateAuditable} from "../auditable/auditableService";
+import {CategoryModel} from "./categoryModel";
 
 export const createCategory = async (data: any, userName: string) => {
     const categoryData = {
         ...data,
-        auditable: createAuditable(),
+        auditable: createAuditable(userName),
     };
-    return await Category.create(categoryData, userName);
+    return await CategoryModel.create(categoryData);
   };
 
 export const getCategories = async (userName: string) => {
-    return Category.find({
+    return CategoryModel.find({
         "auditable.createdBy": userName
     }).sort({name: 1});
 }
 export const getCategoryById = async (id: string, userName: string) => {
-    const category = await Category.findById(id);
+    const category = await CategoryModel.findById(id);
     if (!category) {
         throw Error(`Category with id ${id} not found`);
     }
@@ -30,11 +30,11 @@ export const updateCategory = async (id: string, data: any, userName: string) =>
         ...data,
         auditable: updateAuditable(data.auditable, userName),
       };
-    await Category.findByIdAndUpdate(id, categoryData, { new: true })
+    await CategoryModel.findByIdAndUpdate(id, categoryData, { new: true })
 }
 
 export const deleteCategory = async (id: string, userName: string) => {
-    const category = await Category.findByIdAndDelete(id);
+    const category = await CategoryModel.findByIdAndDelete(id);
     if (!category) {
         throw Error(`Category with id ${id} not found`);
     }

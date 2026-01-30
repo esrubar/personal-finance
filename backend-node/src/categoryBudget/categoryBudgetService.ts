@@ -2,7 +2,7 @@
 import {createAuditable} from "../auditable/auditableService";
 import {CategoryBudgetDTO} from "./categoryBudgetDTO";
 import categoryBudgetModel from "./categoryBudgetModel";
-import categoryModel from "../category/categoryModel";
+import {CategoryModel} from "../category/categoryModel";
 
   export const create = async (data: any, userName: string) => {
     const categoryBudgetData = {
@@ -23,7 +23,7 @@ import categoryModel from "../category/categoryModel";
 
 export const getAll = async (userName: string): Promise<CategoryBudgetDTO[]> => {
   let categoryBudgets = await categoryBudgetModel.find();
-  let categories = await categoryModel
+  let categories = await CategoryModel
       .find({ 
         _id: { $in: categoryBudgets.map(x => x.categoryId) },
         "auditable.createdBy": userName

@@ -1,15 +1,18 @@
-import mongoose from 'mongoose';
+import mongoose, { Schema, Model } from "mongoose";
+import {Category} from "./category";
 
-const CategorySchema = new mongoose.Schema({
-    name: {type: String, required: true},
+// Schema
+const CategorySchema = new Schema<Category>({
+    name: { type: String, required: true },
     auditable: {
-        type: {
-            createdAt: {type: Date, required: true, default: Date.now},
-            updatedAt: {type: Date, required: true, default: Date.now},
-            createdBy: {type: String, required: true},
-            updatedBy: {type: String, required: true},
-        },
-        required: true,
+        createdAt: { type: Date, required: true, default: Date.now },
+        updatedAt: { type: Date, required: true, default: Date.now },
+        createdBy: { type: String, required: true },
+        updatedBy: { type: String, required: true },
     },
 });
-export default mongoose.model('Category', CategorySchema);
+
+// Model (hot-reload safe)
+export const CategoryModel: Model<Category> =
+    mongoose.models.Category ??
+    mongoose.model<Category>("Category", CategorySchema);
