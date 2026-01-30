@@ -1,19 +1,19 @@
 import express from "express";
 import cors from "cors";
 import {config} from "dotenv";
-import userRoutes from "./routes/userRoutes";
 import connectDB from "./config/db";
-import expenseRoutes from "./routes/expenseRoutes";
-import categoryRoutes from "./routes/categoryRoutes";
-import savingProjectRoutes from "./routes/savingProjectRoutes";
-import categoryBudgetRoutes from "./routes/categoryBudgetRoutes";
-import incomeRoutes from "./routes/incomeRoutes";
-import importTransactionRoutes from "./routes/importTransactionRoutes";
-import {UserRepository} from "./repositories/userRepository";
 import jwt from 'jsonwebtoken'
 import cookieParser from 'cookie-parser'
 import {authMiddleware} from "./middlewares/middleware";
-import authRoutes from "./routes/authRoutes";
+import {UserRepository} from "./user/userRepository";
+import authRoutes from "./auth/authRoutes";
+import userRoutes from "./user/userRoutes";
+import expenseRoutes from "./expense/expenseRoutes";
+import categoryRoutes from "./category/categoryRoutes";
+import savingProjectRoutes from "./savingProject/savingProjectRoutes";
+import categoryBudgetRoutes from "./categoryBudget/categoryBudgetRoutes";
+import incomeRoutes from "./income/incomeRoutes";
+import importTransactionRoutes from "./importTransaction/importTransactionRoutes";
 
 config();
 
