@@ -1,19 +1,19 @@
 
 import {createAuditable} from "../auditable/auditableService";
 import {CategoryBudgetDTO} from "./categoryBudgetDTO";
-import categoryBudgetModel from "./categoryBudgetModel";
 import {CategoryModel} from "../category/categoryModel";
+import {CategoryBudgetModel} from "./categoryBudgetModel";
 
   export const create = async (data: any, userName: string) => {
     const categoryBudgetData = {
       ...data,
       auditable: createAuditable(userName),
     };
-    return await categoryBudgetModel.create(categoryBudgetData);
+    return await CategoryBudgetModel.create(categoryBudgetData);
 };
 
   export const getByMonthAndYear = async (month: Number, year: Number, userName: string) => {
-    return categoryBudgetModel
+    return CategoryBudgetModel
         .find({ 
           month, 
           year, 
@@ -22,7 +22,7 @@ import {CategoryModel} from "../category/categoryModel";
   }
 
 export const getAll = async (userName: string): Promise<CategoryBudgetDTO[]> => {
-  let categoryBudgets = await categoryBudgetModel.find();
+  let categoryBudgets = await CategoryBudgetModel.find();
   let categories = await CategoryModel
       .find({ 
         _id: { $in: categoryBudgets.map(x => x.categoryId) },
@@ -37,7 +37,7 @@ export const getAll = async (userName: string): Promise<CategoryBudgetDTO[]> => 
         const category = categories.find(c => c._id.toString() === x.categoryId);
         return {
             id: x._id.toString(),
-            categoryId: x.categoryId,
+            categoryId: x.categoryId.toString(),
             month: x.month,
             year: x.year,
             budgetAmount: x.budgetAmount,

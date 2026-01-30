@@ -2,7 +2,6 @@ import {Types} from "mongoose";
 import {MinimalIncome} from "../income/income";
 
 export interface Expense {
-    _id: string;
     amount: number;
     category: Types.ObjectId | string;
     transactionDate?: Date;

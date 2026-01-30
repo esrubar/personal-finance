@@ -61,7 +61,7 @@ export const getFilteredExpenses = async (
 
     const expenses = result.data;
     
-    const expenseIds = expenses.map((x) => x._id);
+    const expenseIds = expenses.map((x) => x._id.toString());
     const incomeGroups = await getIncomesByLinkedExpense(expenseIds);
     
     const incomeMap = new Map(
