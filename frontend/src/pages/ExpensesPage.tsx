@@ -207,6 +207,9 @@ export const ExpensesPage: React.FC = () => {
         rowKey="_id"
         expandable={{
           expandedRowRender,
+          rowExpandable: (record: Expense) => {
+            return record.incomes == undefined ? false : record.incomes.length > 0
+          },
         }}
       />
       <Modal

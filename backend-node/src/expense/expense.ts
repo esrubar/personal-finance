@@ -1,5 +1,6 @@
-import {Types} from "mongoose";
+import {HydratedDocument, Types} from "mongoose";
 import {MinimalIncome} from "../income/income";
+import {Category} from "../category/category";
 
 export interface Expense {
     amount: number;
@@ -18,3 +19,5 @@ export interface Expense {
 export interface ExpenseWithIncomes extends Expense {
     incomes?: MinimalIncome[] | null;
 }
+
+export type ExpenseDocument = HydratedDocument<Expense>;

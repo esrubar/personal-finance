@@ -2,6 +2,8 @@ import {createAuditable, updateAuditable} from "../auditable/auditableService";
 import {IncomeModel} from "./incomeModel";
 import {IncomeDTO} from "./incomeDTO";
 import {ExpenseModel} from "../expense/expenseModel";
+import {IncomeGroupedByLinkedExpense} from "./income";
+import {Types} from "mongoose";
 
 
 export const createIncome = async (data: any, userName: string) => {
@@ -62,8 +64,8 @@ export const getIncomes = async (userName: string) => {
     }).populate('category', 'name').sort({ transactionDate: -1 });
 }
 
-export const getIncomesByLinkedExpense = async (expenseIds: string[]) => {
-    return IncomeModel.aggregate([
+export const getIncomesByLinkedExpense = async (expenseIds: Types.ObjectId[]): Promise<IncomeGroupedByLinkedExpense[]> => {
+    return IncomeModel.aggregate<IncomeGroupedByLinkedExpense>([
         {
             $match: {
                 linkedExpenseId: { $in: expenseIds }

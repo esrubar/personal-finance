@@ -11,4 +11,9 @@ export interface Category {
     };
 }
 
+export interface MinimalCategory {
+    id: string;
+    name: string;
+}
+
 export type CategoryDocument = HydratedDocument<Category>;

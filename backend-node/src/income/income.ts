@@ -1,12 +1,12 @@
-import {Types} from "mongoose";
+import {HydratedDocument, Types} from "mongoose";
+import {Expense} from "../expense/expense";
 
 export interface Income {
-    _id: string;
     amount: number;
     category: Types.ObjectId | string;
     transactionDate?: Date;
     description?: string;
-    linkedExpenseId?: Types.ObjectId | string;
+    linkedExpenseId?: Types.ObjectId;
     auditable: {
         createdAt: Date;
         updatedAt: Date;
@@ -23,6 +23,8 @@ export interface MinimalIncome {
 }
 
 export interface IncomeGroupedByLinkedExpense {
-    linkedExpenseId?: Types.ObjectId | string;
+    _id: Types.ObjectId | string;
     incomes: MinimalIncome[];
 }
+
+export type IncomeDocument = HydratedDocument<Income>;

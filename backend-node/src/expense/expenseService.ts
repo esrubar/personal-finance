@@ -5,7 +5,9 @@ import {ExpenseModel} from "./expenseModel";
 import {getIncomesByLinkedExpense} from "../income/incomeService";
 import {createAuditable, updateAuditable} from "../auditable/auditableService";
 import {FilteredExpenseQuery} from "./filteredExpensequeryDTO";
-import {ExpenseDTO, MensualExpenseDTO} from "./expenseDTO";
+import {ExpenseDTO, MensualExpenseDTO, PaginatedExpense} from "./expenseDTO";
+import {ExpenseDocument} from "./expense";
+import {mapToPaginatedExpense} from "./expenseMapper";
 
 export const createExpense = async (data: any, userName: string) => {
     const expenseData = {
@@ -59,9 +61,9 @@ export const getFilteredExpenses = async (
         userName
     );
 
-    const expenses = result.data;
+    const expenses = result.data.map(mapToPaginatedExpense);
     
-    const expenseIds = expenses.map((x) => x._id.toString());
+    const expenseIds = expenses.map((x) => x._id);
     const incomeGroups = await getIncomesByLinkedExpense(expenseIds);
     
     const incomeMap = new Map(
