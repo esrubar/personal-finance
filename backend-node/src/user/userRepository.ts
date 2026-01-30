@@ -3,15 +3,16 @@ import bcrypt from 'bcrypt'
 import {createAuditable} from "../auditable/auditableService";
 import {toMinimalUser} from "./userMapper";
 import {UserModel} from "./userModel";
+import {MinimalUser, UserAuthProjection, UserDocument} from "./user";
 
 export class UserRepository {
-    static async create(name: string, password: string) {
+    static async create(name: string, password: string): Promise<UserDocument> {
         // validar username (opcional usar zod)
         Validation.username(name)
         Validation.password(password)
 
         //2. asegurarse que username no existe
-        const user = await UserModel.findOne({name})
+        const user: UserDocument | null = await UserModel.findOne({name})
         if (!!user) throw new Error('user already exists');
 
         //hash password
@@ -24,11 +25,11 @@ export class UserRepository {
         });
     }
 
-    static async login(name: string, password: string) {
+    static async login(name: string, password: string): Promise<MinimalUser | null> {
         Validation.username(name)
         Validation.password(password)
 
-        const user = await UserModel.findOne({name})
+        const user: UserAuthProjection | null = await UserModel.findOne({name})
             .select("_id name password")
             .lean();
 

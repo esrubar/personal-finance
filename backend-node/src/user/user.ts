@@ -1,5 +1,7 @@
+// Domain Interface
+import {HydratedDocument, Types} from "mongoose";
+
 export interface User {
-    _id: string;
     name: string;
     password: string;
     auditable: {
@@ -10,7 +12,15 @@ export interface User {
     };
 }
 
+export interface UserAuthProjection {
+    _id: Types.ObjectId;
+    name: string;
+    password: string;
+}
+
 export interface MinimalUser {
     id: string;
     name: string;
 }
+
+export type UserDocument = HydratedDocument<User>;
