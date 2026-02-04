@@ -75,16 +75,9 @@ export const getFilteredExpenses = async (
         incomes: incomeMap.get(expense._id.toString()) ?? [],
     }));
 
-    const totalIncomeAmount = enrichedExpenses.reduce((acc, exp) =>
-            acc + exp.incomes.reduce((s: any, i: any) => s + i.amount, 0)
-        , 0);
-    
-    const netTotalAmount = result.totalAmount - totalIncomeAmount;
-
     return new PaginatedResponse({
         ...result,
         data: enrichedExpenses,
-        totalAmount: netTotalAmount,
     });
 };
 

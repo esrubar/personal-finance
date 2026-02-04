@@ -1,5 +1,11 @@
 import {Model, Types} from 'mongoose';
 import dayjs from 'dayjs';
+import {getIncomesByLinkedExpense} from "../income/incomeService";
+import {mapToPaginatedExpense} from "../expense/expenseMapper";
+import {MinimalIncome} from "../income/income";
+import {PaginatedResponse} from "../dtos/paginatedResponseDTO";
+import {PaginatedExpense} from "../expense/expenseDTO";
+import {ExpensesSummaryDto} from "../dtos/ExpensesSummaryDto";
 
 interface PaginationOptions {
     page?: number;
@@ -61,14 +67,64 @@ export const paginateWithFilters = async <T extends { amount: number }>(
         .sort({[sortBy]: sortDirection === 'asc' ? 1 : -1})
         .populate('category', 'name')
         .lean();
+    
+    // Total gastado por mes menos los reembolsos
+    const result = await model.aggregate<ExpensesSummaryDto>([
+        // Filtrar por mes y año
+        {
+            $match: {
+                'auditable.createdBy': userName,
+                transactionDate: {
+                    $gte: startDate,
+                    $lt: endDate,
+                },
+            },
+        },
 
-    // Total gastado en el mes/año (sin paginar)
-    const totalAmountResult = await model.aggregate([
-        {$match: fullQuery},
-        {$group: {_id: null, totalAmount: {$sum: "$amount"}}},
-    ]);
+        // Traer incomes relacionados
+        {
+            $lookup: {
+                from: 'incomes',
+                localField: '_id',
+                foreignField: 'linkedExpenseId',
+                as: 'incomes',
+            },
+        },
 
-    const totalAmount = +(totalAmountResult[0]?.totalAmount ?? 0).toFixed(2);
+        // Calcular total de incomes por expense
+        {
+            $addFields: {
+                totalIncomes: { $sum: '$incomes.amount' },
+            },
+        },
+
+        // Calcular gasto real por expense
+        {
+            $addFields: {
+                realAmount: {
+                    $subtract: ['$amount', '$totalIncomes'],
+                },
+            },
+        },
+
+        // Sumar todos los gastos reales
+        {
+            $group: {
+                _id: null,
+                totalRealExpenses: { $sum: '$realAmount' },
+                totalExpenses: { $sum: '$amount' },
+                totalIncomes: { $sum: '$totalIncomes' },
+            },
+        },
+    ])
+
+    const summary: ExpensesSummaryDto = result[0] ?? {
+        totalRealExpenses: 0,
+        totalExpenses: 0,
+        totalIncomes: 0,
+    };
+
+    const totalAmount = summary.totalRealExpenses
 
     return {
         data,
