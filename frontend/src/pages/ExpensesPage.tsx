@@ -192,7 +192,11 @@ export const ExpensesPage: React.FC = () => {
       </Button>
       <Statistic
         title={`Total ${expenses ? getMonthNameCapitalized(expenses.usedMonth) : ''}`}
-        value={`${expenses?.totalAmount} €`}
+        value={`${expenses?.totalAmount.toFixed(2)} €`}
+      />
+      <Statistic
+          title={`Total by category`}
+          value={`${expenses?.visibleAmount.toFixed(2)} €`}
       />
       <Table<Expense>
         columns={columns}

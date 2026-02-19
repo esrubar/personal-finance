@@ -9,6 +9,7 @@ export class PaginatedResponse<T> {
     totalAmount: number;
     usedMonth: number;
     usedYear: number;
+    visibleAmount: number;
 
     constructor(params: {
         data: T[];
@@ -18,6 +19,7 @@ export class PaginatedResponse<T> {
         totalAmount: number;
         usedMonth: number;
         usedYear: number;
+        visibleAmount: number;
     }) {
         this.data = params.data;
         this.page = params.page;
@@ -27,5 +29,6 @@ export class PaginatedResponse<T> {
         this.totalAmount = params.totalAmount;
         this.usedMonth = params.usedMonth;
         this.usedYear = params.usedYear;
+        this.visibleAmount = params.visibleAmount
     }
 }
