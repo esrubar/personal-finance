@@ -29,7 +29,7 @@ export const ExpensesPage: React.FC = () => {
   const { deleteExpense, loading: deleting } = useDeleteExpense();
   const [pagination, setPagination] = useState({ current: 1, pageSize: 10 });
   const [filters, setFilters] = useState<ExpenseFilter>({
-    categoryId: undefined,
+    categoriesIds: [],
     month: undefined,
     year: undefined,
   });
@@ -56,8 +56,8 @@ export const ExpensesPage: React.FC = () => {
     };
 
     const newFilters = {
-      categoryId: Array.isArray(filtersFromTable.category)
-        ? filtersFromTable.category[0]?.toString()
+      categoriesIds: Array.isArray(filtersFromTable.category)
+        ? filtersFromTable.category.map(x => x.toString())
         : undefined,
       month: filtersFromTable.month ? Number(filtersFromTable.month[0]) : undefined,
       year: filtersFromTable.year ? Number(filtersFromTable.year[0]) : undefined,
@@ -88,7 +88,7 @@ export const ExpensesPage: React.FC = () => {
         text: <Tag color={getColorForCategory(c.name)}>{c.name}</Tag>,
         value: c._id!,
       })),
-      filterMultiple: false,
+      filterMultiple: true,
       render: (name: string) => <Tag color={getColorForCategory(name)}>{name}</Tag>,
     },
     {

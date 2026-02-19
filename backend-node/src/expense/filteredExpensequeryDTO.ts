@@ -1,14 +1,14 @@
 // src/dtos/filtered-expense-query.dto.ts
 
 export class FilteredExpenseQuery {
-    categoryId?: string;
+    categoriesIds?: string[];
     year?: number;
     month?: number;
     page: number;
     limit: number;
 
     constructor(params: Partial<FilteredExpenseQuery> = {}) {
-        this.categoryId = params.categoryId;
+        this.categoriesIds = params.categoriesIds;
 
         const year = Number(params.year);
         const month = Number(params.month);
@@ -29,8 +29,8 @@ export class FilteredExpenseQuery {
     toMongoQuery(): Record<string, any> {
         const query: Record<string, any> = {};
 
-        if (this.categoryId) {
-            query['category._id'] = this.categoryId;
+        if (this.categoriesIds) {
+            query['category._id'] = this.categoriesIds;
         }
 
         if (this.year && this.month) {

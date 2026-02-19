@@ -52,7 +52,7 @@ export const getFilteredExpenses = async (
         {
             page: filters.page,
             limit: filters.limit,
-            categoryId: filters.categoryId,
+            categoriesIds: filters.categoriesIds,
             year: filters.year,
             month: filters.month,
             sortBy: "transactionDate",

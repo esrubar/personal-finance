@@ -1,5 +1,5 @@
 export interface ExpenseFilter {
-  categoryId: string | undefined;
+  categoriesIds: string[] | undefined;
   month: number | undefined;
   year: number | undefined;
 }

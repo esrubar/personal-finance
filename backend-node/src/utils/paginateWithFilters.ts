@@ -10,7 +10,7 @@ import {ExpensesSummaryDto} from "../dtos/ExpensesSummaryDto";
 interface PaginationOptions {
     page?: number;
     limit?: number;
-    categoryId?: string;
+    categoriesIds?: string[];
     year?: number;
     month?: number;
     sortBy?: string;
@@ -26,7 +26,7 @@ export const paginateWithFilters = async <T extends { amount: number }>(
     const {
         page = 1,
         limit = 10,
-        categoryId,
+        categoriesIds,
         year,
         month,
         sortBy = 'date',
@@ -52,8 +52,9 @@ export const paginateWithFilters = async <T extends { amount: number }>(
     };
     fullQuery['auditable.createdBy'] = userName;
 
-    if (categoryId) {
-        fullQuery['category'] = new Types.ObjectId(categoryId);
+    if (!!categoriesIds && categoriesIds.length > 0) {
+        const objectIds = categoriesIds.map(id => new Types.ObjectId(id.trim()));
+        fullQuery['category'] = { $in: objectIds };
     }
 
     // Total de documentos
