@@ -59,7 +59,7 @@ export function useMensualExpenses(refreshKey?: number) {
 }
 
 export function useExpensesByDescription(description: string) {
-  const [expense, setExpense] = useState<Expense[] | null>(null);
+  const [expenses, setExpenses] = useState<Expense[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
@@ -68,10 +68,10 @@ export function useExpensesByDescription(description: string) {
     setLoading(true);
     expenseDataSource
         .getExpensesByDescription(description)
-        .then(setExpense)
+        .then(setExpenses)
         .catch(setError)
         .finally(() => setLoading(false));
   }, [description]);
 
-  return { expense, loading, error };
+  return { expenses, loading, error };
 }
