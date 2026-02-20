@@ -1,14 +1,17 @@
 // TransactionTable.tsx
-import React from 'react';
-import { Button, DatePicker, InputNumber, Select, Space, Table } from 'antd';
+import React, {useEffect, useState} from 'react';
+import {Button, DatePicker, Divider, InputNumber, Select, Space, Table, Tag, Typography} from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import type { BankTransaction } from '../models/bankTransaction';
 import { DeleteOutlined } from '@ant-design/icons';
 import type { Category } from '../models/category';
 import TextArea from 'antd/es/input/TextArea';
+import { PlusOutlined } from '@ant-design/icons';
+import {ListModal} from "./ListModal.tsx";
 
 const { Option } = Select;
+const { Paragraph } = Typography;
 
 interface Props {
   transactions: BankTransaction[];
@@ -23,38 +26,92 @@ export const TransactionTable: React.FC<Props> = ({
   onChange,
   onDelete,
 }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectOptions, setSelectOptions] = useState<{label: string, value: string}[]>([]);
+  const [selectedValue, setSelectedValue] = useState<string>();
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  }
+  const onSelectExpense = (expenseId: string, description?: string | undefined) => {
+
+    if (!description) return;
+
+    setSelectOptions(prev => [
+      ...prev,
+      { label: description, value: expenseId }
+    ]);
+  }
+  
+  useEffect(() => {
+    const a = transactions
+        .filter((t) => t.type === "expense")
+        .map((item) => ({
+          label: item.description,
+          value: item.tempId,
+        }));
+    setSelectOptions(a);
+    
+  },[transactions])
+
+  useEffect(() => {
+    console.log(selectedValue);
+  }, [selectedValue]);
+  
+  
   const columns: ColumnsType<BankTransaction> = [
-    {
-      title: 'Fecha',
-      dataIndex: 'date',
-      render: (value, record) => (
-        <DatePicker
-          value={value ? dayjs(value, 'DD/MM/YYYY') : undefined}
-          format="DD/MM/YYYY"
-          onChange={(date) => onChange(date ? date.format('DD/MM/YYYY') : null, record, 'date')}
-        />
-      ),
-    },
+      {
+          title: 'Importe',
+          dataIndex: 'amount',
+          render: (value, record) => (
+              <Space direction="vertical" size={0} style={{ width: '100%' }} align="center">
+                  <InputNumber
+                      style={{ 
+                          color: record.type === 'expense' ? '#ff4d4f' : '#52c41a',
+                        }}
+                      value={value ?? undefined}
+                      onChange={(val) => onChange(val ?? null, record, 'amount')}
+                  />
+                  <Select
+                      value={record.type ?? undefined}
+                      variant="borderless"
+                      onChange={(val) => onChange(val, record, 'type')}
+                      style={{
+                          width: '100%',
+                          display: 'flex',
+                          justifyContent: 'center' // Asegura que el selector busque el centro
+                      }}
+                      allowClear
+                  >
+                      <Option value="expense"><Tag color="volcano">EXPENSE</Tag></Option>
+                      <Option value="income"><Tag color="green">INCOME</Tag></Option>
+                  </Select>
+              </Space>
+          ),
+      },
     {
       title: 'Descripción',
       dataIndex: 'description',
       render: (value, record) => (
-        <TextArea
-          rows={4}
-          value={value || ''}
-          onChange={(e) => onChange(e.target.value, record, 'description')}
-        />
-      ),
-    },
-    {
-      title: 'Importe',
-      dataIndex: 'amount',
-      render: (value, record) => (
-        <InputNumber
-          value={value ?? undefined}
-          onChange={(val) => onChange(val ?? null, record, 'amount')}
-          style={{ width: '100%' }}
-        />
+          <Space direction="vertical" size={0} style={{ width: '100%' }}>
+              <Paragraph 
+                  editable={{ onChange: (e) => onChange(e, record, 'description') }}>
+                  {value}
+              </Paragraph>
+              <DatePicker
+                  value={record.date ? dayjs(record.date, 'DD/MM/YYYY') : undefined}
+                  format="DD/MM/YYYY"
+                  onChange={(date) => onChange(date ? date.format('DD/MM/YYYY') : null, record, 'date')}
+                  style={{
+                      fontSize: '12px',
+                      padding: 0,
+                      height: 'auto',
+                      color: '#8c8c8c'
+                  }}
+                  variant="borderless"
+              />
+          </Space>
+        
       ),
     },
     {
@@ -67,6 +124,7 @@ export const TransactionTable: React.FC<Props> = ({
           onChange={(val) => onChange(val, record, 'categoryId')}
           style={{ width: '100%' }}
           allowClear
+          placeholder="Category..."
         >
           {categories.map((cat) => (
             <Option key={cat._id} value={cat._id}>
@@ -80,36 +138,38 @@ export const TransactionTable: React.FC<Props> = ({
       title: 'linked Expense',
       dataIndex: 'linkedExpenseId',
       key: 'linkedExpenseId',
-      render: (value, record) => (
-        <Select
-          value={value ?? undefined}
-          onChange={(val) => onChange(val, record, 'linkedExpenseId')}
-          allowClear
-        >
-          {transactions
-            .filter((transaction) => transaction.type === 'expense')
-            .map((transaction) => (
-              <Option key={transaction.tempId} value={transaction.tempId}>
-                {transaction.description}
-              </Option>
-            ))}
-        </Select>
-      ),
-    },
-    {
-      title: 'Tipo',
-      dataIndex: 'type',
-      render: (value, record) => (
-        <Select
-          value={value ?? undefined}
-          onChange={(val) => onChange(val, record, 'type')}
-          style={{ width: '100%' }}
-          allowClear
-        >
-          <Option value="expense">Cargo</Option>
-          <Option value="income">Abono</Option>
-        </Select>
-      ),
+      render: (value, record) => {
+        if (record.type === "expense") return null;
+        
+        return (
+            <Select
+                placeholder="Link to..."
+                value={record.linkedExpenseId ?? undefined}
+                onChange={(val) => {
+                  onChange(val, record, "linkedExpenseId");
+                  console.log("onchange linkedexpenseid");
+                }}
+                allowClear
+                style={{ width: 180 }}
+                popupRender={(menu) => (
+                    <>
+                      {menu}
+                      <Divider style={{ margin: "8px 0" }} />
+                      <Space style={{ padding: "0 8px 4px" }}>
+                        <Button
+                            type="text"
+                            icon={<PlusOutlined />}
+                            onClick={() => setIsModalOpen(true)}
+                        >
+                          Add item
+                        </Button>
+                      </Space>
+                    </>
+                )}
+                options={selectOptions}
+            />
+        );
+      }
     },
     {
       title: 'Actions',
@@ -128,11 +188,15 @@ export const TransactionTable: React.FC<Props> = ({
   ];
 
   return (
-    <Table
-      rowKey={(r) => JSON.stringify(r.raw)}
-      dataSource={transactions}
-      columns={columns}
-      pagination={false}
-    />
+      <>
+        <Table
+            rowKey={(r) => JSON.stringify(r.raw)}
+            dataSource={transactions}
+            columns={columns}
+            pagination={false}
+        />
+        <ListModal isModalOpen={isModalOpen} handleCloseModal={handleCloseModal} onSelectExpense={onSelectExpense}/>
+      </>
+    
   );
 };
