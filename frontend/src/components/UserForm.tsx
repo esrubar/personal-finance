@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import type { User } from '../models/user';
-import { useCreateUser, useUpdateUser } from '../hooks/useUserMutations';
+import { useUpdateUser } from '../hooks/useUserMutations';
+import {useRegister} from "../hooks/useRegister.ts";
 
 interface UserFormProps {
   initialData?: User;
@@ -13,7 +14,7 @@ const UserForm: React.FC<UserFormProps> = ({ initialData, onSuccess }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const { createUser } = useCreateUser();
+  const { register } = useRegister();
   const { updateUser } = useUpdateUser();
 
   useEffect(() => {
@@ -30,7 +31,7 @@ const UserForm: React.FC<UserFormProps> = ({ initialData, onSuccess }) => {
       if (initialData && initialData._id) {
         await updateUser(initialData._id, { ...initialData, name });
       } else {
-        await createUser({ name, password } as User);
+        await register({ name, password } as User);
       }
       if (onSuccess) onSuccess();
     } catch (err: any) {
