@@ -1,5 +1,5 @@
-import {config} from "dotenv";
-import app from "./app";
+import { config } from 'dotenv';
+import app from './app';
 
 config();
 
@@ -14,8 +14,10 @@ if (process.env.NODE_ENV === "production") {
   });
 }*/
 
-app.get("/test", (req: any, res: any) => res.send(`mongo urii: ${process.env.NEXT_PUBLIC_MONGODB_URI}`));
+app.get('/test', (req: any, res: any) =>
+  res.send(`mongo urii: ${process.env.NEXT_PUBLIC_MONGODB_URI}`),
+);
 
 app.listen(PORT, () => {
-    console.log(`Server started on port ${PORT}`);
+  console.log(`Server started on port ${PORT}`);
 });

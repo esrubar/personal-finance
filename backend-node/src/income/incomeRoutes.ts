@@ -1,7 +1,7 @@
 // routes/income.routes.ts
-import {Router} from 'express';
+import { Router } from 'express';
 import * as IncomeController from './incomeController';
-import {authMiddleware} from "../middlewares/middleware";
+import { authMiddleware } from '../middlewares/middleware';
 
 const router = Router();
 

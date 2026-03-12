@@ -1,5 +1,4 @@
-import {Auditable} from "./auditableModel";
-
+import { Auditable } from './auditableModel';
 
 export const createAuditable = (userName?: string): Auditable => {
   return new Auditable(userName);

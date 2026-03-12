@@ -1,5 +1,5 @@
 export interface ExpensesSummaryDto {
-    totalRealExpenses: number;
-    totalExpenses: number;
-    totalIncomes: number;
+  totalRealExpenses: number;
+  totalExpenses: number;
+  totalIncomes: number;
 }

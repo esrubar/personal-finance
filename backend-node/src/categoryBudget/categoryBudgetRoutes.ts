@@ -1,6 +1,6 @@
-import {Router} from 'express';
+import { Router } from 'express';
 import * as controller from './categoryBudgetController';
-import {authMiddleware} from "../middlewares/middleware";
+import { authMiddleware } from '../middlewares/middleware';
 
 const router = Router();
 

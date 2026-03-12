@@ -1,4 +1,4 @@
-import {Request, Response} from 'express';
+import { Request, Response } from 'express';
 import * as incomeService from './incomeService';
 
 export const create = async (req: any, res: Response) => {
