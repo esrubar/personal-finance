@@ -22,10 +22,10 @@ export const OverviewPage: React.FC = () => {
   const { categoryBudgets } = useCategoryBudgetsByMonthAndYear(month, year);
 
   useEffect(() => {
-    let list: CategoryData[] = [];
+    const list: CategoryData[] = [];
     if (!expenses || !categoryBudgets) return;
     expenses.forEach((e) => {
-      let cb = categoryBudgets.find((c) => c.categoryId === e.categoryId);
+      const cb = categoryBudgets.find((c) => c.categoryId === e.categoryId);
       list.push({
         categoryName: e.categoryName,
         budgetAmount: cb?.budgetAmount ?? 0,

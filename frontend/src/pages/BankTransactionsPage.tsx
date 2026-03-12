@@ -64,11 +64,11 @@ export const BankTransactionsPage: React.FC = () => {
         expenses.push(expense);
       }
     }
-    
+
     if (expenses.length > 0) {
       await createExpenses(expenses);
     }
-    
+
     if (incomes.length > 0) {
       await createIncomes(incomes);
     }

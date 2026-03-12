@@ -1,4 +1,4 @@
-import React, {useMemo, useState} from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   Button,
   message,
@@ -20,7 +20,7 @@ import { useCategories } from '../hooks/useCategories.ts';
 import { months, years } from '../utils/constants.ts';
 import type { ExpenseFilter } from '../models/expenseFilter.ts';
 import { getMonthNameCapitalized } from '../utils/dateUtils.ts';
-import type {MinimalIncome} from "../models/income.ts";
+import type { MinimalIncome } from '../models/income.ts';
 
 export const ExpensesPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -57,7 +57,7 @@ export const ExpensesPage: React.FC = () => {
 
     const newFilters = {
       categoriesIds: Array.isArray(filtersFromTable.category)
-        ? filtersFromTable.category.map(x => x.toString())
+        ? filtersFromTable.category.map((x) => x.toString())
         : undefined,
       month: filtersFromTable.month ? Number(filtersFromTable.month[0]) : undefined,
       year: filtersFromTable.year ? Number(filtersFromTable.year[0]) : undefined,
@@ -152,25 +152,25 @@ export const ExpensesPage: React.FC = () => {
     if (!expense.incomes?.length) return <i>No hay ingresos vinculados</i>;
 
     const incomeColumns = [
-        {
-          title: 'Amount',
-          dataIndex: 'amount',
-          render: (amount: number) => `${amount.toFixed(2)} €`
-        },
-        {
+      {
+        title: 'Amount',
+        dataIndex: 'amount',
+        render: (amount: number) => `${amount.toFixed(2)} €`,
+      },
+      {
         title: 'Description',
         dataIndex: 'description',
       },
     ];
 
     return (
-        <Table<MinimalIncome>
-            columns={incomeColumns}
-            dataSource={expense.incomes}
-            pagination={false}
-            rowKey="_id"
-            size="small"
-        />
+      <Table<MinimalIncome>
+        columns={incomeColumns}
+        dataSource={expense.incomes}
+        pagination={false}
+        rowKey="_id"
+        size="small"
+      />
     );
   };
 
@@ -194,10 +194,7 @@ export const ExpensesPage: React.FC = () => {
         title={`Total ${expenses ? getMonthNameCapitalized(expenses.usedMonth) : ''}`}
         value={`${expenses?.totalAmount.toFixed(2)} €`}
       />
-      <Statistic
-          title={`Total by category`}
-          value={`${expenses?.visibleAmount.toFixed(2)} €`}
-      />
+      <Statistic title={`Total by category`} value={`${expenses?.visibleAmount.toFixed(2)} €`} />
       <Table<Expense>
         columns={columns}
         dataSource={expenses?.data}
@@ -212,12 +209,12 @@ export const ExpensesPage: React.FC = () => {
         expandable={{
           expandedRowRender,
           rowExpandable: (record: Expense) => {
-            return record.incomes == undefined ? false : record.incomes.length > 0
+            return record.incomes == undefined ? false : record.incomes.length > 0;
           },
         }}
       />
       <Modal
-        open={isModalOpen} 
+        open={isModalOpen}
         onCancel={handleCloseModal}
         footer={null}
         title={editingExpense ? 'Edit Expense' : 'Add Expense'}

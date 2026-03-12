@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import type { User } from '../models/user';
 import { useUpdateUser } from '../hooks/useUserMutations';
-import {useRegister} from "../hooks/useRegister.ts";
+import { useRegister } from '../hooks/useRegister.ts';
 
 interface UserFormProps {
   initialData?: User;
