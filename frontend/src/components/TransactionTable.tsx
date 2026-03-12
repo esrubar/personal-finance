@@ -6,7 +6,6 @@ import dayjs from 'dayjs';
 import type { BankTransaction } from '../models/bankTransaction';
 import { DeleteOutlined } from '@ant-design/icons';
 import type { Category } from '../models/category';
-import TextArea from 'antd/es/input/TextArea';
 import { PlusOutlined } from '@ant-design/icons';
 import {ListModal} from "./ListModal.tsx";
 
@@ -29,18 +28,24 @@ export const TransactionTable: React.FC<Props> = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectOptions, setSelectOptions] = useState<{label: string, value: string}[]>([]);
   const [selectedValue, setSelectedValue] = useState<string>();
+  const [activeRecord, setActiveRecord] = useState<BankTransaction | null>(null);
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
   }
   const onSelectExpense = (expenseId: string, description?: string | undefined) => {
+      if (!description || !activeRecord) return;
 
-    if (!description) return;
+      setSelectOptions(prev => {
+          const isAlreadySelected = prev.some(option => option.value === expenseId);
+          if (isAlreadySelected) return prev;
+          return [...prev, { label: description, value: expenseId }];
+      });
 
-    setSelectOptions(prev => [
-      ...prev,
-      { label: description, value: expenseId }
-    ]);
+      onChange(expenseId, activeRecord, "linkedExpenseId");
+
+      setActiveRecord(null);
+      setIsModalOpen(false);
   }
   
   useEffect(() => {
@@ -159,7 +164,10 @@ export const TransactionTable: React.FC<Props> = ({
                         <Button
                             type="text"
                             icon={<PlusOutlined />}
-                            onClick={() => setIsModalOpen(true)}
+                            onClick={() => {
+                                setActiveRecord(record);
+                                setIsModalOpen(true);
+                            }}
                         >
                           Add item
                         </Button>

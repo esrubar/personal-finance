@@ -217,7 +217,7 @@ export const ExpensesPage: React.FC = () => {
         }}
       />
       <Modal
-        open={isModalOpen}
+        open={isModalOpen} 
         onCancel={handleCloseModal}
         footer={null}
         title={editingExpense ? 'Edit Expense' : 'Add Expense'}

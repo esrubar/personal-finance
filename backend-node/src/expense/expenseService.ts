@@ -5,8 +5,7 @@ import {ExpenseModel} from "./expenseModel";
 import {getIncomesByLinkedExpense} from "../income/incomeService";
 import {createAuditable, updateAuditable} from "../auditable/auditableService";
 import {FilteredExpenseQuery} from "./filteredExpensequeryDTO";
-import {ExpenseDTO, MensualExpenseDTO, PaginatedExpense} from "./expenseDTO";
-import {ExpenseDocument} from "./expense";
+import {ExpenseDTO, MensualExpenseDTO} from "./expenseDTO";
 import {mapToPaginatedExpense} from "./expenseMapper";
 
 export const createExpense = async (data: any, userName: string) => {
@@ -33,7 +32,8 @@ export const createExpenses = async (body: ExpenseDTO[], userName: string) => {
 
         return {
             ...cleanedExpense,
-            auditable: createAuditable(userName),
+            tempId: null,
+            auditable: createAuditable(userName)
         };
     });
 
@@ -180,9 +180,14 @@ export const getTotalAmountForMonth = async (year: number, month: number) => {
     return +(totalAmountResult[0]?.totalAmount ?? 0).toFixed(2);
 }
 
-export const getExpensesByDescription =  async (userName: string, description: string)=>{
-    return ExpenseModel
-        .find({description, "auditable.createdBy": userName})
+export const getExpensesByDescription =  async (description: string, userName: string)=>{
+    const query: any = { "auditable.createdBy": userName };
+
+    if (description) {
+        query.description = { $regex: description, $options: 'i' };
+    }
+
+    return ExpenseModel.find(query)
         .populate('category', 'name')
         .sort({ transactionDate: -1 })
         .lean();

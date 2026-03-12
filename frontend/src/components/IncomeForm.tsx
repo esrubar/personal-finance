@@ -10,7 +10,7 @@ interface IncomeFormProps {
   onSuccess?: () => void;
 }
 
-const IncomeForm: React.FC<IncomeFormProps> = ({ initialData, onSuccess }) => {
+const  IncomeForm: React.FC<IncomeFormProps> = ({ initialData, onSuccess }) => {
   const [amount, setAmount] = useState(initialData?.amount || 0);
   const [description, setDescription] = useState(initialData?.description);
   const [transactionDate, setTransactionDate] = useState(

@@ -14,6 +14,8 @@ export function useExpenses(params: FilteredExpenseParams, refreshKey?: number) 
     expenseDataSource
       .getExpenses(params)
       .then((res) => {
+
+        console.log("expenses", res)
         setExpenses(res);
       })
       .catch(setError)
@@ -64,6 +66,7 @@ export function useExpensesByDescription(description: string) {
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
+    console.log("useExpensesByDescription", description);
     if (!description) return;
     setLoading(true);
     expenseDataSource

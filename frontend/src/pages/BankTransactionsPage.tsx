@@ -64,16 +64,13 @@ export const BankTransactionsPage: React.FC = () => {
         expenses.push(expense);
       }
     }
-    console.log('expenses', expenses);
-    console.log('incomes', incomes);
-
+    
     if (expenses.length > 0) {
-      await createExpenses(expenses).then(async (expenses: Expense[]) => {
-        console.log('expenses created', expenses);
-        if (expenses && incomes.length > 0) {
-          await createIncomes(incomes);
-        }
-      });
+      await createExpenses(expenses);
+    }
+    
+    if (incomes.length > 0) {
+      await createIncomes(incomes);
     }
 
     setTransactions([]);

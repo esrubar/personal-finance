@@ -19,38 +19,42 @@ export const createIncomes = async (data: IncomeDTO[], userName: string) => {
         .filter((i: any) => i.linkedExpenseId != null)
         .map((i: any) => i.linkedExpenseId);
 
-    const expenses = await ExpenseModel
-        .find({tempId: {$in: linkedTempIds}})
+    const expensesFound = await ExpenseModel.find({
+        $or: [
+            { tempId: { $in: linkedTempIds } },
+            { _id: { $in: linkedTempIds } }
+        ]
+    })
         .select('_id tempId')
         .lean();
 
-    const expenseMap = new Map(
-        expenses.map(e => [e.tempId, e._id.toString()])
-    );
+    const expenseLookup = new Map<string, string>();
+    expensesFound.forEach(e => {
+        if (e.tempId) expenseLookup.set(e.tempId, e._id.toString());
+        expenseLookup.set(e._id.toString(), e._id.toString());
+    });
 
     const incomes = data.map((income: any, index: number) => {
-        const cleanedIncome = {...income};
-
-        if (!cleanedIncome._id || cleanedIncome._id === '') {
-            delete cleanedIncome._id;
-        }
-
-        if (!cleanedIncome.category || !cleanedIncome.category._id || cleanedIncome.category._id === '') {
+        if (!income.category || !income.category._id || income.category._id === '') {
             throw new Error(`El gasto en la posición ${index} tiene un category._id vacío o inválido.`);
         }
+        const { _id, ...cleanIncome } = income;
+        const hasValidId = _id && _id !== '';
 
-        let expenseId: string | null = null;
-        if (cleanedIncome.linkedExpenseId != null) {
-            expenseId = expenseMap.get(cleanedIncome.linkedExpenseId) ?? null;
+        let finalExpenseId: string | null = null;
 
-            if (cleanedIncome.linkedExpenseId && !expenseId) {
-                console.warn(`⚠️ No se encontró un gasto con tempId "${cleanedIncome.linkedExpenseId}"`);
+        if (cleanIncome.linkedExpenseId) {
+            finalExpenseId = expenseLookup.get(cleanIncome.linkedExpenseId) || null;
+
+            if (!finalExpenseId) {
+                console.warn(`⚠️ Vínculo no encontrado para: ${cleanIncome.linkedExpenseId}`);
             }
         }
 
         return {
-            ...cleanedIncome,
-            linkedExpenseId: expenseId,
+            ...(hasValidId ? { _id } : {}),
+            ...cleanIncome,
+            linkedExpenseId: finalExpenseId,
             auditable: createAuditable(userName),
         };
     });
