@@ -13,19 +13,17 @@ interface UserFormProps {
 
 export const ListModal = ({ onSelectExpense, isModalOpen, handleCloseModal }: UserFormProps) => {
   const [searchText, setSearchText] = useState('');
-  const [pagination, setPagination] = useState({
+  /*const [pagination, setPagination] = useState({
     page: 1,
     limit: 10,
     total: 0,
-  });
+  });*/
 
   const { expenses, loading } = useExpensesByDescription(searchText);
 
   const handleSearch = () => {
-    setPagination((p) => ({ ...p, page: 1 }));
+    //setPagination((p) => ({ ...p, page: 1 }));
   };
-
-  const handleTableChange = (p: any) => {};
 
   const columns: ColumnsType<Expense> = [
     {
@@ -71,7 +69,6 @@ export const ListModal = ({ onSelectExpense, isModalOpen, handleCloseModal }: Us
           columns={columns}
           dataSource={expenses}
           loading={loading}
-          onChange={handleTableChange}
           onRow={(record) => ({
             onClick: () => {
               if (!record._id) return;

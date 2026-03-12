@@ -37,7 +37,6 @@ export const TransactionTable: React.FC<Props> = ({
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectOptions, setSelectOptions] = useState<{ label: string; value: string }[]>([]);
-  const [selectedValue, setSelectedValue] = useState<string>();
   const [activeRecord, setActiveRecord] = useState<BankTransaction | null>(null);
 
   const handleCloseModal = () => {
@@ -67,10 +66,6 @@ export const TransactionTable: React.FC<Props> = ({
       }));
     setSelectOptions(a);
   }, [transactions]);
-
-  useEffect(() => {
-    console.log(selectedValue);
-  }, [selectedValue]);
 
   const columns: ColumnsType<BankTransaction> = [
     {
@@ -153,7 +148,7 @@ export const TransactionTable: React.FC<Props> = ({
       title: 'linked Expense',
       dataIndex: 'linkedExpenseId',
       key: 'linkedExpenseId',
-      render: (value, record) => {
+      render: (_, record) => {
         if (record.type === 'expense') return null;
 
         return (
