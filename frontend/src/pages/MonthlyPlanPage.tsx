@@ -4,106 +4,81 @@ import {
   Col,
   Divider,
   InputNumber,
-  message,
   Row,
   Select,
   Table,
   Typography,
 } from 'antd';
 import { useState } from 'react';
+import {useCategories} from "../hooks/useCategories.ts";
+import {useCreateCategoryBudget} from "../hooks/useCategoryBudgetMutations.ts";
+import type {CategoryBudget} from "../models/categoryBudget.ts";
 
 const { Option } = Select;
 const { Title, Text } = Typography;
 
-interface Allocation {
-  key: string;
-  type: 'expense' | 'saving';
-  name: string;
-  amount: number;
-}
-
-const categories = ['Agua', 'Comida', 'Peluquería', 'Electricidad', 'Gas'];
-const projects = ['Boda hermana', 'Viaje verano', 'Ahorro genérico'];
-
 export const MonthlyPlanPage = () => {
   const [salary, setSalary] = useState<number>(1000);
-  const [data, setData] = useState<Allocation[]>([]);
+  const [month, setMonth] = useState<number>(0);
+  const [year, setYear] = useState<number>(2026);
+  const [data, setData] = useState<CategoryBudget[]>([]);
   const [counter, setCounter] = useState(0);
 
-  const handleAddRow = (type: 'expense' | 'saving') => {
-    const newRow: Allocation = {
-      key: String(counter),
-      type,
-      name: '',
-      amount: 0,
+  const { categories } = useCategories();
+  const { createCategoryBudget } = useCreateCategoryBudget();
+
+  const handleAddRow = () => {
+    const newRow: CategoryBudget = {
+      categoryId: '',
+      budgetAmount: 0,
+      month: month,
+      year: year
     };
     setData([...data, newRow]);
     setCounter(counter + 1);
   };
 
-  const handleChange = (value: any, key: string, field: keyof Allocation) => {
-    const newData = data.map((item) => (item.key === key ? { ...item, [field]: value } : item));
+  const handleChange = (value: string | number | null, record: CategoryBudget, field: keyof CategoryBudget) => {
+    const newData = data.map((item) => (item === record ? { ...item, [field]: value } : item));
     setData(newData);
   };
 
-  const totalAssigned = data.reduce((sum, item) => sum + item.amount, 0);
+  const totalAssigned = data.reduce((sum, item) => sum + item.budgetAmount, 0);
 
   const handleSavePlan = () => {
-    if (totalAssigned !== salary) {
-      message.error('El total asignado debe ser igual al sueldo.');
-      return;
-    }
-    message.success('Plan mensual guardado correctamente.');
-    console.log('Plan guardado:', { salary, allocations: data });
+    // TODO: create enpoint to save full list in once
+    data.forEach(async (item) => {
+      await createCategoryBudget(item);
+    })
   };
 
   const columns = [
     {
-      title: 'Tipo',
-      dataIndex: 'type',
-      render: (type: 'expense' | 'saving', record: Allocation) => (
-        <Select
-          value={type}
-          style={{ width: 120 }}
-          onChange={(value) => handleChange(value, record.key, 'type')}
-        >
-          <Option value="expense">Gasto</Option>
-          <Option value="saving">Ahorro</Option>
-        </Select>
-      ),
-    },
-    {
-      title: 'Categoría / Proyecto',
-      dataIndex: 'name',
-      render: (name: string, record: Allocation) => (
+      title: 'Category',
+      dataIndex: 'categoryId',
+      render: (name: string, record: CategoryBudget) => (
         <Select
           value={name || undefined}
           style={{ width: 200 }}
           placeholder="Selecciona..."
-          onChange={(value) => handleChange(value, record.key, 'name')}
+          onChange={(value) => handleChange(value, record, 'categoryId')}
         >
-          {record.type === 'expense'
-            ? categories.map((cat) => (
-                <Option key={cat} value={cat}>
-                  {cat}
-                </Option>
-              ))
-            : projects.map((proj) => (
-                <Option key={proj} value={proj}>
-                  {proj}
+          {categories.map((cat) => (
+                <Option key={cat._id} value={cat._id}>
+                  {cat.name}
                 </Option>
               ))}
         </Select>
       ),
     },
     {
-      title: 'Cantidad (€)',
-      dataIndex: 'amount',
-      render: (amount: number, record: Allocation) => (
+      title: 'Budget Amount',
+      dataIndex: 'budgetAmount',
+      render: (amount: number, record: CategoryBudget) => (
         <InputNumber
           value={amount}
           min={0}
-          onChange={(value) => handleChange(value, record.key, 'amount')}
+          onChange={(value) => handleChange(value, record, 'budgetAmount')}
         />
       ),
     },
@@ -115,19 +90,30 @@ export const MonthlyPlanPage = () => {
         <Title level={3}>Plan mensual</Title>
         <Row gutter={16} align="middle">
           <Col>
-            <Text strong>Sueldo mensual (€):</Text>
+            <Text strong>Salary:</Text>
           </Col>
           <Col>
             <InputNumber value={salary} min={0} onChange={(val) => setSalary(val || 0)} />
           </Col>
         </Row>
+        <Row gutter={16} align="middle">
+          <Col>
+            <Text strong>Date:</Text>
+          </Col>
+          <Col>
+            <InputNumber value={month} min={0} onChange={(val) => setMonth(val || 0)} />
+          </Col>
+          <Col>
+            <InputNumber value={year} min={0} onChange={(val) => setYear(val || 0)} />
+          </Col>
+        </Row>
 
         <Divider />
 
-        <Button type="primary" onClick={() => handleAddRow('expense')} style={{ marginRight: 8 }}>
-          Añadir Gasto
+        <Button type="primary" onClick={() => handleAddRow()} style={{ marginRight: 8 }}>
+          Add Expense
         </Button>
-        <Button onClick={() => handleAddRow('saving')}>Añadir Ahorro</Button>
+        <Button disabled onClick={() => handleAddRow()}>Añadir Save</Button>
 
         <Table
           style={{ marginTop: 16 }}
@@ -137,7 +123,7 @@ export const MonthlyPlanPage = () => {
           rowKey="key"
           footer={() => (
             <div>
-              <Text strong>Total asignado:</Text> {totalAssigned} € / {salary} €
+              <Text strong>Total assigned:</Text> {totalAssigned} € / {salary} €
             </div>
           )}
         />
@@ -145,7 +131,7 @@ export const MonthlyPlanPage = () => {
         <Divider />
 
         <Button type="primary" onClick={handleSavePlan}>
-          Guardar plan mensual
+          Save monthly plan
         </Button>
       </Card>
     </div>
