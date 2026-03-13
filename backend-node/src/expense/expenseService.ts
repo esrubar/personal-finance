@@ -18,24 +18,20 @@ export const createExpense = async (data: any, userName: string) => {
 
 export const createExpenses = async (body: ExpenseDTO[], userName: string) => {
   const expenses = body.map((expense: any, index: number) => {
-    const cleanedExpense = { ...expense };
-
-    // Delete empty _id
-    if (!cleanedExpense._id || cleanedExpense._id === '') {
-      delete cleanedExpense._id;
-    }
-
-    // Validate category._id
     if (
-      !cleanedExpense.category ||
-      !cleanedExpense.category._id ||
-      cleanedExpense.category._id === ''
+        !expense.category ||
+        !expense.category._id ||
+        expense.category._id === ''
     ) {
       throw new Error(`El gasto en la posición ${index} tiene un category._id vacío o inválido.`);
     }
-
+    
+    const {_id, ...cleanExpense} = expense;
+    const hasValidId = _id && _id !== '';
+    
     return {
-      ...cleanedExpense,
+      ...(hasValidId ? { _id } : {}),
+      ...cleanExpense,
       tempId: null,
       auditable: createAuditable(userName),
     };
