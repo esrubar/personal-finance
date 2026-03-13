@@ -4,6 +4,7 @@ import { Category } from './category';
 // Schema
 const CategorySchema = new Schema<Category>({
   name: { type: String, required: true },
+  type: { type: String, required: false },
   auditable: {
     createdAt: { type: Date, required: true, default: Date.now },
     updatedAt: { type: Date, required: true, default: Date.now },

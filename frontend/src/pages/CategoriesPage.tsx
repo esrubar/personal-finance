@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Table, Space, Modal, message } from 'antd';
+import {Button, Table, Space, Modal, message, Tag} from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 import { useCategories } from '../hooks/useCategories';
 import { useDeleteCategory } from '../hooks/useCategoryMutations';
@@ -14,7 +14,12 @@ export const CategoriesPage: React.FC = () => {
   const { deleteCategory, loading: deleting } = useDeleteCategory();
 
   const columns = [
-    { title: 'Name', dataIndex: 'name', key: 'name' },
+    { title: 'Name', dataIndex: 'name', key: 'name' }, 
+      { title: 'Type', dataIndex: 'type', key: 'type', 
+          render: (value: string) => value == "Income" 
+              ? <Tag color="green">{value}</Tag>
+              : <Tag color="volcano">{value}</Tag>,
+      },
     {
       title: 'Actions',
       key: 'actions',

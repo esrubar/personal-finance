@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
+import { Form, Input, Select, Button, message } from 'antd';
 import type { Category } from '../models/category';
 import { useCreateCategory, useUpdateCategory } from '../hooks/useCategoryMutations';
 
@@ -8,54 +9,76 @@ interface CategoryFormProps {
 }
 
 const CategoryForm: React.FC<CategoryFormProps> = ({ initialData, onSuccess }) => {
-  const [name, setName] = useState(initialData?.name || '');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
+  const [form] = Form.useForm();
   const { createCategory } = useCreateCategory();
   const { updateCategory } = useUpdateCategory();
 
+  // Sincronizar initialData con los campos del formulario
   useEffect(() => {
     if (initialData) {
-      setName(initialData.name);
+      form.setFieldsValue(initialData);
+    } else {
+      form.resetFields();
     }
-  }, [initialData]);
+  }, [initialData, form]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
+  const onFinish = async (values: any) => {
     try {
       if (initialData && initialData._id) {
-        await updateCategory(initialData._id, { ...initialData, name });
+        await updateCategory(initialData._id, { ...initialData, ...values });
+        message.success('Categoría actualizada');
       } else {
-        await createCategory({ name } as Category);
+        await createCategory(values as Category);
+        message.success('Categoría creada');
       }
+
       if (onSuccess) onSuccess();
     } catch (err: any) {
-      setError(err.message || 'Error saving category');
-    } finally {
-      setLoading(false);
+      // Ant Design maneja internamente las validaciones, 
+      // pero capturamos errores de API aquí
+      message.error(err.message || 'Error al guardar la categoría');
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        <label htmlFor="name">Name:</label>
-        <input
-          id="name"
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-        />
-      </div>
-      {error && <div style={{ color: 'red' }}>{error}</div>}
-      <button type="submit" disabled={loading}>
-        {initialData ? 'Update' : 'Create'} Category
-      </button>
-    </form>
+      <Form
+          form={form}
+          layout="vertical"
+          onFinish={onFinish}
+          initialValues={{ type: 'expense', ...initialData }}
+      >
+        <Form.Item
+            name="name"
+            label="Nombre"
+            rules={[{ required: true, message: 'El nombre es obligatorio' }]}
+        >
+          <Input placeholder="Escribe el nombre de la categoría" />
+        </Form.Item>
+
+        <Form.Item
+            name="type"
+            label="Tipo"
+            rules={[{ required: true, message: 'Selecciona un tipo' }]}
+        >
+          <Select
+              placeholder="Selecciona el tipo"
+              options={[
+                { value: 'income', label: 'Income (Ingreso)' },
+                { value: 'expense', label: 'Expense (Gasto)' },
+              ]}
+          />
+        </Form.Item>
+
+        <Form.Item>
+          <Button
+              type="primary"
+              htmlType="submit"
+              block
+          >
+            {initialData ? 'Actualizar' : 'Crear'} Categoría
+          </Button>
+        </Form.Item>
+      </Form>
   );
 };
 
