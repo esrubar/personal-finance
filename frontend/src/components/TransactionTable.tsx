@@ -157,7 +157,6 @@ export const TransactionTable: React.FC<Props> = ({
             value={record.linkedExpenseId ?? undefined}
             onChange={(val) => {
               onChange(val, record, 'linkedExpenseId');
-              console.log('onchange linkedexpenseid');
             }}
             allowClear
             style={{ width: 180 }}

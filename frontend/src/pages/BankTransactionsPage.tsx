@@ -43,11 +43,9 @@ export const BankTransactionsPage: React.FC = () => {
   };
 
   const handleUpdate = (value: any, record: BankTransaction, field: keyof BankTransaction) => {
-    console.log(field);
     const newData = transactions.map((item) =>
       item === record ? { ...item, [field]: value } : item
     );
-    console.log(newData);
     setTransactions(newData);
   };
 
