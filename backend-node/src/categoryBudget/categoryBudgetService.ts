@@ -20,7 +20,9 @@ export const getByMonthAndYear = async (month: Number, year: Number, userName: s
 };
 
 export const getAll = async (userName: string): Promise<CategoryBudgetDTO[]> => {
-  let categoryBudgets = await CategoryBudgetModel.find();
+  let categoryBudgets = await CategoryBudgetModel.find({
+    'auditable.createdBy': userName,
+  });
   let categories = await CategoryModel.find({
     _id: { $in: categoryBudgets.map((x) => x.categoryId) },
     'auditable.createdBy': userName,
