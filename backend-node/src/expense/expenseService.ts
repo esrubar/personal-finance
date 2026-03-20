@@ -114,7 +114,7 @@ export async function getMensualExpenses(userName: string): Promise<MensualExpen
     // 1. Filtra los gastos creados por "system" y en el rango de fechas indicado
     {
       $match: {
-        'auditable.createdBy': 'system',
+        'auditable.createdBy': userName,
         transactionDate: { $gte: firstDay, $lte: lastDay },
       },
     },

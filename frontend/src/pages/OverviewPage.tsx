@@ -1,8 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { useMensualExpenses } from '../hooks/useExpenses.ts';
-import { useCategoryBudgetsByMonthAndYear } from '../hooks/useCategoryBudgets.ts';
-import { getColorForCategory } from '../utils/getCategoryColors.ts';
+import React, { useState } from 'react';
 import { CategoryBudgetCard } from '../components/CategoryBudgetCard.tsx';
+import {useComparisonMensualExpenses} from "../hooks/useComparisonMensualExpenses.ts";
 
 export interface CategoryData {
   categoryName: string;
@@ -16,25 +14,8 @@ export const OverviewPage: React.FC = () => {
   const now = new Date();
   const year = now.getFullYear();
   const month = now.getMonth() + 1; // Months are 0-indexed in JavaScript, so we add 1 to match the expected format
-  const [comparisonMensualExpenses, setcomparisonMensualExpenses] = useState<CategoryData[]>([]);
 
-  const { expenses } = useMensualExpenses(refreshKey);
-  const { categoryBudgets } = useCategoryBudgetsByMonthAndYear(month, year);
-
-  useEffect(() => {
-    const list: CategoryData[] = [];
-    if (!expenses || !categoryBudgets) return;
-    expenses.forEach((e) => {
-      const cb = categoryBudgets.find((c) => c.categoryId === e.categoryId);
-      list.push({
-        categoryName: e.categoryName,
-        budgetAmount: cb?.budgetAmount ?? 0,
-        spentAmount: e.totalAmount,
-        categoryColor: getColorForCategory(e.categoryName),
-      });
-    });
-    setcomparisonMensualExpenses(list);
-  }, [expenses, categoryBudgets]);
+  const { comparisonMensualExpenses } = useComparisonMensualExpenses(month, year, refreshKey);
 
   return (
     <>
