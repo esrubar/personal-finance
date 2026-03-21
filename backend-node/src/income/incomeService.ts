@@ -3,7 +3,8 @@ import { IncomeModel } from './incomeModel';
 import { IncomeDTO } from './incomeDTO';
 import { ExpenseModel } from '../expense/expenseModel';
 import { IncomeGroupedByLinkedExpense } from './income';
-import { Types } from 'mongoose';
+import mongoose, { Types } from 'mongoose';
+import { isObjectId } from '../utils/objectIdValidator';
 
 export const createIncome = async (data: any, userName: string) => {
   const incomeData = {
@@ -14,20 +15,35 @@ export const createIncome = async (data: any, userName: string) => {
 };
 
 export const createIncomes = async (data: IncomeDTO[], userName: string) => {
-  const linkedTempIds = data
-    .filter((i: any) => i.linkedExpenseId != null)
-    .map((i: any) => i.linkedExpenseId);
+  const objectIds: Types.ObjectId[] = [];
+  const uuidSet = new Set<string>();
+
+  data.forEach((item: any) => {
+    const id = item.linkedExpenseId;
+    if (id == null) return;
+
+    if (isObjectId(id)) {
+      objectIds.push(new Types.ObjectId(id));
+    } else {
+      uuidSet.add(id);
+    }
+  });
 
   const expensesFound = await ExpenseModel.find({
-    $or: [{ tempId: { $in: linkedTempIds } }, { _id: { $in: linkedTempIds } }],
+    $or: [{ tempId: { $in: Array.from(uuidSet) } }, { _id: { $in: objectIds } }],
   })
     .select('_id tempId')
-    .lean();
+    .lean<ExpenseDoc[]>();
 
   const expenseLookup = new Map<string, string>();
-  expensesFound.forEach((e) => {
-    if (e.tempId) expenseLookup.set(e.tempId, e._id.toString());
-    expenseLookup.set(e._id.toString(), e._id.toString());
+  expensesFound.forEach((doc) => {
+    const idStr = doc._id.toString();
+
+    if (doc.tempId && uuidSet.has(doc.tempId)) {
+      expenseLookup.set(doc.tempId, idStr);
+    }
+
+    expenseLookup.set(idStr, idStr);
   });
 
   const incomes = data.map((income: any, index: number) => {
@@ -127,3 +143,8 @@ export const deleteIncome = async (id: string, userName: string) => {
     throw new Error('You dont have permission to delete this income');
   }
 };
+
+interface ExpenseDoc {
+  _id: Types.ObjectId;
+  tempId?: string | null;
+}
