@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { CategoryBudgetCard } from '../components/CategoryBudgetCard.tsx';
-import {useComparisonMensualExpenses} from "../hooks/useComparisonMensualExpenses.ts";
+import { useComparisonMensualExpenses } from '../hooks/useComparisonMensualExpenses.ts';
 
 export interface CategoryData {
   categoryName: string;

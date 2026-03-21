@@ -7,6 +7,7 @@ import type { MinimalIncome } from './income.ts';
 export interface Expense {
   _id?: string;
   amount: number;
+  realAmount?: number;
   category: Category;
   transactionDate?: Date;
   description?: string;

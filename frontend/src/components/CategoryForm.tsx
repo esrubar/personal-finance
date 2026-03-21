@@ -34,51 +34,47 @@ const CategoryForm: React.FC<CategoryFormProps> = ({ initialData, onSuccess }) =
 
       if (onSuccess) onSuccess();
     } catch (err: any) {
-      // Ant Design maneja internamente las validaciones, 
+      // Ant Design maneja internamente las validaciones,
       // pero capturamos errores de API aquí
       message.error(err.message || 'Error al guardar la categoría');
     }
   };
 
   return (
-      <Form
-          form={form}
-          layout="vertical"
-          onFinish={onFinish}
-          initialValues={{ type: 'expense', ...initialData }}
+    <Form
+      form={form}
+      layout="vertical"
+      onFinish={onFinish}
+      initialValues={{ type: 'expense', ...initialData }}
+    >
+      <Form.Item
+        name="name"
+        label="Nombre"
+        rules={[{ required: true, message: 'El nombre es obligatorio' }]}
       >
-        <Form.Item
-            name="name"
-            label="Nombre"
-            rules={[{ required: true, message: 'El nombre es obligatorio' }]}
-        >
-          <Input placeholder="Escribe el nombre de la categoría" />
-        </Form.Item>
+        <Input placeholder="Escribe el nombre de la categoría" />
+      </Form.Item>
 
-        <Form.Item
-            name="type"
-            label="Tipo"
-            rules={[{ required: true, message: 'Selecciona un tipo' }]}
-        >
-          <Select
-              placeholder="Selecciona el tipo"
-              options={[
-                { value: 'income', label: 'Income (Ingreso)' },
-                { value: 'expense', label: 'Expense (Gasto)' },
-              ]}
-          />
-        </Form.Item>
+      <Form.Item
+        name="type"
+        label="Tipo"
+        rules={[{ required: true, message: 'Selecciona un tipo' }]}
+      >
+        <Select
+          placeholder="Selecciona el tipo"
+          options={[
+            { value: 'income', label: 'Income (Ingreso)' },
+            { value: 'expense', label: 'Expense (Gasto)' },
+          ]}
+        />
+      </Form.Item>
 
-        <Form.Item>
-          <Button
-              type="primary"
-              htmlType="submit"
-              block
-          >
-            {initialData ? 'Actualizar' : 'Crear'} Categoría
-          </Button>
-        </Form.Item>
-      </Form>
+      <Form.Item>
+        <Button type="primary" htmlType="submit" block>
+          {initialData ? 'Actualizar' : 'Crear'} Categoría
+        </Button>
+      </Form.Item>
+    </Form>
   );
 };
 

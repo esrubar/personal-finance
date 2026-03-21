@@ -1,18 +1,8 @@
-import {
-  Button,
-  Card,
-  Col,
-  Divider,
-  InputNumber,
-  Row,
-  Select,
-  Table,
-  Typography,
-} from 'antd';
+import { Button, Card, Col, Divider, InputNumber, Row, Select, Table, Typography } from 'antd';
 import { useState } from 'react';
-import {useCategories} from "../hooks/useCategories.ts";
-import {useCreateCategoryBudget} from "../hooks/useCategoryBudgetMutations.ts";
-import type {CategoryBudget} from "../models/categoryBudget.ts";
+import { useCategories } from '../hooks/useCategories.ts';
+import { useCreateCategoryBudget } from '../hooks/useCategoryBudgetMutations.ts';
+import type { CategoryBudget } from '../models/categoryBudget.ts';
 
 const { Option } = Select;
 const { Title, Text } = Typography;
@@ -32,13 +22,17 @@ export const MonthlyPlanPage = () => {
       categoryId: '',
       budgetAmount: 0,
       month: month,
-      year: year
+      year: year,
     };
     setData([...data, newRow]);
     setCounter(counter + 1);
   };
 
-  const handleChange = (value: string | number | null, record: CategoryBudget, field: keyof CategoryBudget) => {
+  const handleChange = (
+    value: string | number | null,
+    record: CategoryBudget,
+    field: keyof CategoryBudget
+  ) => {
     const newData = data.map((item) => (item === record ? { ...item, [field]: value } : item));
     setData(newData);
   };
@@ -49,7 +43,7 @@ export const MonthlyPlanPage = () => {
     // TODO: create enpoint to save full list in once
     data.forEach(async (item) => {
       await createCategoryBudget(item);
-    })
+    });
   };
 
   const columns = [
@@ -64,10 +58,10 @@ export const MonthlyPlanPage = () => {
           onChange={(value) => handleChange(value, record, 'categoryId')}
         >
           {categories.map((cat) => (
-                <Option key={cat._id} value={cat._id}>
-                  {cat.name}
-                </Option>
-              ))}
+            <Option key={cat._id} value={cat._id}>
+              {cat.name}
+            </Option>
+          ))}
         </Select>
       ),
     },
@@ -113,7 +107,9 @@ export const MonthlyPlanPage = () => {
         <Button type="primary" onClick={() => handleAddRow()} style={{ marginRight: 8 }}>
           Add Expense
         </Button>
-        <Button disabled onClick={() => handleAddRow()}>Añadir Save</Button>
+        <Button disabled onClick={() => handleAddRow()}>
+          Añadir Save
+        </Button>
 
         <Table
           style={{ marginTop: 16 }}
