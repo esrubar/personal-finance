@@ -77,7 +77,22 @@ export const ExpensesPage: React.FC = () => {
       title: 'Amount',
       dataIndex: 'amount',
       key: 'amount',
-      render: (amount: number) => `${amount.toFixed(2)} €`,
+      render: (amount: number, record: Expense) => {
+        const isDifferent = record.realAmount !== undefined && record.realAmount !== amount;
+
+        if (isDifferent) {
+          return (
+            <>
+              <span>{record.realAmount?.toFixed(2)} €</span>
+              <small style={{ textDecoration: 'line-through', marginLeft: 8, color: '#999' }}>
+                ({amount.toFixed(2)} €)
+              </small>
+            </>
+          );
+        }
+
+        return `${amount.toFixed(2)} €`;
+      },
     },
     { title: 'Description', dataIndex: 'description', key: 'description' },
     {
