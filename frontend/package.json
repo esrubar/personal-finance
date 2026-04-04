@@ -12,6 +12,7 @@
     "format": "prettier --write 'src/**/*.{ts,tsx,js,jsx,json,css,md}'"
   },
   "dependencies": {
+    "@ant-design/charts": "^2.6.7",
     "antd": "^5.25.4",
     "axios": "^1.9.0",
     "dayjs": "^1.11.13",
