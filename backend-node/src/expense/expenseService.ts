@@ -62,17 +62,15 @@ export const getFilteredExpenses = async (
   const incomeGroups = await getIncomesByLinkedExpense(expenseIds);
 
   const incomeMap = new Map(incomeGroups.map((g) => [g._id.toString(), g.incomes]));
-  
 
   const enrichedExpenses = expenses.map((expense) => {
     const incomes = incomeMap.get(expense._id.toString()) ?? [];
-    return (
-        {
-          ...expense,
-          realAmount: expense.amount - incomes.reduce((a, b) => a + b.amount, 0),
-          amount: expense.amount,
-          incomes: incomes,
-        });
+    return {
+      ...expense,
+      realAmount: expense.amount - incomes.reduce((a, b) => a + b.amount, 0),
+      amount: expense.amount,
+      incomes: incomes,
+    };
   });
 
   return new PaginatedResponse({

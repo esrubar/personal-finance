@@ -1,5 +1,5 @@
 import axios from '../api/axios';
-import type {SavingProject, SavingProjectWithEntries} from '../models/savingProject';
+import type { SavingProject, SavingProjectWithEntries } from '../models/savingProject';
 
 const API_URL = '/api/saving-projects';
 
@@ -32,5 +32,5 @@ export const deleteSavingProject = async (id: string): Promise<void> => {
 
 export const getSavingProjectDetails = async (id: string): Promise<SavingProjectWithEntries> => {
   const { data } = await axios.get<SavingProjectWithEntries>(`${API_URL}/${id}/entries`);
-  return data;  
-}
+  return data;
+};

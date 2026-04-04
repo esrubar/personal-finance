@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import * as savingProjectDataSource from '../data/savingProjectDataSource';
-import type {SavingProject, SavingProjectWithEntries} from '../models/savingProject';
+import type { SavingProject, SavingProjectWithEntries } from '../models/savingProject';
 
 export function useSavingProjects(refreshKey?: number) {
   const [savingProjects, setSavingProjects] = useState<SavingProject[]>([]);
@@ -46,10 +46,10 @@ export function useSavingProjectDetails(id: string) {
     if (!id) return;
     setLoading(true);
     savingProjectDataSource
-        .getSavingProjectDetails(id)
-        .then(setSavingProject)
-        .catch(setError)
-        .finally(() => setLoading(false));
+      .getSavingProjectDetails(id)
+      .then(setSavingProject)
+      .catch(setError)
+      .finally(() => setLoading(false));
   }, [id]);
 
   return { savingProject, loading, error };

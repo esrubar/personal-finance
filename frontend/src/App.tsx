@@ -12,8 +12,8 @@ import { LoginPage } from './pages/LoginPage.tsx';
 import { PrivateRoute } from './components/PrivateRoute.tsx';
 import { PublicRoute } from './components/PublicRoute.tsx';
 import { MainLayout } from './pages/MainLayout.tsx';
-import {SavingProjectsPage} from "./pages/SavingProjectsPage.tsx";
-import {SavingEntryPage} from "./pages/SavingEntryPage.tsx";
+import { SavingProjectsPage } from './pages/SavingProjectsPage.tsx';
+import { SavingEntryPage } from './pages/SavingEntryPage.tsx';
 
 const App: React.FC = () => {
   return (

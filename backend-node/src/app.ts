@@ -14,7 +14,7 @@ import savingProjectRoutes from './savingProject/savingProjectRoutes';
 import categoryBudgetRoutes from './categoryBudget/categoryBudgetRoutes';
 import incomeRoutes from './income/incomeRoutes';
 import importTransactionRoutes from './importTransaction/importTransactionRoutes';
-import savingEntryRoutes from "./savingEntry/savingEntryRoutes";
+import savingEntryRoutes from './savingEntry/savingEntryRoutes';
 
 config();
 

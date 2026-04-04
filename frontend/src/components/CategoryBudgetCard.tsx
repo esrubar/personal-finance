@@ -1,4 +1,4 @@
-import React from 'react';
+/*import React from 'react';
 import { Card, Progress, Typography, Row, Col, Tag } from 'antd';
 import type { CategoryData } from '../pages/OverviewPage.tsx';
 
@@ -39,3 +39,4 @@ export const CategoryBudgetCard: React.FC<Props> = ({ data }) => {
     </Card>
   );
 };
+*/

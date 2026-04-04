@@ -1,7 +1,7 @@
 import { createAuditable, updateAuditable } from '../auditable/auditableService';
 import { SavingProjectModel } from './savingsProjectModel';
-import {SavingEntryModel} from "../savingEntry/savingEntryModel";
-import {SavingProjectWithEntries} from "./savingProject";
+import { SavingEntryModel } from '../savingEntry/savingEntryModel';
+import { SavingProjectWithEntries } from './savingProject';
 
 export const createSavingProject = async (data: any, userName: string) => {
   const savingProjectData = {
@@ -46,10 +46,13 @@ export const deleteSavingProject = async (id: string, userName: string) => {
   }
 };
 
-export const getSavingProjectWithEntries = async (id: string, userName: string): Promise<SavingProjectWithEntries> => {
+export const getSavingProjectWithEntries = async (
+  id: string,
+  userName: string,
+): Promise<SavingProjectWithEntries> => {
   const savingProject = await SavingProjectModel.findOne({
     _id: id,
-    "auditable.createdBy": userName
+    'auditable.createdBy': userName,
   });
   if (!savingProject) {
     throw Error(`There are no saving project with id ${id}`);
@@ -60,14 +63,14 @@ export const getSavingProjectWithEntries = async (id: string, userName: string):
 
   const savingEntries = await SavingEntryModel.find({
     'auditable.createdBy': userName,
-    'projectId': savingProject._id
-  })
+    projectId: savingProject._id,
+  });
 
   return {
     id: savingProject._id,
     amount: savingProject.amount,
     goal: savingProject.goal,
     name: savingProject.name,
-    savingEntries: savingEntries
+    savingEntries: savingEntries,
   };
 };

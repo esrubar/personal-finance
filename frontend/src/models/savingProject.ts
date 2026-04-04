@@ -1,5 +1,5 @@
 import type { Auditable } from './auditable';
-import type {SavingEntry} from "./savingEntries.ts";
+import type { SavingEntry } from './savingEntries.ts';
 
 export interface MinimalSavingProject {
   _id: string;

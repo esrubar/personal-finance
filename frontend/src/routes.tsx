@@ -3,7 +3,7 @@ import { ExpensesPage } from './pages/ExpensesPage.tsx';
 import { CategoriesPage } from './pages/CategoriesPage.tsx';
 import { IncomesPage } from './pages/IncomesPage.tsx';
 import { UsersPage } from './pages/UsersPage.tsx';
-import { SavingProjectsPage } from "./pages/SavingProjectsPage.tsx";
+import { SavingProjectsPage } from './pages/SavingProjectsPage.tsx';
 
 const AppRoutes = () => (
   <Routes>

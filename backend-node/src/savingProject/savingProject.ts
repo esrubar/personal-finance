@@ -1,5 +1,5 @@
-import {Types} from "mongoose";
-import {SavingEntry} from "../savingEntry/savingEntry";
+import { Types } from 'mongoose';
+import { SavingEntry } from '../savingEntry/savingEntry';
 
 export interface SavingProject {
   amount: number;

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+/*import { useEffect, useState } from 'react';
 import { getColorForCategory } from '../utils/getCategoryColors.ts';
 import type { CategoryData } from '../pages/OverviewPage.tsx';
 import { useMensualExpenses } from './useExpenses.ts';
@@ -32,3 +32,4 @@ export function useComparisonMensualExpenses(month: number, year: number, refres
 
   return { comparisonMensualExpenses, loading };
 }
+*/

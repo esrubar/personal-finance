@@ -40,73 +40,70 @@ const SavingProjectForm: React.FC<SavingProjectFormProps> = ({ initialData, onSu
   };
 
   return (
-      <Form
-          form={form}
-          layout="vertical"
-          onFinish={onFinish}
-          // Establecemos 'active' por defecto aquí
-          initialValues={{ amount: 0, status: 'active', ...initialData }}
+    <Form
+      form={form}
+      layout="vertical"
+      onFinish={onFinish}
+      // Establecemos 'active' por defecto aquí
+      initialValues={{ amount: 0, status: 'active', ...initialData }}
+    >
+      <Form.Item
+        name="name"
+        label="Nombre del Plan"
+        rules={[{ required: true, message: 'Ej: Operación de la vista, Viaje...' }]}
       >
-        <Form.Item
-            name="name"
-            label="Nombre del Plan"
-            rules={[{ required: true, message: 'Ej: Operación de la vista, Viaje...' }]}
-        >
-          <Input placeholder="¿Para qué estás ahorrando?" />
-        </Form.Item>
+        <Input placeholder="¿Para qué estás ahorrando?" />
+      </Form.Item>
 
-        <Row gutter={16}>
-          <Col span={12}>
-            <Form.Item
-                name="amount"
-                label="Saldo Inicial"
-                rules={[{ required: true, message: 'Indica el saldo' }]}
-            >
-              <InputNumber
-                  style={{ width: '100%' }}
-                  placeholder="0.00"
-                  min={0}
-                  precision={2}
-                  addonAfter="€"
-              />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item
-                name="goal"
-                label="Meta (Opcional)"
-            >
-              <InputNumber
-                  style={{ width: '100%' }}
-                  placeholder="Ej: 3000"
-                  min={0}
-                  precision={2}
-                  addonAfter="€"
-              />
-            </Form.Item>
-          </Col>
-        </Row>
+      <Row gutter={16}>
+        <Col span={12}>
+          <Form.Item
+            name="amount"
+            label="Saldo Inicial"
+            rules={[{ required: true, message: 'Indica el saldo' }]}
+          >
+            <InputNumber
+              style={{ width: '100%' }}
+              placeholder="0.00"
+              min={0}
+              precision={2}
+              addonAfter="€"
+            />
+          </Form.Item>
+        </Col>
+        <Col span={12}>
+          <Form.Item name="goal" label="Meta (Opcional)">
+            <InputNumber
+              style={{ width: '100%' }}
+              placeholder="Ej: 3000"
+              min={0}
+              precision={2}
+              addonAfter="€"
+            />
+          </Form.Item>
+        </Col>
+      </Row>
 
-        <Form.Item
-            name="status"
-            label="Estado del Plan"
-            rules={[{ required: true, message: 'El estado es obligatorio' }]}
-        >
-          <Select placeholder="Selecciona un estado">
-            <Option value="active">Activo</Option>
-            <Option value="paused">Pausado</Option>
-            <Option value="completed">Completado</Option>
-          </Select>
-        </Form.Item>
+      <Form.Item
+        name="status"
+        label="Estado del Plan"
+        rules={[{ required: true, message: 'El estado es obligatorio' }]}
+      >
+        <Select placeholder="Selecciona un estado">
+          <Option value="active">Activo</Option>
+          <Option value="paused">Pausado</Option>
+          <Option value="completed">Completado</Option>
+        </Select>
+      </Form.Item>
 
-        <Divider />
+      <Divider />
 
-        <Form.Item style={{ marginBottom: 0 }}>
-          <Button type="primary" htmlType="submit" block size="large">
-            {initialData ? 'Actualizar Plan' : 'Crear Plan de Ahorro'}
-          </Button>
-        </Form.Item>
-      </Form>
+      <Form.Item style={{ marginBottom: 0 }}>
+        <Button type="primary" htmlType="submit" block size="large">
+          {initialData ? 'Actualizar Plan' : 'Crear Plan de Ahorro'}
+        </Button>
+      </Form.Item>
+    </Form>
   );
 };
 
