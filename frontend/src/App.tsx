@@ -13,6 +13,7 @@ import { PrivateRoute } from './components/PrivateRoute.tsx';
 import { PublicRoute } from './components/PublicRoute.tsx';
 import { MainLayout } from './pages/MainLayout.tsx';
 import {SavingProjectsPage} from "./pages/SavingProjectsPage.tsx";
+import {SavingEntryPage} from "./pages/SavingEntryPage.tsx";
 
 const App: React.FC = () => {
   return (
@@ -35,6 +36,7 @@ const App: React.FC = () => {
             <Route path="/users" element={<UsersPage />} />
             <Route path="/category-budgets" element={<CategoryBudgetsPage />} />
             <Route path="/upload-transactions" element={<BankTransactionsPage />} />
+            <Route path="/entries/:id" element={<SavingEntryPage />} />
           </Route>
         </Route>
       </Routes>

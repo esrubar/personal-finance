@@ -13,7 +13,6 @@ const CategoryForm: React.FC<CategoryFormProps> = ({ initialData, onSuccess }) =
   const { createCategory } = useCreateCategory();
   const { updateCategory } = useUpdateCategory();
 
-  // Sincronizar initialData con los campos del formulario
   useEffect(() => {
     if (initialData) {
       form.setFieldsValue(initialData);
@@ -63,15 +62,15 @@ const CategoryForm: React.FC<CategoryFormProps> = ({ initialData, onSuccess }) =
         <Select
           placeholder="Selecciona el tipo"
           options={[
-            { value: 'income', label: 'Income (Ingreso)' },
-            { value: 'expense', label: 'Expense (Gasto)' },
+            { value: 'income', label: 'Income' },
+            { value: 'expense', label: 'Expense' },
           ]}
         />
       </Form.Item>
 
       <Form.Item>
         <Button type="primary" htmlType="submit" block>
-          {initialData ? 'Actualizar' : 'Crear'} Categoría
+          {initialData ? 'Update' : 'Create'} Categoría
         </Button>
       </Form.Item>
     </Form>
