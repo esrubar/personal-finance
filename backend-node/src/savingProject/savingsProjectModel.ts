@@ -4,6 +4,8 @@ import { SavingProject } from './savingProject';
 const SavingsProjectSchema = new mongoose.Schema({
   amount: { type: Number, required: true },
   goal: { type: Number, required: false },
+  name: { type: String, required: true },
+  status: { type: String, required: true },
   auditable: {
     type: {
       createdAt: { type: Date, required: true, default: Date.now },

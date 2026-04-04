@@ -34,3 +34,9 @@ export const remove = async (req: any, res: Response) => {
   await savingProjectService.deleteSavingProject(req.params.id, user.name);
   res.sendStatus(204);
 };
+
+export const getDetails = async (req: any, res: Response) => {
+  const user = req.session.user;
+  const savingProject = await savingProjectService.getSavingProjectWithEntries(req.params.id, user.name);
+  res.status(201).json(savingProject);
+}

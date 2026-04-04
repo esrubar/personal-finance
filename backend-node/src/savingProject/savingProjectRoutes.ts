@@ -9,5 +9,6 @@ router.get('/', authMiddleware, controller.getAll);
 router.get('/:id', authMiddleware, controller.getById);
 router.put('/:id', authMiddleware, controller.update);
 router.delete('/:id', authMiddleware, controller.remove);
+router.get('/:id/entries', authMiddleware, controller.getDetails)
 
 export default router;

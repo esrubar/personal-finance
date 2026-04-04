@@ -1,3 +1,6 @@
+import {Types} from "mongoose";
+import {SavingEntry} from "../savingEntry/savingEntry";
+
 export interface SavingProject {
   amount: number;
   goal?: number;
@@ -9,4 +12,14 @@ export interface SavingProject {
     createdBy: string;
     updatedBy: string;
   };
+}
+export interface MinimalSavingProject {
+  id: Types.ObjectId | string;
+  amount: number;
+  goal?: number;
+  name: string;
+}
+
+export interface SavingProjectWithEntries extends MinimalSavingProject {
+  savingEntries: SavingEntry[];
 }

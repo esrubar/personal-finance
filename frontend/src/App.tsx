@@ -5,7 +5,6 @@ import { UsersPage } from './pages/UsersPage';
 import { OverviewPage } from './pages/OverviewPage';
 import { IncomesPage } from './pages/IncomesPage';
 import { ExpensesPage } from './pages/ExpensesPage';
-import { SavingPlansPage } from './pages/SavingPlansPage';
 import { CategoryBudgetsPage } from './pages/CategoryBudgetsPage';
 import { BankTransactionsPage } from './pages/BankTransactionsPage';
 import { MonthlyPlanPage } from './pages/MonthlyPlanPage';
@@ -13,6 +12,7 @@ import { LoginPage } from './pages/LoginPage.tsx';
 import { PrivateRoute } from './components/PrivateRoute.tsx';
 import { PublicRoute } from './components/PublicRoute.tsx';
 import { MainLayout } from './pages/MainLayout.tsx';
+import {SavingProjectsPage} from "./pages/SavingProjectsPage.tsx";
 
 const App: React.FC = () => {
   return (
@@ -30,7 +30,7 @@ const App: React.FC = () => {
             <Route path="/monthly-plan" element={<MonthlyPlanPage />} />
             <Route path="/incomes" element={<IncomesPage />} />
             <Route path="/expenses" element={<ExpensesPage />} />
-            <Route path="/saving-plans" element={<SavingPlansPage />} />
+            <Route path="/saving-plans" element={<SavingProjectsPage />} />
             <Route path="/categories" element={<CategoriesPage />} />
             <Route path="/users" element={<UsersPage />} />
             <Route path="/category-budgets" element={<CategoryBudgetsPage />} />
