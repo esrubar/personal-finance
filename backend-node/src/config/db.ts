@@ -1,4 +1,4 @@
-import { connect } from 'mongoose';
+import mongoose, { connect } from 'mongoose';
 import { config } from 'dotenv';
 
 config();
@@ -7,6 +7,7 @@ const connectDB = async () => {
   const uri = process.env.MONGODB_URI ?? '';
   try {
     console.log('MONGODB_URI: ', uri);
+    mongoose.set('debug', true);
     await connect(uri);
     console.log('MongoDB Connected');
   } catch (err: any) {
