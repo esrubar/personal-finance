@@ -19,5 +19,5 @@ export function useCreateSavingEntry() {
         }
     };
 
-    return { createSavingProject: createSavingEntry, loading, error };
+    return { createSavingEntry, loading, error };
 }
