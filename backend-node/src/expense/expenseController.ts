@@ -41,7 +41,10 @@ export const remove = async (req: any, res: Response) => {
 
 export const getMensualExpenses = async (req: any, res: Response) => {
   const user = req.session.user;
-  const expenses: MensualExpenseDTO[] = await expenseService.getMensualExpenses(user.name);
+  const expenses: MensualExpenseDTO[] = await expenseService.getMensualExpenses(
+    parseInt(req.params.month),
+    parseInt(req.params.year),
+    user.name);
   res.json(expenses);
 };
 

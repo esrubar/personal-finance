@@ -1,20 +1,20 @@
-/*import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getColorForCategory } from '../utils/getCategoryColors.ts';
-import type { CategoryData } from '../pages/OverviewPage.tsx';
 import { useMensualExpenses } from './useExpenses.ts';
 import { useCategoryBudgetsByMonthAndYear } from './useCategoryBudgets.ts';
+import type { MensualExpenseCompare } from '../models/mensualExpenseCompare.ts';
 
 export function useComparisonMensualExpenses(month: number, year: number, refreshKey?: number) {
-  const [comparisonMensualExpenses, setComparisonMensualExpenses] = useState<CategoryData[]>([]);
+  const [comparisonMensualExpenses, setComparisonMensualExpenses] = useState<MensualExpenseCompare[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const { expenses } = useMensualExpenses(refreshKey);
+  const { expenses } = useMensualExpenses(month, year, refreshKey);
   const { categoryBudgets } = useCategoryBudgetsByMonthAndYear(month, year);
 
   useEffect(() => {
     setLoading(true);
 
-    const list: CategoryData[] = [];
+    const list: MensualExpenseCompare[] = [];
     if (!expenses || !categoryBudgets) return;
     expenses.forEach((e) => {
       const cb = categoryBudgets.find((c) => c.categoryId === e.categoryId);
@@ -32,4 +32,3 @@ export function useComparisonMensualExpenses(month: number, year: number, refres
 
   return { comparisonMensualExpenses, loading };
 }
-*/

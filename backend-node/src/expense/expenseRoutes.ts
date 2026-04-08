@@ -5,7 +5,7 @@ import { authMiddleware } from '../middlewares/middleware';
 
 const router = Router();
 
-router.get('/getMensualExpenses', authMiddleware, ExpenseController.getMensualExpenses);
+router.get('/getMensualExpenses/:month/:year', authMiddleware, ExpenseController.getMensualExpenses);
 router.post('/create-many', authMiddleware, ExpenseController.createMany);
 router.get(
   '/byDescription/:description',

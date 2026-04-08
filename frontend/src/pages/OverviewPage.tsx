@@ -1,12 +1,15 @@
-import React from 'react';
-import { Row, Col, Card, Statistic, Progress, Typography, Space, List } from 'antd';
+import React, { useState } from 'react';
+import { Row, Col, Card, Statistic, Progress, Typography, Space, List, DatePicker } from 'antd';
 import {
   ArrowUpOutlined,
   ArrowDownOutlined,
   RocketOutlined,
   SafetyOutlined,
+  CalendarOutlined,
 } from '@ant-design/icons';
 import { Column, Pie } from '@ant-design/charts';
+import dayjs, { Dayjs } from 'dayjs';
+import { useComparisonMensualExpenses } from '../hooks/useComparisonMensualExpenses.ts';
 
 const { Title, Text } = Typography;
 
@@ -17,7 +20,6 @@ const dashboardData = {
     savings: 600,
     budget: 1600,
   },
-  // Datos para la evolución mensual (Gastos vs Ingresos)
   evolution: [
     { month: 'Ene', type: 'Ingresos', value: 2500 },
     { month: 'Ene', type: 'Gastos', value: 1800 },
@@ -28,7 +30,6 @@ const dashboardData = {
     { month: 'Abr', type: 'Ingresos', value: 2850 },
     { month: 'Abr', type: 'Gastos', value: 1420 },
   ],
-  // Datos para el Donut de categorías (Expenses por Category)
   categories: [
     { name: 'Vivienda', value: 800 },
     { name: 'Alimentación', value: 350 },
@@ -36,28 +37,32 @@ const dashboardData = {
     { name: 'Transporte', value: 80 },
     { name: 'Suscripciones', value: 70.5 },
   ],
-  // Comparativa Gasto Real vs Presupuesto (CategoryBudget vs Expense)
-  budgetComparison: [
-    { category: 'Vivienda', actual: 800, planned: 800 },
-    { category: 'Alimentación', actual: 350, planned: 300 },
-    { category: 'Ocio', actual: 120, planned: 200 },
-    { category: 'Transporte', actual: 80, planned: 100 },
-  ],
 };
 
 export const OverviewPage: React.FC = () => {
-  // --- Configuración de Gráfica de Evolución (Columnas agrupadas) ---
+  // --- ESTADOS PARA FILTRO DE FECHA ---
+  const [selectedDate, setSelectedDate] = useState<Dayjs>(dayjs());
+  const [refreshKey] = useState(0);
+
+  // Extraemos mes y año para pasarlos al hook
+  const month = selectedDate.month() + 1;
+  const year = selectedDate.year();
+
+  // --- HOOK DE DATOS DINÁMICOS ---
+  // Al cambiar 'month' o 'year', este hook debería volver a pedir los datos automáticamente
+  const { comparisonMensualExpenses } = useComparisonMensualExpenses(month, year, refreshKey);
+
+  // --- CONFIGURACIÓN DE GRÁFICAS ---
   const evolutionConfig = {
     data: dashboardData.evolution,
     isGroup: true,
     xField: 'month',
     yField: 'value',
     seriesField: 'type',
-    color: ['#52c41a', '#ff4d4f'], // Verde para ingresos, rojo para gastos
+    color: ['#52c41a', '#ff4d4f'],
     columnStyle: { radius: [4, 4, 0, 0] },
   };
 
-  // --- Configuración de Gráfica de Categorías (Donut) ---
   const categoryConfig = {
     appendPadding: 10,
     data: dashboardData.categories,
@@ -66,17 +71,44 @@ export const OverviewPage: React.FC = () => {
     radius: 1,
     innerRadius: 0.6,
     label: {
-      type: 'inner',
-      offset: '-50%',
-      content: '{value}€',
-      style: { textAlign: 'center', fontSize: 12 },
+      text: 'value',
+      position: 'inside',
+      style: {
+        fontSize: 12,
+        textAlign: 'center',
+      },
     },
     interactions: [{ type: 'element-selected' }, { type: 'element-active' }],
   };
 
   return (
     <div style={{ padding: '24px', background: '#f5f7fa', minHeight: '100vh' }}>
-      <Title level={2}>Panel de Control Financiero</Title>
+      
+      {/* CABECERA CON SELECTOR DE MES */}
+      <Row justify="space-between" align="middle" style={{ marginBottom: 24 }}>
+        <Col>
+          <Space direction="vertical" size={0}>
+            <Title level={2} style={{ margin: 0 }}>Panel de Control Financiero</Title>
+            <Text type="secondary">Visualizando datos de {selectedDate.format('MMMM YYYY')}</Text>
+          </Space>
+        </Col>
+        <Col>
+          <Card size="small" bordered={false} style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}>
+            <Space>
+              <CalendarOutlined style={{ color: '#1890ff' }} />
+              <Text strong>Periodo:</Text>
+              <DatePicker 
+                picker="month" 
+                value={selectedDate} 
+                onChange={(date) => date && setSelectedDate(date)}
+                allowClear={false}
+                format="MMMM YYYY"
+                placeholder="Seleccionar mes"
+              />
+            </Space>
+          </Card>
+        </Col>
+      </Row>
 
       {/* 1. ROW DE TARJETAS (KPIs) */}
       <Row gutter={[16, 16]}>
@@ -154,35 +186,43 @@ export const OverviewPage: React.FC = () => {
       <Row gutter={[16, 16]} style={{ marginTop: 24 }}>
         <Col xs={24} md={12}>
           <Card title="Control de Presupuesto (Gasto Real vs Planeado)" bordered={false}>
+            {/* Aquí utilizamos los datos reales provenientes de tu hook */}
             <List
               itemLayout="horizontal"
-              dataSource={dashboardData.budgetComparison}
-              renderItem={(item) => (
-                <List.Item>
-                  <div style={{ width: '100%' }}>
-                    <div
-                      style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5 }}
-                    >
-                      <Text strong>{item.category}</Text>
-                      <Text>
-                        {item.actual}€ / <Text type="secondary">{item.planned}€</Text>
-                      </Text>
+              dataSource={comparisonMensualExpenses || []}
+              renderItem={(item: any) => {
+                // Adaptamos las variables por si tu hook devuelve nombres de propiedades distintos (e.g., totalAmount, budgetAmount)
+                const categoryName = item.categoryName || item.category;
+                const actual = item.spentAmount || 0;
+                const planned = item.budgetAmount || item.planned || 1; // Evitar división por 0
+                const percent = Math.round((actual / planned) * 100);
+
+                return (
+                  <List.Item>
+                    <div style={{ width: '100%' }}>
+                      <div
+                        style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5 }}
+                      >
+                        <Text strong>{categoryName}</Text>
+                        <Text>
+                          {actual}€ / <Text type="secondary">{planned}€</Text>
+                        </Text>
+                      </div>
+                      <Progress
+                        percent={percent}
+                        size="small"
+                        strokeColor={actual > planned ? '#ff4d4f' : '#1890ff'}
+                      />
                     </div>
-                    <Progress
-                      percent={Math.round((item.actual / item.planned) * 100)}
-                      size="small"
-                      strokeColor={item.actual > item.planned ? '#ff4d4f' : '#1890ff'}
-                    />
-                  </div>
-                </List.Item>
-              )}
+                  </List.Item>
+                );
+              }}
             />
           </Card>
         </Col>
 
         <Col xs={24} md={12}>
           <Card title="Estado de Proyectos de Ahorro" bordered={false}>
-            {/* Usamos tus modelos de SavingProject aquí */}
             <List
               dataSource={[
                 { name: 'Viaje Japón', amount: 1200, goal: 3000 },
