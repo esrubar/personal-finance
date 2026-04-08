@@ -90,7 +90,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ initialData, onSuccess }) => 
         <DatePicker
           id="transactionDate"
           value={transactionDate}
-          onChange={(date) => setTransactionDate(date)}
+          onChange={(date) => setTransactionDate(date.hour(12).minute(0).second(0))}
           format="DD/MM/YYYY"
         />
       </div>
