@@ -20,7 +20,7 @@ SavingEntrySchema.post('save', async function (doc) {
 
   try {
     await Project.findByIdAndUpdate(doc.projectId, {
-      $inc: { currentAmount: doc.amount },
+      $inc: { amount: doc.amount },
     });
   } catch (error) {
     console.error('Error actualizando el total del proyecto:', error);
@@ -31,7 +31,7 @@ SavingEntrySchema.post('findOneAndDelete', async function (doc) {
   if (doc) {
     const Project = mongoose.model('SavingProject');
     await Project.findByIdAndUpdate(doc.projectId, {
-      $inc: { currentAmount: -doc.amount },
+      $inc: { amount: -doc.amount },
     });
   }
 });
