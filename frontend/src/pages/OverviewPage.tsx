@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Row, Col, Card, Statistic, Progress, Typography, Space, List, DatePicker } from 'antd';
 import {
   ArrowUpOutlined,
@@ -10,6 +10,7 @@ import {
 import { Column, Pie } from '@ant-design/charts';
 import dayjs, { Dayjs } from 'dayjs';
 import { useComparisonMensualExpenses } from '../hooks/useComparisonMensualExpenses.ts';
+import { useMensualStats } from '../hooks/useOverview.ts';
 
 const { Title, Text } = Typography;
 
@@ -51,6 +52,7 @@ export const OverviewPage: React.FC = () => {
   // --- HOOK DE DATOS DINÁMICOS ---
   // Al cambiar 'month' o 'year', este hook debería volver a pedir los datos automáticamente
   const { comparisonMensualExpenses } = useComparisonMensualExpenses(month, year, refreshKey);
+  const {total} = useMensualStats(month, year, refreshKey); 
 
   // --- CONFIGURACIÓN DE GRÁFICAS ---
   const evolutionConfig = {

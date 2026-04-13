@@ -15,6 +15,7 @@ import categoryBudgetRoutes from './categoryBudget/categoryBudgetRoutes';
 import incomeRoutes from './income/incomeRoutes';
 import importTransactionRoutes from './importTransaction/importTransactionRoutes';
 import savingEntryRoutes from './savingEntry/savingEntryRoutes';
+import overviewRoutes from './overview/overviewRoutes';
 
 config();
 
@@ -96,5 +97,6 @@ app.use('/api/categoryBudgets', categoryBudgetRoutes);
 app.use('/api/incomes', incomeRoutes);
 app.use('/api/import-transactions', importTransactionRoutes);
 app.use('/api/saving-entries', savingEntryRoutes);
+app.use('/api/resume', overviewRoutes);
 
 export default app;
