@@ -36,8 +36,13 @@ export const deleteExpense = async (id: string): Promise<void> => {
   await axios.delete(`${API_URL}/${id}`);
 };
 
-export const getMensualExpenses = async (month: number, year: number): Promise<MensualExpense[]> => {
-  const { data } = await axios.get<MensualExpense[]>(`${API_URL}/getMensualExpenses/${month}/${year}`);
+export const getMensualExpenses = async (
+  month: number,
+  year: number
+): Promise<MensualExpense[]> => {
+  const { data } = await axios.get<MensualExpense[]>(
+    `${API_URL}/getMensualExpenses/${month}/${year}`
+  );
   return data;
 };
 

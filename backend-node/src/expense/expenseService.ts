@@ -103,10 +103,14 @@ export const deleteExpense = async (id: string, userName: string) => {
   }
 };
 
-export async function getMensualExpenses(selectedMonth: number, selectedYear: number, userName: string): Promise<MensualExpenseDTO[]> {
+export async function getMensualExpenses(
+  selectedMonth: number,
+  selectedYear: number,
+  userName: string,
+): Promise<MensualExpenseDTO[]> {
   const now = new Date();
 
-  const year =  selectedYear || now.getFullYear();
+  const year = selectedYear || now.getFullYear();
   const month = selectedMonth - 1 || now.getMonth();
 
   const firstDay = new Date(year, month, 1);

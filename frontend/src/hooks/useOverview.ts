@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 import * as overviewDataSource from '../data/overviewDataSource';
+import type { Stats } from '../models/overview';
 
 export function useMensualStats(month: number, year: number, refreshKey?: number) {
-  const [total, setTotal] = useState<number>();
+  const [stats, setStats] = useState<Stats>();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
@@ -10,10 +11,10 @@ export function useMensualStats(month: number, year: number, refreshKey?: number
     setLoading(true);
     overviewDataSource
       .getStats(year, month)
-      .then(setTotal)
+      .then(setStats)
       .catch(setError)
       .finally(() => setLoading(false));
   }, [month, year, refreshKey]);
 
-  return { total, loading, error };
+  return { stats, loading, error };
 }

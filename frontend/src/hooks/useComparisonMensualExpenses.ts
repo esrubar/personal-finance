@@ -5,7 +5,9 @@ import { useCategoryBudgetsByMonthAndYear } from './useCategoryBudgets.ts';
 import type { MensualExpenseCompare } from '../models/mensualExpenseCompare.ts';
 
 export function useComparisonMensualExpenses(month: number, year: number, refreshKey?: number) {
-  const [comparisonMensualExpenses, setComparisonMensualExpenses] = useState<MensualExpenseCompare[]>([]);
+  const [comparisonMensualExpenses, setComparisonMensualExpenses] = useState<
+    MensualExpenseCompare[]
+  >([]);
   const [loading, setLoading] = useState(true);
 
   const { expenses } = useMensualExpenses(month, year, refreshKey);

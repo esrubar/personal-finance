@@ -1,4 +1,5 @@
-import { getMonthlyIncomes, getTotalExpensesCalculated } from "./overviewService";
+import { Stats } from './overview';
+import { getMonthlyIncomes, getTotalExpensesCalculated } from './overviewService';
 import { Request, Response } from 'express';
 
 export const getStats = async (req: any, res: Response) => {
@@ -7,14 +8,21 @@ export const getStats = async (req: any, res: Response) => {
   const totalIncomes: number = await getMonthlyIncomes(
     parseInt(req.params.month),
     parseInt(req.params.year),
-    user.name
+    user.name,
   );
 
   const totalExpenses = await getTotalExpensesCalculated(
     user.name,
     parseInt(req.params.month),
-    parseInt(req.params.year)
+    parseInt(req.params.year),
   );
 
-  res.json(totalIncomes);
+  const stats: Stats = {
+    income: totalIncomes,
+    expenses: totalExpenses,
+    savings: totalIncomes - totalExpenses,
+    budget: 1600, // Este valor podría ser dinámico en el futuro
+  };
+
+  res.json(stats);
 };

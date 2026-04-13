@@ -26,7 +26,8 @@ export const CategoriesPage: React.FC = () => {
       title: 'Calculable',
       dataIndex: 'isCalculable',
       key: 'isCalculable',
-      render: (value: boolean) => (value ? <Tag color="blue">Yes</Tag> : <Tag color="gray">No</Tag>),
+      render: (value: boolean) =>
+        value ? <Tag color="blue">Yes</Tag> : <Tag color="gray">No</Tag>,
     },
     {
       title: 'Actions',

@@ -52,7 +52,7 @@ export const OverviewPage: React.FC = () => {
   // --- HOOK DE DATOS DINÁMICOS ---
   // Al cambiar 'month' o 'year', este hook debería volver a pedir los datos automáticamente
   const { comparisonMensualExpenses } = useComparisonMensualExpenses(month, year, refreshKey);
-  const {total} = useMensualStats(month, year, refreshKey); 
+  const { total } = useMensualStats(month, year, refreshKey);
 
   // --- CONFIGURACIÓN DE GRÁFICAS ---
   const evolutionConfig = {
@@ -85,12 +85,13 @@ export const OverviewPage: React.FC = () => {
 
   return (
     <div style={{ padding: '24px', background: '#f5f7fa', minHeight: '100vh' }}>
-      
       {/* CABECERA CON SELECTOR DE MES */}
       <Row justify="space-between" align="middle" style={{ marginBottom: 24 }}>
         <Col>
           <Space direction="vertical" size={0}>
-            <Title level={2} style={{ margin: 0 }}>Panel de Control Financiero</Title>
+            <Title level={2} style={{ margin: 0 }}>
+              Panel de Control Financiero
+            </Title>
             <Text type="secondary">Visualizando datos de {selectedDate.format('MMMM YYYY')}</Text>
           </Space>
         </Col>
@@ -99,9 +100,9 @@ export const OverviewPage: React.FC = () => {
             <Space>
               <CalendarOutlined style={{ color: '#1890ff' }} />
               <Text strong>Periodo:</Text>
-              <DatePicker 
-                picker="month" 
-                value={selectedDate} 
+              <DatePicker
+                picker="month"
+                value={selectedDate}
                 onChange={(date) => date && setSelectedDate(date)}
                 allowClear={false}
                 format="MMMM YYYY"
@@ -203,7 +204,11 @@ export const OverviewPage: React.FC = () => {
                   <List.Item>
                     <div style={{ width: '100%' }}>
                       <div
-                        style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5 }}
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          marginBottom: 5,
+                        }}
                       >
                         <Text strong>{categoryName}</Text>
                         <Text>

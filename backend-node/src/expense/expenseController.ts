@@ -44,7 +44,8 @@ export const getMensualExpenses = async (req: any, res: Response) => {
   const expenses: MensualExpenseDTO[] = await expenseService.getMensualExpenses(
     parseInt(req.params.month),
     parseInt(req.params.year),
-    user.name);
+    user.name,
+  );
   res.json(expenses);
 };
 
