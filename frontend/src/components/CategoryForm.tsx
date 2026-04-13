@@ -68,6 +68,14 @@ const CategoryForm: React.FC<CategoryFormProps> = ({ initialData, onSuccess }) =
         />
       </Form.Item>
 
+      <Form.Item
+        name="isCalculable"
+        label="Calculable"
+        valuePropName="checked"
+      >
+        <Input type="checkbox" />
+      </Form.Item>
+
       <Form.Item>
         <Button type="primary" htmlType="submit" block>
           {initialData ? 'Update' : 'Create'} Categoría

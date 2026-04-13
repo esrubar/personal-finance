@@ -23,6 +23,12 @@ export const CategoriesPage: React.FC = () => {
         value == 'Income' ? <Tag color="green">{value}</Tag> : <Tag color="volcano">{value}</Tag>,
     },
     {
+      title: 'Calculable',
+      dataIndex: 'isCalculable',
+      key: 'isCalculable',
+      render: (value: boolean) => (value ? <Tag color="blue">Yes</Tag> : <Tag color="gray">No</Tag>),
+    },
+    {
       title: 'Actions',
       key: 'actions',
       render: (_: unknown, record: Category) => (
