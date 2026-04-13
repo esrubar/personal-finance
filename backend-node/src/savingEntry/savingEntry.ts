@@ -4,8 +4,11 @@ import { MinimalSavingProject } from '../savingProject/savingProject';
 export interface SavingEntry {
   projectId: mongoose.Types.ObjectId;
   amount: number;
-  date: Date;
   note?: string;
+  date: Date;
+  auditable: {
+    createdBy: string;
+  };
 }
 
 export interface SavingEntryWithMinimalProject {

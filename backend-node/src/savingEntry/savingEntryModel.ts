@@ -5,6 +5,7 @@ const SavingEntrySchema = new mongoose.Schema({
   amount: { type: Number, required: true },
   note: { type: String, required: false },
   projectId: { type: Schema.Types.ObjectId, ref: 'SavingProject', required: true },
+  date: { type: Date, required: true, default: Date.now },
   auditable: {
     type: {
       createdAt: { type: Date, required: true, default: Date.now },

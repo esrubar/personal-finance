@@ -1,17 +1,29 @@
 import { Stats } from './overview';
-import { getMonthlyIncomes, getTotalExpensesCalculated } from './overviewService';
+import { getTotalMonthlyIncome, getTotalMonthlyExpense, getTotalMonthlySavingEntry, getTotalMonthlyBudget } from './overviewService';
 import { Request, Response } from 'express';
 
 export const getStats = async (req: any, res: Response) => {
   const user = req.session.user;
 
-  const totalIncomes: number = await getMonthlyIncomes(
+  const totalIncomes: number = await getTotalMonthlyIncome(
     parseInt(req.params.month),
     parseInt(req.params.year),
     user.name,
   );
 
-  const totalExpenses = await getTotalExpensesCalculated(
+  const totalExpenses = await getTotalMonthlyExpense(
+    user.name,
+    parseInt(req.params.month),
+    parseInt(req.params.year),
+  );
+
+  const totalSavingEntries = await getTotalMonthlySavingEntry(
+    user.name,
+    parseInt(req.params.month),
+    parseInt(req.params.year),
+  );
+
+  const totalBudget = await getTotalMonthlyBudget(
     user.name,
     parseInt(req.params.month),
     parseInt(req.params.year),
@@ -20,8 +32,8 @@ export const getStats = async (req: any, res: Response) => {
   const stats: Stats = {
     income: totalIncomes,
     expenses: totalExpenses,
-    savings: totalIncomes - totalExpenses,
-    budget: 1600, // Este valor podría ser dinámico en el futuro
+    savings: totalSavingEntries,
+    budget: totalBudget,
   };
 
   res.json(stats);

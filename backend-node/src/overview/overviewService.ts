@@ -1,8 +1,10 @@
+import { CategoryBudgetModel } from '../categoryBudget/categoryBudgetModel';
 import { ExpenseModel } from '../expense/expenseModel';
 import { IncomeModel } from '../income/incomeModel';
+import { SavingEntryModel } from '../savingEntry/savingEntryModel';
 import { getMonthRange } from '../utils/dateUtils';
 
-export const getMonthlyIncomes = async (
+export const getTotalMonthlyIncome = async (
   selectedMonth: number,
   selectedYear: number,
   userName: string,
@@ -39,12 +41,10 @@ export const getMonthlyIncomes = async (
     },
   ]);
 
-  const a = result.length > 0 ? result[0].totalAmount : 0;
-  console.log('Total Incomes:', a);
-  return a;
+  return result.length > 0 ? result[0].totalAmount : 0;
 };
 
-export const getTotalExpensesCalculated = async (
+export const getTotalMonthlyExpense = async (
   userName: string,
   month: number,
   year: number,
@@ -96,7 +96,54 @@ export const getTotalExpensesCalculated = async (
     },
   ]);
 
-  const a = result.length > 0 ? result[0].totalAmount : 0;
-  console.log('Total Expenses:', a);
-  return a;
+  return result.length > 0 ? result[0].totalAmount : 0;
+};
+
+export const getTotalMonthlySavingEntry = async (
+  userName: string,
+  month: number,
+  year: number,
+): Promise<number> => {
+  const { firstDay, lastDay } = getMonthRange(year, month);
+
+  const result = await SavingEntryModel.aggregate([
+    {
+      $match: {
+        'auditable.createdBy': userName,
+        date: { $gte: firstDay, $lte: lastDay },
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        totalAmount: { $sum: '$amount' },
+      },
+    },
+  ]);
+
+  return result.length > 0 ? result[0].totalAmount : 0;
+};
+
+export const getTotalMonthlyBudget = async (
+  userName: string,
+  month: number,
+  year: number,
+): Promise<number> => {
+  const result = await CategoryBudgetModel.aggregate([
+    {
+      $match: {
+        'auditable.createdBy': userName,
+        month: month, 
+        year: year,
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        totalAmount: { $sum: '$budgetAmount' },
+      },
+    },
+  ]);
+
+  return result.length > 0 ? result[0].totalAmount : 0;
 };
