@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Row, Col, Card, Statistic, Progress, Typography, Space, List, DatePicker } from 'antd';
 import {
   ArrowUpOutlined,
@@ -11,34 +11,9 @@ import { Column, Pie } from '@ant-design/charts';
 import dayjs, { Dayjs } from 'dayjs';
 import { useComparisonMensualExpenses } from '../hooks/useComparisonMensualExpenses.ts';
 import { useMensualStats } from '../hooks/useOverview.ts';
+import { useSavingProjects } from '../hooks/useSavingProjects.ts';
 
 const { Title, Text } = Typography;
-
-const dashboardData = {
-  stats: {
-    income: 2850,
-    expenses: 1420.5,
-    savings: 600,
-    budget: 1600,
-  },
-  evolution: [
-    { month: 'Ene', type: 'Ingresos', value: 2500 },
-    { month: 'Ene', type: 'Gastos', value: 1800 },
-    { month: 'Feb', type: 'Ingresos', value: 2500 },
-    { month: 'Feb', type: 'Gastos', value: 1600 },
-    { month: 'Mar', type: 'Ingresos', value: 2700 },
-    { month: 'Mar', type: 'Gastos', value: 1900 },
-    { month: 'Abr', type: 'Ingresos', value: 2850 },
-    { month: 'Abr', type: 'Gastos', value: 1420 },
-  ],
-  categories: [
-    { name: 'Vivienda', value: 800 },
-    { name: 'Alimentación', value: 350 },
-    { name: 'Ocio', value: 120 },
-    { name: 'Transporte', value: 80 },
-    { name: 'Suscripciones', value: 70.5 },
-  ],
-};
 
 export const OverviewPage: React.FC = () => {
   // --- ESTADOS PARA FILTRO DE FECHA ---
@@ -51,12 +26,17 @@ export const OverviewPage: React.FC = () => {
 
   // --- HOOK DE DATOS DINÁMICOS ---
   // Al cambiar 'month' o 'year', este hook debería volver a pedir los datos automáticamente
-  const { comparisonMensualExpenses } = useComparisonMensualExpenses(month, year, refreshKey);
-  const { total } = useMensualStats(month, year, refreshKey);
+  const { comparisonMensualExpenses, menusalExpensesByCategory } = useComparisonMensualExpenses(
+    month,
+    year,
+    refreshKey
+  );
+  const { overviewData } = useMensualStats(month, year, refreshKey);
+  const { savingProjects } = useSavingProjects(refreshKey);
 
   // --- CONFIGURACIÓN DE GRÁFICAS ---
   const evolutionConfig = {
-    data: dashboardData.evolution,
+    data: overviewData.evolution,
     isGroup: true,
     xField: 'month',
     yField: 'value',
@@ -67,7 +47,7 @@ export const OverviewPage: React.FC = () => {
 
   const categoryConfig = {
     appendPadding: 10,
-    data: dashboardData.categories,
+    data: menusalExpensesByCategory,
     angleField: 'value',
     colorField: 'name',
     radius: 1,
@@ -119,7 +99,7 @@ export const OverviewPage: React.FC = () => {
           <Card bordered={false} hoverable>
             <Statistic
               title="Ingresos del Mes"
-              value={dashboardData.stats.income}
+              value={overviewData.stats.income}
               prefix={<ArrowUpOutlined />}
               suffix="€"
               valueStyle={{ color: '#52c41a' }}
@@ -130,7 +110,7 @@ export const OverviewPage: React.FC = () => {
           <Card bordered={false} hoverable>
             <Statistic
               title="Gastos Totales"
-              value={dashboardData.stats.expenses}
+              value={overviewData.stats.expenses}
               prefix={<ArrowDownOutlined />}
               suffix="€"
               valueStyle={{ color: '#ff4d4f' }}
@@ -141,7 +121,7 @@ export const OverviewPage: React.FC = () => {
           <Card bordered={false} hoverable>
             <Statistic
               title="Ahorro Acumulado"
-              value={dashboardData.stats.savings}
+              value={overviewData.stats.savings}
               prefix={<RocketOutlined />}
               suffix="€"
               valueStyle={{ color: '#1890ff' }}
@@ -153,15 +133,9 @@ export const OverviewPage: React.FC = () => {
             <Text type="secondary">Eficiencia de Gasto</Text>
             <div style={{ marginTop: 8 }}>
               <Progress
-                percent={Math.round(
-                  (dashboardData.stats.expenses / dashboardData.stats.budget) * 100
-                )}
-                status={
-                  dashboardData.stats.expenses > dashboardData.stats.budget ? 'exception' : 'active'
-                }
-                strokeColor={
-                  dashboardData.stats.expenses > dashboardData.stats.budget ? '#f5222d' : '#faad14'
-                }
+                percent={Math.round((overviewData.stats.expenses / overviewData.stats.budget) * 100)}
+                status={overviewData.stats.expenses > overviewData.stats.budget ? 'exception' : 'active'}
+                strokeColor={overviewData.stats.expenses > overviewData.stats.budget ? '#f5222d' : '#faad14'}
               />
               <Text style={{ fontSize: '12px' }} type="secondary">
                 vs. Presupuesto mensual
@@ -231,10 +205,7 @@ export const OverviewPage: React.FC = () => {
         <Col xs={24} md={12}>
           <Card title="Estado de Proyectos de Ahorro" bordered={false}>
             <List
-              dataSource={[
-                { name: 'Viaje Japón', amount: 1200, goal: 3000 },
-                { name: 'Fondo Emergencia', amount: 5000, goal: 5000 },
-              ]}
+              dataSource={savingProjects}
               renderItem={(proj) => (
                 <List.Item>
                   <Card size="small" style={{ width: '100%', background: '#fafafa' }}>
@@ -243,15 +214,26 @@ export const OverviewPage: React.FC = () => {
                         <Text strong>
                           <SafetyOutlined /> {proj.name}
                         </Text>
-                        <Text strong>{Math.round((proj.amount / proj.goal) * 100)}%</Text>
+                        {proj.goal && (
+                          <Text strong>{Math.round((proj.amount / proj.goal) * 100)}%</Text>
+                        )}
                       </div>
-                      <Progress
-                        percent={Math.round((proj.amount / proj.goal) * 100)}
-                        strokeColor="#52c41a"
-                      />
-                      <Text type="secondary" style={{ fontSize: '12px' }}>
-                        {proj.amount}€ de {proj.goal}€ objetivo
-                      </Text>
+
+                      {proj.goal ? (
+                        <>
+                          <Progress
+                            percent={Math.round((proj.amount / proj.goal) * 100)}
+                            strokeColor="#52c41a"
+                          />
+                          <Text type="secondary" style={{ fontSize: '12px' }}>
+                            {proj.amount}€ de {proj.goal}€ objetivo
+                          </Text>
+                        </>
+                      ) : (
+                        <Text style={{ fontSize: '16px', fontWeight: 'bold' }}>
+                          {proj.amount}€ ahorrados
+                        </Text>
+                      )}
                     </Space>
                   </Card>
                 </List.Item>

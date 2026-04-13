@@ -3,10 +3,14 @@ import { getColorForCategory } from '../utils/getCategoryColors.ts';
 import { useMensualExpenses } from './useExpenses.ts';
 import { useCategoryBudgetsByMonthAndYear } from './useCategoryBudgets.ts';
 import type { MensualExpenseCompare } from '../models/mensualExpenseCompare.ts';
+import type { CategoryDistribution } from '../models/overview.ts';
 
 export function useComparisonMensualExpenses(month: number, year: number, refreshKey?: number) {
   const [comparisonMensualExpenses, setComparisonMensualExpenses] = useState<
     MensualExpenseCompare[]
+  >([]);
+  const [menusalExpensesByCategory, setMensualExpensesByCategory] = useState<
+    CategoryDistribution[]
   >([]);
   const [loading, setLoading] = useState(true);
 
@@ -28,9 +32,15 @@ export function useComparisonMensualExpenses(month: number, year: number, refres
       });
     });
     setComparisonMensualExpenses(list);
+    setMensualExpensesByCategory(
+      expenses.map((e) => ({
+        name: e.categoryName,
+        value: e.totalAmount,
+      }))
+    );
 
     setLoading(false);
   }, [expenses, categoryBudgets]);
 
-  return { comparisonMensualExpenses, loading };
+  return { comparisonMensualExpenses, menusalExpensesByCategory, loading };
 }
