@@ -11,6 +11,10 @@ export function useMensualStats(month: number, year: number, refreshKey?: number
       budget: 0,
     },
     evolution: [],
+    monthlyComparison: {
+      comparison: [],
+      spentByNames: [],
+    },
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);

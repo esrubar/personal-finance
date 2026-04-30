@@ -9,7 +9,6 @@ import {
 } from '@ant-design/icons';
 import { Column, Pie } from '@ant-design/charts';
 import dayjs, { Dayjs } from 'dayjs';
-import { useComparisonMensualExpenses } from '../hooks/useComparisonMensualExpenses.ts';
 import { useMensualStats } from '../hooks/useOverview.ts';
 import { useSavingProjects } from '../hooks/useSavingProjects.ts';
 
@@ -25,12 +24,6 @@ export const OverviewPage: React.FC = () => {
   const year = selectedDate.year();
 
   // --- HOOK DE DATOS DINÁMICOS ---
-  // Al cambiar 'month' o 'year', este hook debería volver a pedir los datos automáticamente
-  const { comparisonMensualExpenses, menusalExpensesByCategory } = useComparisonMensualExpenses(
-    month,
-    year,
-    refreshKey
-  );
   const { overviewData } = useMensualStats(month, year, refreshKey);
   const { savingProjects } = useSavingProjects(refreshKey);
 
@@ -47,9 +40,9 @@ export const OverviewPage: React.FC = () => {
 
   const categoryConfig = {
     appendPadding: 10,
-    data: menusalExpensesByCategory,
-    angleField: 'value',
-    colorField: 'name',
+    data: overviewData.monthlyComparison.spentByNames,
+    angleField: 'spentAmount',
+    colorField: 'categoryName',
     radius: 1,
     innerRadius: 0.6,
     label: {
@@ -133,9 +126,15 @@ export const OverviewPage: React.FC = () => {
             <Text type="secondary">Eficiencia de Gasto</Text>
             <div style={{ marginTop: 8 }}>
               <Progress
-                percent={Math.round((overviewData.stats.expenses / overviewData.stats.budget) * 100)}
-                status={overviewData.stats.expenses > overviewData.stats.budget ? 'exception' : 'active'}
-                strokeColor={overviewData.stats.expenses > overviewData.stats.budget ? '#f5222d' : '#faad14'}
+                percent={Math.round(
+                  (overviewData.stats.expenses / overviewData.stats.budget) * 100
+                )}
+                status={
+                  overviewData.stats.expenses > overviewData.stats.budget ? 'exception' : 'active'
+                }
+                strokeColor={
+                  overviewData.stats.expenses > overviewData.stats.budget ? '#f5222d' : '#faad14'
+                }
               />
               <Text style={{ fontSize: '12px' }} type="secondary">
                 vs. Presupuesto mensual
@@ -166,7 +165,7 @@ export const OverviewPage: React.FC = () => {
             {/* Aquí utilizamos los datos reales provenientes de tu hook */}
             <List
               itemLayout="horizontal"
-              dataSource={comparisonMensualExpenses || []}
+              dataSource={overviewData.monthlyComparison.comparison || []}
               renderItem={(item: any) => {
                 // Adaptamos las variables por si tu hook devuelve nombres de propiedades distintos (e.g., totalAmount, budgetAmount)
                 const categoryName = item.categoryName || item.category;

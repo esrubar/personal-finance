@@ -1,3 +1,5 @@
+import type { MensualExpenseCompare } from './mensualExpenseCompare';
+
 export interface Stats {
   income: number;
   expenses: number;
@@ -19,4 +21,10 @@ export interface CategoryDistribution {
 export interface OverviewData {
   stats: Stats;
   evolution: Evolution[];
+  monthlyComparison: MonthlyComparisonResponse;
+}
+
+export interface MonthlyComparisonResponse {
+  comparison: MensualExpenseCompare[];
+  spentByNames: { categoryName: string; spentAmount: number }[];
 }

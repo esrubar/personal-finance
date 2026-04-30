@@ -1,32 +1,30 @@
 import { Stats } from './overview';
-import { getTotalMonthlyIncome, getTotalMonthlyExpense, getTotalMonthlySavingEntry, getTotalMonthlyBudget, getAnualIncomesAndExpenses } from './overviewService';
+import {
+  getTotalMonthlyIncome,
+  getTotalMonthlyExpense,
+  getTotalMonthlySavingEntry,
+  getTotalMonthlyBudget,
+  getAnualIncomesAndExpenses,
+  getMonthlyExpenseComparison,
+} from './overviewService';
 import { Request, Response } from 'express';
 
 export const getStats = async (req: any, res: Response) => {
   const user = req.session.user;
 
-  const [incomes, expenses, savings, budget, evolution] = await Promise.all([
-    getTotalMonthlyIncome(
-    parseInt(req.params.month),
-    parseInt(req.params.year),
-    user.name,
-  ),
-    getTotalMonthlyExpense(
-    user.name,
-    parseInt(req.params.month),
-    parseInt(req.params.year),
-  ),
-    getTotalMonthlySavingEntry(
-    user.name,
-    parseInt(req.params.month),
-    parseInt(req.params.year),
-  ),
-    getTotalMonthlyBudget(
-    user.name,
-    parseInt(req.params.month),
-    parseInt(req.params.year),
-  ),
-  getAnualIncomesAndExpenses(parseInt(req.params.year), user.name)
+  var overviewParams = {
+    month: parseInt(req.params.month),
+    year: parseInt(req.params.year),
+    userName: user.name,
+  };
+
+  const [incomes, expenses, savings, budget, evolution, monthlyComparison] = await Promise.all([
+    getTotalMonthlyIncome(overviewParams),
+    getTotalMonthlyExpense(overviewParams),
+    getTotalMonthlySavingEntry(overviewParams),
+    getTotalMonthlyBudget(overviewParams),
+    getAnualIncomesAndExpenses(overviewParams),
+    getMonthlyExpenseComparison(overviewParams),
   ]);
 
   const stats: Stats = {
@@ -39,6 +37,7 @@ export const getStats = async (req: any, res: Response) => {
   const overviewData = {
     stats,
     evolution,
+    monthlyComparison,
   };
 
   res.json(overviewData);

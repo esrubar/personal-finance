@@ -11,14 +11,6 @@ export const create = async (data: any, userName: string) => {
   return await CategoryBudgetModel.create(categoryBudgetData);
 };
 
-export const getByMonthAndYear = async (month: Number, year: Number, userName: string) => {
-  return CategoryBudgetModel.find({
-    month,
-    year,
-    'auditable.createdBy': userName,
-  });
-};
-
 export const getAll = async (userName: string): Promise<CategoryBudgetDTO[]> => {
   let categoryBudgets = await CategoryBudgetModel.find({
     'auditable.createdBy': userName,
