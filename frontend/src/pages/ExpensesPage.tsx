@@ -13,7 +13,6 @@ import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { useExpenses } from '../hooks/useExpenses';
 import { useDeleteExpense } from '../hooks/useExpenseMutations';
 import type { Expense } from '../models/expense';
-import ExpenseForm from '../components/ExpenseForm';
 import { getColorForCategory } from '../utils/getCategoryColors';
 import type { FilterValue } from 'antd/es/table/interface';
 import { useCategories } from '../hooks/useCategories.ts';
@@ -21,6 +20,7 @@ import { months, years } from '../utils/constants.ts';
 import type { ExpenseFilter } from '../models/expenseFilter.ts';
 import { getMonthNameCapitalized } from '../utils/dateUtils.ts';
 import type { MinimalIncome } from '../models/income.ts';
+import { ExpenseForm } from '../components/forms/ExpenseForm.tsx';
 
 export const ExpensesPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);

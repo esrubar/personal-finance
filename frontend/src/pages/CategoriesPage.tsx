@@ -4,7 +4,7 @@ import { DeleteOutlined } from '@ant-design/icons';
 import { useCategories } from '../hooks/useCategories';
 import { useDeleteCategory } from '../hooks/useCategoryMutations';
 import type { Category } from '../models/category';
-import CategoryForm from '../components/CategoryForm';
+import CategoryForm from '../components/forms/CategoryForm';
 
 export const CategoriesPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);

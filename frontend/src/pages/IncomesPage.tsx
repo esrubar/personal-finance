@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { Button, Table, Space, Modal, message, Tag } from 'antd';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import IncomeForm from '../components/IncomeForm';
 import type { Income } from '../models/income';
 import { useDeleteIncome } from '../hooks/useIncomeMutations';
 import { useIncomes } from '../hooks/useIncomes';
 import { useCategories } from '../hooks/useCategories.ts';
 import { getColorForCategory } from '../utils/getCategoryColors.ts';
+import { IncomeForm } from '../components/forms/IncomeForm.tsx';
 
 export const IncomesPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);

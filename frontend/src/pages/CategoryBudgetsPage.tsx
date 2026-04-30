@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Button, Modal, Table, Tag } from 'antd';
-import { CategoryBudgetFrom } from '../components/CategoryBudgetForm';
 import { useAllCategoryBudgets } from '../hooks/useCategoryBudgets';
 import { getColorForCategory } from '../utils/getCategoryColors';
+import { CategoryBudgetForm } from '../components/forms/CategoryBudgetForm';
 
 export const CategoryBudgetsPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -55,7 +55,7 @@ export const CategoryBudgetsPage: React.FC = () => {
         title={'Add Category'}
         destroyOnClose
       >
-        <CategoryBudgetFrom initialData={undefined} onSuccess={handleCloseModal} />
+        <CategoryBudgetForm initialData={undefined} onSuccess={handleCloseModal} />
       </Modal>
       {error && <div style={{ color: 'red' }}>{error.message}</div>}
     </>

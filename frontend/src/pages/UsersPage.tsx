@@ -4,8 +4,8 @@ import { DeleteOutlined } from '@ant-design/icons';
 import { useUsers } from '../hooks/useUsers';
 import { useDeleteUser } from '../hooks/useUserMutations';
 import type { User } from '../models/user';
-import UserForm from '../components/UserForm';
 import * as loginDataSource from '../data/loginDataSource.ts';
+import { UserForm } from '../components/forms/UserForm.tsx';
 
 export const UsersPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);

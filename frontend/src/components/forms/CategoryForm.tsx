@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Form, Input, Select, Button, message } from 'antd';
-import type { Category } from '../models/category';
-import { useCreateCategory, useUpdateCategory } from '../hooks/useCategoryMutations';
+import { useCreateCategory, useUpdateCategory } from '../../hooks/useCategoryMutations';
+import type { Category } from '../../models/category';
 
 interface CategoryFormProps {
   initialData?: Category;

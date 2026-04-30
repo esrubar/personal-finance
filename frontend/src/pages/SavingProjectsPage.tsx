@@ -3,11 +3,10 @@ import { Table, Progress, Tag, Typography, Space, Modal, Button, Popconfirm, Too
 import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import type { ColumnsType } from 'antd/es/table';
-
-import SavingProjectForm from '../components/SavingProjectForm';
 import { useSavingProjects } from '../hooks/useSavingProjects';
 import { useDeleteSavingProject } from '../hooks/useSavingProjectMutations';
 import type { SavingProject } from '../models/savingProject';
+import SavingProjectForm from '../components/forms/SavingProjectForm';
 
 const { Text, Title } = Typography;
 
