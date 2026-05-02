@@ -46,12 +46,20 @@ export const OverviewPage: React.FC = () => {
     radius: 1,
     innerRadius: 0.6,
     label: {
-      text: 'value',
+      text: 'spentAmount',
       position: 'inside',
       style: {
         fontSize: 12,
         textAlign: 'center',
       },
+    },
+    tooltip: {
+      items: [
+        (d: { categoryName: string; spentAmount: number }) => ({
+          name: d.categoryName,
+          value: `${d.spentAmount}€`,
+        }),
+      ],
     },
     interactions: [{ type: 'element-selected' }, { type: 'element-active' }],
   };
