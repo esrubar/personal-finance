@@ -14,6 +14,7 @@ import { PublicRoute } from './components/PublicRoute.tsx';
 import { MainLayout } from './pages/MainLayout.tsx';
 import { SavingProjectsPage } from './pages/SavingProjectsPage.tsx';
 import { SavingEntryPage } from './pages/SavingEntryPage.tsx';
+import { CategoryEntriesPage } from './pages/CategoriesEntriesPage.tsx';
 
 const App: React.FC = () => {
   return (
@@ -37,6 +38,7 @@ const App: React.FC = () => {
             <Route path="/category-budgets" element={<CategoryBudgetsPage />} />
             <Route path="/upload-transactions" element={<BankTransactionsPage />} />
             <Route path="/entries/:id" element={<SavingEntryPage />} />
+            <Route path="/category-entries/:id" element={<CategoryEntriesPage />} />
           </Route>
         </Route>
       </Routes>

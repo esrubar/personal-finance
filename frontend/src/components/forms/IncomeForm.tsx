@@ -22,7 +22,9 @@ export const IncomeForm: React.FC<IncomeFormProps> = ({ initialData, onSuccess }
     if (initialData) {
       form.setFieldsValue({
         ...initialData,
-        transactionDate: initialData.transactionDate ? dayjs(initialData.transactionDate) : undefined,
+        transactionDate: initialData.transactionDate
+          ? dayjs(initialData.transactionDate)
+          : undefined,
         categoryId: initialData.category?._id,
       });
     } else {

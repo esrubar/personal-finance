@@ -75,3 +75,21 @@ export function useExpensesByDescription(description: string) {
 
   return { expenses, loading, error };
 }
+
+export function useExpensesByCategory(categoryId: string) {
+  const [expenses, setExpenses] = useState<Expense[] | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+
+  useEffect(() => {
+    if (!categoryId) return;
+    setLoading(true);
+    expenseDataSource
+      .getExpensesByCategory(categoryId)
+      .then(setExpenses)
+      .catch(setError)
+      .finally(() => setLoading(false));
+  }, [categoryId]);
+
+  return { expenses, loading, error };
+}

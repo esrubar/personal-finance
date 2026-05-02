@@ -54,3 +54,9 @@ export const getExpensesByDescription = async (req: any, res: Response) => {
   const expense = await expenseService.getExpensesByDescription(req.params.description, user.name);
   res.json(expense);
 };
+
+export const getExpensesByCategory = async (req: any, res: Response) => {
+  const user = req.session.user;
+  const expenses = await expenseService.getExpensesByCategory(req.params.categoryId, user.name);
+  res.json(expenses);
+};

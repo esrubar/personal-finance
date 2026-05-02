@@ -18,6 +18,7 @@ router.get(
 );
 router.get('/', authMiddleware, ExpenseController.getFiltered);
 router.get('/:id', authMiddleware, ExpenseController.getById);
+router.get('/byCategory/:categoryId', authMiddleware, ExpenseController.getExpensesByCategory);
 router.post('/', authMiddleware, ExpenseController.create);
 router.put('/:id', authMiddleware, ExpenseController.update);
 router.delete('/:id', authMiddleware, ExpenseController.remove);

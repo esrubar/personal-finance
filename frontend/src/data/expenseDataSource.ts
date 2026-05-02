@@ -50,3 +50,8 @@ export const getExpensesByDescription = async (description: string): Promise<Exp
   const { data } = await axios.get<Expense[]>(`${API_URL}/byDescription/${description}`);
   return data;
 };
+
+export const getExpensesByCategory = async (categoryId: string): Promise<Expense[]> => {
+  const { data } = await axios.get<Expense[]>(`${API_URL}/byCategory/${categoryId}`);
+  return data;
+};

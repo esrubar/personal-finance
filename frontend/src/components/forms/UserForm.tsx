@@ -44,12 +44,7 @@ export const UserForm: React.FC<UserFormProps> = ({ initialData, onSuccess }) =>
   };
 
   return (
-    <Form
-      form={form}
-      layout="vertical"
-      onFinish={onFinish}
-      initialValues={{ name: '' }}
-    >
+    <Form form={form} layout="vertical" onFinish={onFinish} initialValues={{ name: '' }}>
       <Form.Item
         name="name"
         label="Name"

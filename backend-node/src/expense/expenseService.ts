@@ -193,3 +193,13 @@ export const getExpensesByDescription = async (description: string, userName: st
 
   return ExpenseModel.find(query).populate('category', 'name').sort({ transactionDate: -1 }).lean();
 };
+
+export const getExpensesByCategory = async (categoryId: string, userName: string) => {
+  return ExpenseModel.find({
+    'auditable.createdBy': userName,
+    category: categoryId,
+  })
+    .populate('category', 'name')
+    .sort({ transactionDate: -1 })
+    .lean();
+};

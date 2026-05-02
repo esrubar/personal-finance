@@ -5,11 +5,14 @@ import { useCategories } from '../../hooks/useCategories';
 import type { Category } from '../../models/category';
 
 interface CategoryBudgetFormProps {
-  initialData?: any; 
+  initialData?: any;
   onSuccess?: () => void;
 }
 
-export const CategoryBudgetForm: React.FC<CategoryBudgetFormProps> = ({ initialData, onSuccess }) => {
+export const CategoryBudgetForm: React.FC<CategoryBudgetFormProps> = ({
+  initialData,
+  onSuccess,
+}) => {
   const [form] = Form.useForm();
   const { categories } = useCategories();
   const { createCategoryBudget } = useCreateCategoryBudget();
@@ -25,9 +28,9 @@ export const CategoryBudgetForm: React.FC<CategoryBudgetFormProps> = ({ initialD
   const onFinish = async (values: any) => {
     try {
       await createCategoryBudget(values);
-      
+
       message.success('Budget saved successfully');
-      
+
       if (onSuccess) onSuccess();
       if (!initialData) form.resetFields();
     } catch (err: any) {
@@ -40,10 +43,10 @@ export const CategoryBudgetForm: React.FC<CategoryBudgetFormProps> = ({ initialD
       form={form}
       layout="vertical"
       onFinish={onFinish}
-      initialValues={{ 
-        month: new Date().getMonth() + 1, 
+      initialValues={{
+        month: new Date().getMonth() + 1,
         year: new Date().getFullYear(),
-        ...initialData 
+        ...initialData,
       }}
     >
       <Form.Item
@@ -51,30 +54,17 @@ export const CategoryBudgetForm: React.FC<CategoryBudgetFormProps> = ({ initialD
         label="Amount"
         rules={[{ required: true, message: 'The amount is required' }]}
       >
-        <InputNumber
-          style={{ width: '100%' }}
-          placeholder="Ex: 500"
-          min={0}
-          precision={2}
-        />
+        <InputNumber style={{ width: '100%' }} placeholder="Ex: 500" min={0} precision={2} />
       </Form.Item>
 
       <Row gutter={16}>
         <Col span={12}>
-          <Form.Item
-            name="month"
-            label="Month"
-            rules={[{ required: true, message: 'Required' }]}
-          >
+          <Form.Item name="month" label="Month" rules={[{ required: true, message: 'Required' }]}>
             <InputNumber min={1} max={12} style={{ width: '100%' }} />
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item
-            name="year"
-            label="Year"
-            rules={[{ required: true, message: 'Required' }]}
-          >
+          <Form.Item name="year" label="Year" rules={[{ required: true, message: 'Required' }]}>
             <InputNumber min={2000} style={{ width: '100%' }} />
           </Form.Item>
         </Col>
