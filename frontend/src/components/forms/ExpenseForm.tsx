@@ -72,7 +72,6 @@ export const ExpenseForm: React.FC<ExpenseFormProps> = ({ initialData, onSuccess
           min={0}
           precision={2}
           formatter={(value) => `€ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-          parser={(value) => value!.replace(/€\s?|(,*)/g, '')}
         />
       </Form.Item>
 

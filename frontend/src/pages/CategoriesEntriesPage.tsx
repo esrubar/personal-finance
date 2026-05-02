@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Typography, Card, Statistic, Row, Col, Button, Tag, Space, Empty } from 'antd';
+import { Table, Typography, Button, Empty } from 'antd';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
 import dayjs from 'dayjs';
@@ -56,10 +56,7 @@ export const CategoryEntriesPage: React.FC = () => {
       </div>
     );
   }
-
-  // Calculate total spent in this category
-  const totalSpent = expenses?.reduce((acc: number, curr: Expense) => acc + curr.amount, 0) || 0;
-
+  
   return (
     <div style={{ padding: '24px' }}>
       <Button
