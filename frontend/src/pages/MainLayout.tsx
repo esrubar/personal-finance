@@ -1,13 +1,23 @@
 import { Layout, Menu, Button } from 'antd';
 import { PieChartOutlined, LogoutOutlined } from '@ant-design/icons';
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, useNavigate } from 'react-router-dom';
+import { useLogout } from '../hooks/useLogin';
+import '../styles.css';
 
 const { Sider, Content } = Layout;
 
 export const MainLayout = () => {
+  const { logout } = useLogout();
+  const navigate = useNavigate();
+  
+  const logoutHandler = () => {
+    logout();
+    navigate('/');
+  };
+
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      <Sider breakpoint="lg" collapsedWidth="0">
+      <Sider breakpoint="lg" collapsedWidth="0" className="menuContainer">
         <Menu theme="dark" mode="inline" defaultSelectedKeys={['overview']}>
           <Menu.Item key="overview" icon={<PieChartOutlined />}>
             <Link to="/overview">Overview</Link>
@@ -38,9 +48,9 @@ export const MainLayout = () => {
           </Menu.Item>
         </Menu>
 
-        <div style={{ color: 'white', textAlign: 'center' }}>
+        <div className='bottomMenu'>
           <LogoutOutlined />
-          <Button type="text" style={{ color: 'white' }}>
+          <Button type="text" style={{ color: 'white' }} onClick={logoutHandler}>
             Logout
           </Button>
         </div>

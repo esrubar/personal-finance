@@ -21,3 +21,24 @@ export function useLogin() {
 
   return { login, loading, error };
 }
+
+
+export function useLogout() {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+
+  const logout = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      await loginDataSource.logout();
+    } catch (err: any) {
+      setError(err);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { logout, loading, error };
+}

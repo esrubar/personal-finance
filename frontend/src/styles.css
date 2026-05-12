@@ -1,3 +1,17 @@
 .linkedExpense {
   width: 100%;
 }
+
+.menuContainer{
+  display: flex;
+  flex-direction: column;
+}
+.bottomMenu {
+  padding: 16px;
+  margin-top: auto;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: white;
+}

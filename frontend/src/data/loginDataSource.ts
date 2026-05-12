@@ -1,4 +1,4 @@
-import axios from '../api/axios.ts';
+import axios from '../api/axios';
 
 //const API_URL = '/api/auth/login';
 const API_URL = '/login';
@@ -24,4 +24,8 @@ export const getMe = async () => {
     withCredentials: true,
   });
   return data;
+};
+
+export const logout = async () => {
+  await axios.post('/logout', {});
 };
