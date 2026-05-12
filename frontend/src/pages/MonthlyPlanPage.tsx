@@ -98,7 +98,7 @@ export const MonthlyPlanPage = () => {
           return createSavingEntry({
             projectId: item.targetId,
             amount: item.amount,
-            date: dayjs(`${year}-${month}-01`).toDate(),
+            date: dayjs(`${year}-${month}-03`).toDate(),
             note: `Plan mensual ${month}/${year}`,
           });
         }
