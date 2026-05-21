@@ -1,3 +1,4 @@
+import { CategoryType } from '../category/categoryDTO';
 import { CategoryBudgetModel } from '../categoryBudget/categoryBudgetModel';
 import { ExpenseModel } from '../expense/expenseModel';
 import { IncomeModel } from '../income/incomeModel';
@@ -33,7 +34,7 @@ export const getTotalMonthlyIncome = async (overviewParams: OverviewParams): Pro
     {
       $match: {
         'categoryDetails.isCalculable': true,
-        'categoryDetails.type': 'income',
+        'categoryDetails.type': CategoryType.INCOME,
       },
     },
     {
@@ -69,28 +70,13 @@ export const getTotalMonthlyExpense = async (overviewParams: OverviewParams): Pr
     {
       $match: {
         'categoryDetails.isCalculable': true,
-        'categoryDetails.type': 'expense',
-      },
-    },
-    {
-      $lookup: {
-        from: 'incomes',
-        localField: '_id',
-        foreignField: 'linkedExpenseId',
-        as: 'relatedIncomes',
-      },
-    },
-    {
-      $addFields: {
-        netAmount: {
-          $subtract: ['$amount', { $sum: '$relatedIncomes.amount' }],
-        },
+        'categoryDetails.type': CategoryType.EXPENSE,
       },
     },
     {
       $group: {
         _id: null,
-        totalAmount: { $sum: '$netAmount' },
+        totalAmount: { $sum: '$realAmount' },
       },
     },
   ]);
@@ -165,7 +151,7 @@ export const getAnualIncomesAndExpenses = async (
     {
       $match: {
         'categoryDetails.isCalculable': true,
-        'categoryDetails.type': 'income',
+        'categoryDetails.type': CategoryType.INCOME,
       },
     },
     {
@@ -198,21 +184,13 @@ export const getAnualIncomesAndExpenses = async (
     {
       $match: {
         'categoryDetails.isCalculable': true,
-        'categoryDetails.type': 'expense',
-      },
-    },
-    {
-      $lookup: {
-        from: 'incomes',
-        localField: '_id',
-        foreignField: 'linkedExpenseId',
-        as: 'relatedIncomes',
+        'categoryDetails.type': CategoryType.EXPENSE,
       },
     },
     {
       $group: {
         _id: { $month: '$transactionDate' },
-        totalAmount: { $sum: '$amount' },
+        totalAmount: { $sum: '$realAmount' },
       },
     },
     {
@@ -222,27 +200,27 @@ export const getAnualIncomesAndExpenses = async (
 
   let result: Evolution[] = [];
 
-  const formattedData = Array.from({ length: 12 }, (_, index) => {
+  const formattedIncomes = Array.from({ length: 12 }, (_, index) => {
     const monthNumber = index + 1;
     const found = incomes.find((item) => item._id === monthNumber);
     return {
       month: monthNames[monthNumber],
-      type: 'income',
+      type: CategoryType.INCOME,
       value: found ? parseFloat(found.totalAmount) : 0,
     };
   });
 
-  const formattedData2 = Array.from({ length: 12 }, (_, index) => {
+  const formattedExpenses = Array.from({ length: 12 }, (_, index) => {
     const monthNumber = index + 1;
     const found = expenses.find((item) => item._id === monthNumber);
     return {
       month: monthNames[monthNumber],
-      type: 'expense',
+      type: CategoryType.EXPENSE,
       value: found ? parseFloat(found.totalAmount) : 0,
     };
   });
 
-  result = [...formattedData, ...formattedData2];
+  result = [...formattedIncomes, ...formattedExpenses];
 
   return result;
 };
@@ -275,56 +253,44 @@ async function fetchMonthlyExpenses(
   start: Date,
   end: Date,
 ): Promise<AggregatedData[]> {
-  return ExpenseModel.aggregate([
-    {
-      $match: {
-        'auditable.createdBy': userName,
-        transactionDate: { $gte: start, $lte: end },
-      },
+  return await ExpenseModel.aggregate([
+  {
+    $match: {
+      'auditable.createdBy': userName,
+      transactionDate: { $gte: start, $lte: end },
     },
-    {
-      $lookup: {
-        from: 'incomes',
-        localField: '_id',
-        foreignField: 'linkedExpenseId',
-        as: 'linkedIncomes',
-      },
+  },
+  // Agrupamos directamente sumando el realAmount de los gastos
+  {
+    $group: {
+      _id: '$category',
+      amount: { $sum: '$realAmount' }, 
     },
-    {
-      $addFields: {
-        netAmount: { $subtract: ['$amount', { $sum: '$linkedIncomes.amount' }] },
-      },
+  },
+  {
+    $lookup: {
+      from: 'categories',
+      localField: '_id',
+      foreignField: '_id',
+      as: 'cat',
     },
-    {
-      $group: {
-        _id: '$category',
-        amount: { $sum: '$netAmount' },
-      },
+  },
+  { $unwind: '$cat' },
+  {
+    $match: {
+      'cat.isCalculable': true,
+      'cat.type': CategoryType.EXPENSE,
     },
-    {
-      $lookup: {
-        from: 'categories',
-        localField: '_id',
-        foreignField: '_id',
-        as: 'cat',
-      },
+  },
+  {
+    $project: {
+      _id: 0,
+      categoryId: { $toString: '$_id' },
+      categoryName: '$cat.name',
+      amount: 1,
     },
-    { $unwind: '$cat' },
-    {
-      $match: {
-        'cat.isCalculable': true,
-        'cat.type': 'expense',
-      },
-    },
-    {
-      $project: {
-        _id: 0,
-        categoryId: { $toString: '$_id' },
-        categoryName: '$cat.name',
-        amount: 1,
-      },
-    },
-  ]);
+  },
+]);
 }
 
 async function fetchMonthlyBudgets(

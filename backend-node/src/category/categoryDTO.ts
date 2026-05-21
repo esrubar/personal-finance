@@ -5,3 +5,8 @@ export interface CategoryDTO {
   name: string;
   auditable: AuditableDTO;
 }
+
+export enum CategoryType {
+  INCOME = 'income',
+  EXPENSE = 'expense',
+}
