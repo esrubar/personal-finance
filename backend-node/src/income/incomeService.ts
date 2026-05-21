@@ -274,3 +274,77 @@ interface ExpenseDoc {
   tempId?: string | null;
   realAmount: number;
 }
+
+export const reconcileUserFinances = async (userName: string) => {
+  const session = await mongoose.startSession();
+  
+  try {
+    let result;
+
+    await session.withTransaction(async () => {
+      // 1. Agrupar y sumar los ingresos vinculados de este usuario
+      const incomeTotals = await IncomeModel.aggregate([
+        {
+          $match: {
+            'auditable.createdBy': userName,
+            linkedExpenseId: { $exists: true, $ne: null }
+          }
+        },
+        {
+          $group: {
+            _id: '$linkedExpenseId',
+            totalIncome: { $sum: '$amount' }
+          }
+        }
+      ]).session(session);
+
+      // Pasamos los totales a un Map para buscarlos en O(1)
+      const incomeMap = new Map<string, number>();
+      incomeTotals.forEach((item) => {
+        incomeMap.set(item._id.toString(), item.totalIncome);
+      });
+
+      // 2. Traer todos los gastos del usuario
+      const expenses = await ExpenseModel.find({ 'auditable.createdBy': userName })
+        .select('_id amount realAmount')
+        .session(session)
+        .lean();
+
+      // 3. Construir las operaciones de actualización masiva
+      const bulkOps = expenses.map((expense) => {
+        const totalIncome = incomeMap.get(expense._id.toString()) || 0;
+        const calculatedRealAmount = expense.amount - totalIncome;
+
+        return {
+          updateOne: {
+            filter: { _id: expense._id },
+            update: { 
+              $set: { 
+                realAmount: calculatedRealAmount,
+                'auditable.updatedAt': new Date(),
+                'auditable.updatedBy': userName
+              } 
+            }
+          }
+        };
+      });
+
+      // 4. Ejecutar la actualización en bloque si existen gastos
+      if (bulkOps.length > 0) {
+        await ExpenseModel.bulkWrite(bulkOps, { session });
+      }
+
+      result = {
+        processedExpenses: expenses.length,
+        linkedIncomesFound: incomeTotals.length
+      };
+    });
+
+    return result;
+  } catch (error) {
+    console.error(`Error en la reconciliación de ${userName}:`, error);
+    throw error;
+  } finally {
+    await session.endSession();
+  }
+};
