@@ -1,9 +1,9 @@
 import { HydratedDocument, Types } from 'mongoose';
 import { MinimalIncome } from '../income/income';
-import { Category } from '../category/category';
 
 export interface Expense {
   amount: number;
+  realAmount: number;
   category: Types.ObjectId | string;
   transactionDate?: Date;
   description?: string;

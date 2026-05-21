@@ -11,6 +11,7 @@ import { mapToPaginatedExpense } from './expenseMapper';
 export const createExpense = async (data: any, userName: string) => {
   const expenseData = {
     ...data,
+    realAmount: data.amount,
     auditable: createAuditable(userName),
   };
   return await ExpenseModel.create(expenseData);
@@ -28,6 +29,7 @@ export const createExpenses = async (body: ExpenseDTO[], userName: string) => {
     return {
       ...(hasValidId ? { _id } : {}),
       ...cleanExpense,
+      realAmount: expense.amount,
       auditable: createAuditable(userName),
     };
   });

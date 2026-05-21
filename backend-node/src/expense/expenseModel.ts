@@ -3,6 +3,7 @@ import { Expense } from './expense';
 
 const ExpenseSchema = new mongoose.Schema({
   amount: { type: Number, required: true },
+  realAmount: { type: Number, required: true},
   category: { type: Schema.Types.ObjectId, ref: 'Category', required: true },
   transactionDate: { type: Date },
   description: { type: String },
