@@ -18,3 +18,10 @@ export interface SavingEntryWithMinimalProject {
   note?: string;
   savingProject: MinimalSavingProject;
 }
+
+export interface SavingEntryDto {
+  projectId: mongoose.Types.ObjectId;
+  amount: number;
+  note?: string;
+  date: Date;
+}

@@ -56,7 +56,7 @@ export const CategoryEntriesPage: React.FC = () => {
       </div>
     );
   }
-  
+
   return (
     <div style={{ padding: '24px' }}>
       <Button

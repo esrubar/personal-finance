@@ -28,3 +28,11 @@ export interface MensualExpenseDTO {
   totalAmount: number;
   CategoryName: string;
 }
+
+export interface SavingProjectExpense {
+  id: Types.ObjectId | string;
+  projectId: Types.ObjectId;
+  realAmount: number;
+  transactionDate: Date;
+  description?: string;
+}

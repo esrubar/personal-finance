@@ -254,43 +254,43 @@ async function fetchMonthlyExpenses(
   end: Date,
 ): Promise<AggregatedData[]> {
   return await ExpenseModel.aggregate([
-  {
-    $match: {
-      'auditable.createdBy': userName,
-      transactionDate: { $gte: start, $lte: end },
+    {
+      $match: {
+        'auditable.createdBy': userName,
+        transactionDate: { $gte: start, $lte: end },
+      },
     },
-  },
-  // Agrupamos directamente sumando el realAmount de los gastos
-  {
-    $group: {
-      _id: '$category',
-      amount: { $sum: '$realAmount' }, 
+    // Agrupamos directamente sumando el realAmount de los gastos
+    {
+      $group: {
+        _id: '$category',
+        amount: { $sum: '$realAmount' },
+      },
     },
-  },
-  {
-    $lookup: {
-      from: 'categories',
-      localField: '_id',
-      foreignField: '_id',
-      as: 'cat',
+    {
+      $lookup: {
+        from: 'categories',
+        localField: '_id',
+        foreignField: '_id',
+        as: 'cat',
+      },
     },
-  },
-  { $unwind: '$cat' },
-  {
-    $match: {
-      'cat.isCalculable': true,
-      'cat.type': CategoryType.EXPENSE,
+    { $unwind: '$cat' },
+    {
+      $match: {
+        'cat.isCalculable': true,
+        'cat.type': CategoryType.EXPENSE,
+      },
     },
-  },
-  {
-    $project: {
-      _id: 0,
-      categoryId: { $toString: '$_id' },
-      categoryName: '$cat.name',
-      amount: 1,
+    {
+      $project: {
+        _id: 0,
+        categoryId: { $toString: '$_id' },
+        categoryName: '$cat.name',
+        amount: 1,
+      },
     },
-  },
-]);
+  ]);
 }
 
 async function fetchMonthlyBudgets(

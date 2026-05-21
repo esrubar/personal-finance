@@ -2,6 +2,8 @@ import { createAuditable, updateAuditable } from '../auditable/auditableService'
 import { SavingProjectModel } from './savingsProjectModel';
 import { SavingEntryModel } from '../savingEntry/savingEntryModel';
 import { SavingProjectWithEntries } from './savingProject';
+import { ExpenseModel } from '../expense/expenseModel';
+import { SavingEntryDto } from '../savingEntry/savingEntry';
 
 export const createSavingProject = async (data: any, userName: string) => {
   const savingProjectData = {
@@ -61,10 +63,27 @@ export const getSavingProjectWithEntries = async (
     throw new Error('You dont have permission to use this income');
   }
 
-  const savingEntries = await SavingEntryModel.find({
+  const savingEntries: SavingEntryDto[] = await SavingEntryModel.find({
     'auditable.createdBy': userName,
     projectId: savingProject._id,
-  });
+  }).lean();
+
+  const expenses = await ExpenseModel.find({
+    projectId: savingProject._id,
+    'auditable.createdBy': userName,
+  })
+    .select('_id projectId realAmount transactionDate description')
+    .sort({ transactionDate: -1 })
+    .lean();
+
+  const mappingExpenses = expenses.map((expense: any) => ({
+    projectId: expense.projectId,
+    amount: -expense.realAmount,
+    date: expense.transactionDate,
+    note: expense.description,
+  }));
+
+  savingEntries.push(...mappingExpenses);
 
   return {
     id: savingProject._id,

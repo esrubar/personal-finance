@@ -22,7 +22,6 @@ export function useLogin() {
   return { login, loading, error };
 }
 
-
 export function useLogout() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);

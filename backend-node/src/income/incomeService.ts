@@ -17,7 +17,7 @@ export const createIncome = async (data: any, userName: string) => {
 export const createIncomes = async (data: IncomeDTO[], userName: string) => {
   // 1. Iniciar la sesión
   const session = await mongoose.startSession();
-  
+
   try {
     let insertedIncomes;
 
@@ -56,10 +56,12 @@ export const createIncomes = async (data: IncomeDTO[], userName: string) => {
         if (!income.category || !income.category._id || income.category._id === '') {
           throw new Error(`El gasto en la posición ${index} tiene un category._id vacío.`);
         }
-        
+
         const { _id, ...cleanIncome } = income;
         const hasValidId = _id && _id !== '';
-        let finalExpenseId = cleanIncome.linkedExpenseId ? (expenseLookup.get(cleanIncome.linkedExpenseId) || null) : null;
+        let finalExpenseId = cleanIncome.linkedExpenseId
+          ? expenseLookup.get(cleanIncome.linkedExpenseId) || null
+          : null;
 
         return {
           ...(hasValidId ? { _id } : {}),
@@ -74,14 +76,14 @@ export const createIncomes = async (data: IncomeDTO[], userName: string) => {
 
       // 4. Preparar y ejecutar el bulkWrite para actualizar los balances
       const expenseUpdates = incomes
-        .filter(inc => inc.linkedExpenseId)
-        .map(inc => ({
+        .filter((inc) => inc.linkedExpenseId)
+        .map((inc) => ({
           updateOne: {
             filter: { _id: inc.linkedExpenseId },
-            update: { 
-              $inc: { realAmount: -inc.amount } 
-            }
-          }
+            update: {
+              $inc: { realAmount: -inc.amount },
+            },
+          },
         }));
 
       if (expenseUpdates.length > 0) {
@@ -91,10 +93,9 @@ export const createIncomes = async (data: IncomeDTO[], userName: string) => {
 
     // Si llegamos aquí, withTransaction ya hizo el commit automáticamente
     return insertedIncomes;
-
   } catch (error) {
     // Si hay error, withTransaction hace el abort automáticamente
-    console.error("Error en la transacción de ingresos:", error);
+    console.error('Error en la transacción de ingresos:', error);
     throw error;
   } finally {
     // 5. Siempre cerrar la sesión
@@ -156,7 +157,7 @@ export const getIncomesById = async (id: string, userName: string) => {
 
 export const updateIncome = async (id: string, data: any, userName: string) => {
   const session = await mongoose.startSession();
-  
+
   try {
     let updatedIncome;
 
@@ -164,7 +165,7 @@ export const updateIncome = async (id: string, data: any, userName: string) => {
       // 1. Obtener el ingreso actual (antes de actualizar)
       const oldIncome = await IncomeModel.findById(id).session(session);
       if (!oldIncome) throw new Error(`Income with id ${id} not found`);
-      
+
       if (oldIncome.auditable.createdBy !== userName) {
         throw new Error('You dont have permission to update this income');
       }
@@ -187,10 +188,10 @@ export const updateIncome = async (id: string, data: any, userName: string) => {
           await ExpenseModel.findByIdAndUpdate(
             oldExpenseId,
             { $inc: { realAmount: -diff } }, // Si el nuevo monto es mayor, restamos la diferencia
-            { session }
+            { session },
           );
         }
-      } 
+      }
       // CASO B: El vínculo ha cambiado o se ha movido
       else {
         // 1. Revertir el monto en el gasto antiguo (si existía)
@@ -198,7 +199,7 @@ export const updateIncome = async (id: string, data: any, userName: string) => {
           await ExpenseModel.findByIdAndUpdate(
             oldExpenseId,
             { $inc: { realAmount: oldIncome.amount } },
-            { session }
+            { session },
           );
         }
         // 2. Aplicar el monto en el nuevo gasto (si existe)
@@ -206,21 +207,21 @@ export const updateIncome = async (id: string, data: any, userName: string) => {
           await ExpenseModel.findByIdAndUpdate(
             newExpenseId,
             { $inc: { realAmount: -data.amount } },
-            { session }
+            { session },
           );
         }
       }
 
       // 4. Actualizar finalmente el ingreso
-      updatedIncome = await IncomeModel.findByIdAndUpdate(id, incomeData, { 
-        new: true, 
-        session 
+      updatedIncome = await IncomeModel.findByIdAndUpdate(id, incomeData, {
+        new: true,
+        session,
       });
     });
 
     return updatedIncome;
   } catch (error) {
-    console.error("Error actualizando ingreso:", error);
+    console.error('Error actualizando ingreso:', error);
     throw error;
   } finally {
     await session.endSession();
@@ -251,7 +252,7 @@ export const deleteIncome = async (id: string, userName: string) => {
         await ExpenseModel.findByIdAndUpdate(
           income.linkedExpenseId,
           { $inc: { realAmount: income.amount } }, // Sumamos de vuelta
-          { session }
+          { session },
         );
       }
 
@@ -260,9 +261,8 @@ export const deleteIncome = async (id: string, userName: string) => {
     });
 
     return deletedIncome;
-
   } catch (error) {
-    console.error("Error eliminando ingreso:", error);
+    console.error('Error eliminando ingreso:', error);
     throw error;
   } finally {
     await session.endSession();
@@ -277,7 +277,7 @@ interface ExpenseDoc {
 
 export const reconcileUserFinances = async (userName: string) => {
   const session = await mongoose.startSession();
-  
+
   try {
     let result;
 
@@ -287,15 +287,15 @@ export const reconcileUserFinances = async (userName: string) => {
         {
           $match: {
             'auditable.createdBy': userName,
-            linkedExpenseId: { $exists: true, $ne: null }
-          }
+            linkedExpenseId: { $exists: true, $ne: null },
+          },
         },
         {
           $group: {
             _id: '$linkedExpenseId',
-            totalIncome: { $sum: '$amount' }
-          }
-        }
+            totalIncome: { $sum: '$amount' },
+          },
+        },
       ]).session(session);
 
       // Pasamos los totales a un Map para buscarlos en O(1)
@@ -318,14 +318,14 @@ export const reconcileUserFinances = async (userName: string) => {
         return {
           updateOne: {
             filter: { _id: expense._id },
-            update: { 
-              $set: { 
+            update: {
+              $set: {
                 realAmount: calculatedRealAmount,
                 'auditable.updatedAt': new Date(),
-                'auditable.updatedBy': userName
-              } 
-            }
-          }
+                'auditable.updatedBy': userName,
+              },
+            },
+          },
         };
       });
 
@@ -336,7 +336,7 @@ export const reconcileUserFinances = async (userName: string) => {
 
       result = {
         processedExpenses: expenses.length,
-        linkedIncomesFound: incomeTotals.length
+        linkedIncomesFound: incomeTotals.length,
       };
     });
 

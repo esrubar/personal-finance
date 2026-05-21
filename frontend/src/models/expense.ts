@@ -29,6 +29,14 @@ export interface ExpensesSummary {
   totalAmount: number;
 }
 
+export interface SavingProjectExpense {
+  id: string;
+  projectId: string;
+  realAmount: number;
+  transactionDate: Date;
+  description?: string;
+}
+
 export const createExpenseFromTransaction = (
   transaction: Omit<BankTransaction, '_id' | 'auditable' | 'category'>,
   categoryId: string,

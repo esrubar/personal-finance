@@ -1,5 +1,6 @@
 import { Types } from 'mongoose';
-import { SavingEntry } from '../savingEntry/savingEntry';
+import { SavingEntry, SavingEntryDto } from '../savingEntry/savingEntry';
+import { SavingProjectExpense } from '../expense/expenseDTO';
 
 export interface SavingProject {
   amount: number;
@@ -21,5 +22,5 @@ export interface MinimalSavingProject {
 }
 
 export interface SavingProjectWithEntries extends MinimalSavingProject {
-  savingEntries: SavingEntry[];
+  savingEntries: SavingEntryDto[];
 }

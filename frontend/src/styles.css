@@ -2,7 +2,7 @@
   width: 100%;
 }
 
-.menuContainer{
+.menuContainer {
   display: flex;
   flex-direction: column;
 }

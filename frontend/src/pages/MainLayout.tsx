@@ -9,7 +9,7 @@ const { Sider, Content } = Layout;
 export const MainLayout = () => {
   const { logout } = useLogout();
   const navigate = useNavigate();
-  
+
   const logoutHandler = () => {
     logout();
     navigate('/');
@@ -48,7 +48,7 @@ export const MainLayout = () => {
           </Menu.Item>
         </Menu>
 
-        <div className='bottomMenu'>
+        <div className="bottomMenu">
           <LogoutOutlined />
           <Button type="text" style={{ color: 'white' }} onClick={logoutHandler}>
             Logout

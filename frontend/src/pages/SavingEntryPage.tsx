@@ -28,10 +28,20 @@ export const SavingEntryPage = () => {
       title: 'Aportación',
       dataIndex: 'amount',
       key: 'amount',
-      render: (amount: number) => (
-        // Usamos span para evitar el error TS2607
-        <span style={{ fontWeight: 600, color: '#52c41a' }}>+{amount.toLocaleString()} €</span>
-      ),
+      render: (amount: number) => {
+        const isNegative = amount < 0;
+
+        const color = isNegative ? '#ff4d4f' : '#52c41a';
+
+        const prefix = isNegative ? '' : '+';
+
+        return (
+          <span style={{ fontWeight: 600, color }}>
+            {prefix}
+            {amount.toLocaleString()} €
+          </span>
+        );
+      },
     },
     {
       title: 'Nota',
