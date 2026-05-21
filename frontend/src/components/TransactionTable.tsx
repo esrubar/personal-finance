@@ -18,6 +18,7 @@ import { DeleteOutlined } from '@ant-design/icons';
 import type { Category } from '../models/category';
 import { PlusOutlined } from '@ant-design/icons';
 import { ListModal } from './ListModal.tsx';
+import type { SavingProject } from '../models/savingProject.ts';
 
 const { Option } = Select;
 const { Paragraph } = Typography;
@@ -25,6 +26,7 @@ const { Paragraph } = Typography;
 interface Props {
   transactions: BankTransaction[];
   categories: Category[];
+  savingProjects: SavingProject[];
   onChange: (value: any, record: BankTransaction, field: keyof BankTransaction) => void;
   onDelete: (index: number) => void;
 }
@@ -32,6 +34,7 @@ interface Props {
 export const TransactionTable: React.FC<Props> = ({
   transactions,
   categories,
+  savingProjects,
   onChange,
   onDelete,
 }) => {
@@ -143,6 +146,30 @@ export const TransactionTable: React.FC<Props> = ({
           ))}
         </Select>
       ),
+    },
+    {
+      title: 'Saving Project',
+      dataIndex: 'linkedProjectId',
+      key: 'linkedProjectId',
+      render: (value, record) => {
+        if (record.type === 'income') return null;
+
+        return (
+          <Select
+            value={value ?? undefined}
+            onChange={(val) => onChange(val, record, 'projectId')}
+            style={{ width: '100%' }}
+            allowClear
+            placeholder="Saving Project..."
+          >
+            {savingProjects.map((project) => (
+              <Option key={project._id} value={project._id}>
+                {project.name}
+              </Option>
+            ))}
+          </Select>
+        );
+      },
     },
     {
       title: 'linked Expense',

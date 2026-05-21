@@ -29,6 +29,7 @@ export const createExpenses = async (body: ExpenseDTO[], userName: string) => {
     return {
       ...(hasValidId ? { _id } : {}),
       ...cleanExpense,
+      projectId: expense.savingProject?._id,
       realAmount: expense.amount,
       auditable: createAuditable(userName),
     };

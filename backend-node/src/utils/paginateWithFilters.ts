@@ -31,6 +31,10 @@ async function getFilteredExpenses<T>(
     .limit(limit)
     .sort({ [sortBy]: sortDirection === 'asc' ? 1 : -1 })
     .populate('category', 'name')
+    .populate({
+      path: 'projectId',
+      select: 'name amount',
+    })
     .lean();
 }
 

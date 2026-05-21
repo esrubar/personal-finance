@@ -9,6 +9,7 @@ import { useCreateIncomes } from '../hooks/useIncomeMutations';
 import { createIncomeFromTransaction, type Income } from '../models/income';
 import { createExpenseFromTransaction, type Expense } from '../models/expense';
 import { useCategories } from '../hooks/useCategories';
+import { useSavingProjects } from '../hooks/useSavingProjects';
 
 const { Title } = Typography;
 const { Content } = Layout;
@@ -20,6 +21,7 @@ export const BankTransactionsPage: React.FC = () => {
   const { createExpenses } = useCreateExpenses();
   const { createIncomes } = useCreateIncomes();
   const { categories } = useCategories();
+  const { savingProjects } = useSavingProjects();
 
   const handleUpload = async () => {
     if (!file) return;
@@ -58,7 +60,7 @@ export const BankTransactionsPage: React.FC = () => {
         const income = createIncomeFromTransaction(tx, tx.categoryId);
         incomes.push(income);
       } else if (tx.type === 'expense') {
-        const expense = createExpenseFromTransaction(tx, tx.categoryId);
+        const expense = createExpenseFromTransaction(tx, tx.categoryId, tx.projectId);
         expenses.push(expense);
       }
     }
@@ -95,6 +97,7 @@ export const BankTransactionsPage: React.FC = () => {
         <TransactionTable
           transactions={transactions}
           categories={categories}
+          savingProjects={savingProjects}
           onDelete={handleDelete}
           onChange={handleUpdate}
         />

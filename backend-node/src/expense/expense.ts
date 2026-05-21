@@ -5,6 +5,7 @@ export interface Expense {
   amount: number;
   realAmount: number;
   category: Types.ObjectId | string;
+  projectId?: Types.ObjectId | string;
   transactionDate?: Date;
   description?: string;
   tempId?: string;

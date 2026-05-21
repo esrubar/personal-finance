@@ -7,5 +7,6 @@ export interface BankTransaction {
   type: 'income' | 'expense';
   raw: string[];
   categoryId: string;
+  projectId?: string;
   linkedExpenseId?: string;
 }

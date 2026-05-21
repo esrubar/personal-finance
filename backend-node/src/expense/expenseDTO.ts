@@ -2,6 +2,7 @@ import { CategoryDTO } from '../category/categoryDTO';
 import { AuditableDTO } from '../auditable/auditableDTO';
 import { Types } from 'mongoose';
 import { MinimalCategory } from '../category/category';
+import { MinimalSavingProject } from '../savingProject/savingProject';
 
 export interface ExpenseDTO {
   id?: string;
@@ -17,6 +18,7 @@ export interface PaginatedExpense {
   _id: Types.ObjectId;
   amount: number;
   category: MinimalCategory;
+  savingProject?: MinimalSavingProject;
   transactionDate?: string;
   description?: string;
 }

@@ -107,6 +107,12 @@ export const ExpensesPage: React.FC = () => {
       render: (name: string) => <Tag color={getColorForCategory(name)}>{name}</Tag>,
     },
     {
+      title: 'Saving Project',
+      dataIndex: ['savingProject', 'name'],
+      key: 'savingproject',
+      render: (name: string) => <Tag color="blue">{name}</Tag>,
+    },
+    {
       title: 'Month',
       key: 'month',
       filters: months,
