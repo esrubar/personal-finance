@@ -7,6 +7,8 @@ import { createAuditable, updateAuditable } from '../auditable/auditableService'
 import { FilteredExpenseQuery } from './filteredExpensequeryDTO';
 import { ExpenseDTO, MensualExpenseDTO } from './expenseDTO';
 import { mapToPaginatedExpense } from './expenseMapper';
+import { SavingProjectModel } from '../savingProject/savingsProjectModel';
+import mongoose from 'mongoose';
 
 export const createExpense = async (data: any, userName: string) => {
   const expenseData = {
@@ -18,24 +20,60 @@ export const createExpense = async (data: any, userName: string) => {
 };
 
 export const createExpenses = async (body: ExpenseDTO[], userName: string) => {
-  const expenses = body.map((expense: any, index: number) => {
-    if (!expense.category || !expense.category._id || expense.category._id === '') {
-      throw new Error(`El gasto en la posición ${index} tiene un category._id vacío o inválido.`);
-    }
+  const session = await mongoose.startSession();
 
-    const { _id, ...cleanExpense } = expense;
-    const hasValidId = _id && _id !== '';
+  try {
+    let insertedExpenses;
 
-    return {
-      ...(hasValidId ? { _id } : {}),
-      ...cleanExpense,
-      projectId: expense.savingProject?._id,
-      realAmount: expense.amount,
-      auditable: createAuditable(userName),
-    };
-  });
+    await session.withTransaction(async () => {
+      const projectUpdates: any[] = [];
 
-  return await ExpenseModel.insertMany(expenses);
+      const expenses = body.map((expense: any, index: number) => {
+        if (!expense.category || !expense.category._id || expense.category._id === '') {
+          throw new Error(
+            `El gasto en la posición ${index} tiene un category._id vacío o inválido.`,
+          );
+        }
+
+        const { _id, ...cleanExpense } = expense;
+        const hasValidId = _id && _id !== '';
+
+        const projectId = expense.savingProject?._id;
+
+        if (projectId) {
+          projectUpdates.push({
+            updateOne: {
+              filter: { _id: projectId },
+              update: {
+                $inc: { amount: -expense.amount },
+              },
+            },
+          });
+        }
+
+        return {
+          ...(hasValidId ? { _id } : {}),
+          ...cleanExpense,
+          projectId: projectId || null,
+          realAmount: expense.amount,
+          auditable: createAuditable(userName),
+        };
+      });
+
+      insertedExpenses = await ExpenseModel.insertMany(expenses, { session });
+
+      if (projectUpdates.length > 0) {
+        await SavingProjectModel.bulkWrite(projectUpdates, { session });
+      }
+    });
+
+    return insertedExpenses;
+  } catch (error) {
+    console.error('Error al crear los gastos masivos:', error);
+    throw error;
+  } finally {
+    await session.endSession();
+  }
 };
 
 export const getFilteredExpenses = async (
