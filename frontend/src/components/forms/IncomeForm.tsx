@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react';
-import { Form, Input, InputNumber, Select, Button, DatePicker, message } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Form, Input, InputNumber, Select, Button, DatePicker, message, Divider } from 'antd';
 import dayjs from 'dayjs';
 import type { Income } from '../../models/income.ts';
 import { useCreateIncome, useUpdateIncome } from '../../hooks/useIncomeMutations.ts';
 import { useCategories } from '../../hooks/useCategories.ts';
+import { useExpensesByDescription } from '../../hooks/useExpenses.ts'; // Tu hook de búsqueda
 import type { Category } from '../../models/category';
 
 interface IncomeFormProps {
@@ -14,10 +15,17 @@ interface IncomeFormProps {
 export const IncomeForm: React.FC<IncomeFormProps> = ({ initialData, onSuccess }) => {
   const [form] = Form.useForm();
   const { categories } = useCategories();
+  
+  // Estado local para capturar lo que el usuario escribe en el Select de gastos
+  const [expenseSearchText, setExpenseSearchText] = useState('');
+  
+  // El hook reacciona automáticamente cada vez que cambia 'expenseSearchText'
+  const { expenses, loading: loadingExpenses } = useExpensesByDescription(expenseSearchText);
+  
   const { createIncome } = useCreateIncome();
   const { updateIncome } = useUpdateIncome();
 
-  // Sync initial data when editing
+  // Sincronización de datos iniciales en modo edición
   useEffect(() => {
     if (initialData) {
       form.setFieldsValue({
@@ -26,6 +34,7 @@ export const IncomeForm: React.FC<IncomeFormProps> = ({ initialData, onSuccess }
           ? dayjs(initialData.transactionDate)
           : undefined,
         categoryId: initialData.category?._id,
+        linkedExpenseId: initialData.linkedExpenseId || (initialData as any).linkedExpense?.  _id,
       });
     } else {
       form.resetFields();
@@ -36,10 +45,9 @@ export const IncomeForm: React.FC<IncomeFormProps> = ({ initialData, onSuccess }
     try {
       const payload = {
         ...values,
-        // Convert dayjs object back to JS Date for the API
         transactionDate: values.transactionDate ? values.transactionDate.toDate() : undefined,
-        // Structure category to match your Income model
         category: { _id: values.categoryId, name: '' },
+        linkedExpenseId: values.linkedExpenseId || undefined,
       };
 
       if (initialData && initialData._id) {
@@ -62,49 +70,50 @@ export const IncomeForm: React.FC<IncomeFormProps> = ({ initialData, onSuccess }
       form={form}
       layout="vertical"
       onFinish={onFinish}
-      initialValues={{
-        transactionDate: dayjs(), // Default to today
-      }}
+      initialValues={{ transactionDate: dayjs() }}
+      style={styles.formContainer}
     >
       <Form.Item
         name="amount"
-        label="Amount"
-        rules={[{ required: true, message: 'Please enter the amount' }]}
+        label="Income Amount"
+        rules={[{ required: true, message: 'Please enter the income amount' }]}
       >
         <InputNumber
-          style={{ width: '100%' }}
+          style={styles.fullWidth}
           placeholder="0.00"
           min={0}
           precision={2}
-          formatter={(value) => `€ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+          addonAfter="€"
+          size="large"
         />
       </Form.Item>
 
       <Form.Item
         name="description"
-        label="Description"
+        label="Description / Source"
         rules={[{ required: true, message: 'Please enter a description' }]}
       >
-        <Input placeholder="e.g., Monthly salary, Freelance work..." />
+        <Input placeholder="e.g., Monthly salary, Freelance invoice" size="large" />
       </Form.Item>
 
       <Form.Item
         name="transactionDate"
-        label="Date"
+        label="Transaction Date"
         rules={[{ required: true, message: 'Please select a date' }]}
       >
-        <DatePicker style={{ width: '100%' }} format="DD/MM/YYYY" />
+        <DatePicker style={styles.fullWidth} format="DD/MM/YYYY" size="large" />
       </Form.Item>
 
       <Form.Item
         name="categoryId"
-        label="Category"
-        rules={[{ required: true, message: 'Please select a category' }]}
+        label="Accounting Category"
+        rules={[{ required: true, message: 'Please map this to a tracking category' }]}
       >
         <Select
           showSearch
-          placeholder="Select a category"
+          placeholder="Select or search category..."
           optionFilterProp="label"
+          size="large"
           options={categories.map((cat: Category) => ({
             value: cat._id,
             label: cat.name,
@@ -112,11 +121,55 @@ export const IncomeForm: React.FC<IncomeFormProps> = ({ initialData, onSuccess }
         />
       </Form.Item>
 
-      <Form.Item style={{ marginTop: 24 }}>
-        <Button type="primary" htmlType="submit" block>
-          {initialData ? 'Update' : 'Create'} Income
+      {/* Selector de Gasto Vinculado con búsqueda asíncrona */}
+      <Form.Item
+        name="linkedExpenseId"
+        label="Link to Existing Expense"
+      >
+        <Select
+          showSearch
+          allowClear
+          placeholder="Type to search and link an expense..."
+          size="large"
+          loading={loadingExpenses}
+          onSearch={(value) => setExpenseSearchText(value)} // Actualiza el string de búsqueda del hook
+          filterOption={false} // Desactiva el filtrado local para que mande la query a la API
+          notFoundContent={loadingExpenses ? 'Searching expenses...' : 'No expenses found'}
+          options={(expenses || []).map((exp) => ({
+            value: exp._id,
+            label: `${exp.description} (${exp.amount.toFixed(2)} €)`,
+          }))}
+        />
+      </Form.Item>
+
+      <Divider style={styles.divider} />
+
+      <Form.Item style={styles.actionFormItem}>
+        <Button type="primary" htmlType="submit" block size="large" style={styles.submitButton}>
+          {initialData ? 'Update Income Entry' : 'Register Income Record'}
         </Button>
       </Form.Item>
     </Form>
   );
+};
+
+// --- Form Styles (Co-location) ---
+const styles = {
+  formContainer: {
+    paddingTop: '12px',
+  },
+  fullWidth: {
+    width: '100%',
+  },
+  divider: {
+    margin: '24px 0 20px 0',
+  },
+  actionFormItem: {
+    marginBottom: 0,
+  },
+  submitButton: {
+    fontWeight: 600,
+    borderRadius: '6px',
+    height: '40px',
+  },
 };

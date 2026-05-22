@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Table, Progress, Tag, Typography, Space, Modal, Button, Popconfirm, Tooltip } from 'antd';
-import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import { Table, Progress, Tag, Typography, Space, Modal, Button, Popconfirm, Tooltip, Card, Row, Col, Alert } from 'antd';
+import { EditOutlined, DeleteOutlined, PlusOutlined, WalletOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import type { ColumnsType } from 'antd/es/table';
 import { useSavingProjects } from '../hooks/useSavingProjects';
@@ -41,78 +41,91 @@ export const SavingProjectsPage: React.FC = () => {
     setRefreshKey((prev) => prev + 1);
   };
 
-  // --- Definición de Columnas ---
+  // --- Column Definitions ---
   const columns: ColumnsType<SavingProject> = [
     {
-      title: 'Nombre del Plan',
+      title: 'Plan Name',
       dataIndex: 'name',
       key: 'name',
-      render: (text) => <Text strong>{text}</Text>,
+      render: (text) => <Text style={styles.projectName}>{text}</Text>,
     },
     {
-      title: 'Estado',
+      title: 'Status',
       dataIndex: 'status',
       key: 'status',
       width: 120,
       render: (status: string) => {
         const colors = { active: 'blue', completed: 'green', paused: 'orange' };
-        return <Tag color={colors[status as keyof typeof colors]}>{status.toUpperCase()}</Tag>;
+        return (
+          <Tag color={colors[status as keyof typeof colors] ?? 'default'} style={styles.flatTag}>
+            {status.toUpperCase()}
+          </Tag>
+        );
       },
     },
     {
-      title: 'Progreso',
+      title: 'Progress',
       key: 'progress',
+      width: 260,
       render: (_, record) => {
-        if (!record.goal) return <Text type="secondary">Sin meta definida</Text>;
+        if (!record.goal) return <Text type="secondary" style={styles.fallbackText}>No goal defined</Text>;
         const percent = Math.round((record.amount / record.goal) * 100);
         return (
-          <Space direction="vertical" style={{ width: '100%' }} size={0}>
+          <Space direction="vertical" style={styles.controlWrapper} size={0}>
             <Progress
               percent={percent}
               size="small"
               status={record.status === 'completed' || percent >= 100 ? 'success' : 'active'}
               strokeColor={percent >= 100 ? '#52c41a' : '#1890ff'}
+              style={styles.progressBar}
             />
-            <Text style={{ fontSize: '12px' }} type="secondary">
-              {record.amount}€ de {record.goal}€
+            <Text style={styles.progressMetrics} type="secondary">
+              {record.amount}€ of {record.goal}€
             </Text>
           </Space>
         );
       },
     },
     {
-      title: 'Restante',
+      title: 'Remaining',
       key: 'remaining',
+      width: 140,
       render: (_, record) => {
         if (!record.goal) return null;
         const remaining = record.goal - record.amount;
         return remaining > 0 ? (
-          <Text type="secondary">{remaining}€</Text>
+          <Text type="secondary" style={styles.remainingText}>{remaining}€</Text>
         ) : (
-          <Text type="success" strong>
-            ¡Completado!
+          <Text type="success" strong style={styles.remainingText}>
+            Completed!
           </Text>
         );
       },
     },
     {
-      title: 'Acciones',
+      title: 'Actions',
       key: 'actions',
-      width: 100,
+      align: 'right' as const,
+      width: 120,
       render: (_, record) => (
-        <Space size="middle" onClick={(e) => e.stopPropagation()}>
-          {/* stopPropagation evita que al editar/borrar se navegue a entries */}
-          <Tooltip title="Editar">
-            <Button type="text" icon={<EditOutlined />} onClick={() => handleOpenEdit(record)} />
+        <Space size="small" onClick={(e) => e.stopPropagation()}>
+          <Tooltip title="Edit">
+            <Button 
+              type="text" 
+              icon={<EditOutlined />} 
+              onClick={() => handleOpenEdit(record)} 
+              style={styles.editButton}
+            />
           </Tooltip>
 
-          <Tooltip title="Borrar">
+          <Tooltip title="Delete">
             <Popconfirm
-              title="¿Eliminar proyecto?"
-              description="Esta acción no se puede deshacer."
+              title="Delete project?"
+              description="This action cannot be undone."
               onConfirm={() => handleDelete(record._id)}
-              okText="Sí"
+              okText="Yes"
               cancelText="No"
+              placement="topRight"
             >
               <Button type="text" danger icon={<DeleteOutlined />} />
             </Popconfirm>
@@ -123,46 +136,130 @@ export const SavingProjectsPage: React.FC = () => {
   ];
 
   return (
-    <div style={{ padding: '24px' }}>
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: 24,
-        }}
-      >
-        <Title level={2} style={{ margin: 0 }}>
-          Mis Planes de Ahorro
-        </Title>
-        <Button type="primary" icon={<PlusOutlined />} size="large" onClick={handleOpenCreate}>
-          Nuevo Proyecto
-        </Button>
-      </div>
+    <div style={styles.pageContainer}>
+      {error && (
+        <Alert
+          message="Execution Error"
+          description={error.message}
+          type="error"
+          showIcon
+          closable
+          style={styles.errorAlert}
+        />
+      )}
 
-      <Table
-        dataSource={savingProjects}
-        columns={columns}
-        rowKey="_id"
-        loading={loading}
-        pagination={{ pageSize: 8 }}
-        onRow={(record) => ({
-          onClick: () => navigate(`/entries/${record._id}`),
-          style: { cursor: 'pointer' },
-        })}
-      />
+      {/* Synchronized Dashboard Header Grid */}
+      <Row justify="space-between" align="middle" style={styles.headerRow}>
+        <Col>
+          <Space direction="vertical" size={0}>
+            <Title level={2} style={styles.title}>
+              Savings Plans
+            </Title>
+            <Text type="secondary">Track targets, allocation milestones, and project completion metrics</Text>
+          </Space>
+        </Col>
+        <Col>
+          <Button type="primary" icon={<PlusOutlined />} size="large" onClick={handleOpenCreate}>
+            New Project
+          </Button>
+        </Col>
+      </Row>
 
+      {/* Main Table Content Card Container */}
+      <Card bordered={false} style={styles.tableCard}>
+        <Table
+          dataSource={savingProjects}
+          columns={columns}
+          rowKey="_id"
+          loading={loading}
+          pagination={{ pageSize: 8, hideOnSinglePage: true }}
+          onRow={(record) => ({
+            onClick: () => navigate(`/entries/${record._id}`),
+            style: styles.clickableRow,
+          })}
+        />
+      </Card>
+
+      {/* Dynamic Saving Project Form Modal */}
       <Modal
         open={isModalOpen}
         onCancel={() => setIsModalOpen(false)}
         footer={null}
-        title={editingProject ? 'Editar Proyecto de Ahorro' : 'Nuevo Proyecto de Ahorro'}
+        title={
+          <Space style={styles.modalTitle}>
+            <WalletOutlined style={editingProject ? styles.editIcon : styles.addIcon} />
+            <span>{editingProject ? 'Modify Savings Plan' : 'Create Savings Plan'}</span>
+          </Space>
+        }
         destroyOnClose
       >
         <SavingProjectForm initialData={editingProject || undefined} onSuccess={handleCloseModal} />
       </Modal>
-
-      {error && <Text type="danger">{error.message}</Text>}
     </div>
   );
+};
+
+// --- Page Styles (Co-location) ---
+const styles = {
+  pageContainer: {
+    padding: '24px',
+    background: '#f5f7fa',
+    minHeight: '100vh',
+  },
+  headerRow: {
+    marginBottom: '24px',
+  },
+  title: {
+    margin: 0,
+  },
+  tableCard: {
+    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.02), 0 4px 12px rgba(0, 0, 0, 0.03)',
+    borderRadius: '8px',
+  },
+  projectName: {
+    color: '#1f1f1f',
+    fontWeight: 500,
+  },
+  flatTag: {
+    margin: 0,
+    fontWeight: 600,
+    fontSize: '11px',
+    borderRadius: '4px',
+  },
+  controlWrapper: {
+    width: '100%',
+  },
+  progressBar: {
+    margin: 0,
+    paddingRight: '8px',
+  },
+  progressMetrics: {
+    fontSize: '12px',
+    marginTop: '2px',
+    display: 'block',
+  },
+  fallbackText: {
+    fontStyle: 'italic',
+  },
+  remainingText: {
+    fontWeight: 500,
+  },
+  editButton: {
+    color: '#1890ff',
+  },
+  errorAlert: {
+    marginBottom: '16px',
+  },
+  clickableRow: {
+    cursor: 'pointer',
+  },
+  modalTitle: {
+    fontSize: '16px',
+  },
+  addIcon: {
+    color: '#52c41a',
+  },
+  editIcon: {
+    color: '#1890ff',
+  },
 };

@@ -8,8 +8,13 @@ import {
   Table,
   type TablePaginationConfig,
   Tag,
+  Card,
+  Row,
+  Col,
+  Typography,
+  Alert,
 } from 'antd';
-import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { useExpenses } from '../hooks/useExpenses';
 import { useDeleteExpense } from '../hooks/useExpenseMutations';
 import type { Expense } from '../models/expense';
@@ -21,6 +26,8 @@ import type { ExpenseFilter } from '../models/expenseFilter.ts';
 import { getMonthNameCapitalized } from '../utils/dateUtils.ts';
 import type { MinimalIncome } from '../models/income.ts';
 import { ExpenseForm } from '../components/forms/ExpenseForm.tsx';
+
+const { Title, Text } = Typography;
 
 export const ExpensesPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -45,6 +52,14 @@ export const ExpensesPage: React.FC = () => {
 
   const { expenses, loading, error } = useExpenses(params, refreshKey);
   const { categories } = useCategories();
+
+  // --- Frontend Math for Saving Projects ---
+  const totalSavingProjectsAmount = useMemo(() => {
+    if (!expenses?.data) return 0;
+    return expenses.data
+      .filter((exp: any) => exp.savingProject || exp.projectId)
+      .reduce((sum, exp) => sum + (exp.realAmount ?? exp.amount), 0);
+  }, [expenses?.data]);
 
   const handleTableChange = (
     paginationData: TablePaginationConfig,
@@ -77,21 +92,20 @@ export const ExpensesPage: React.FC = () => {
       title: 'Amount',
       dataIndex: 'amount',
       key: 'amount',
+      width: 150,
       render: (amount: number, record: Expense) => {
         const isDifferent = record.realAmount !== undefined && record.realAmount !== amount;
 
         if (isDifferent) {
           return (
-            <>
-              <span>{record.realAmount?.toFixed(2)} €</span>
-              <small style={{ textDecoration: 'line-through', marginLeft: 8, color: '#999' }}>
-                ({amount.toFixed(2)} €)
-              </small>
-            </>
+            <Space size={4}>
+              <Text strong style={styles.adjustedAmount}>{record.realAmount?.toFixed(2)} €</Text>
+              <Text style={styles.strikethroughAmount}>({amount.toFixed(2)} €)</Text>
+            </Space>
           );
         }
 
-        return `${amount.toFixed(2)} €`;
+        return <Text strong style={styles.standardAmount}>{amount.toFixed(2)} €</Text>;
       },
     },
     { title: 'Description', dataIndex: 'description', key: 'description' },
@@ -99,22 +113,25 @@ export const ExpensesPage: React.FC = () => {
       title: 'Category',
       dataIndex: ['category', 'name'],
       key: 'category',
+      width: 140,
       filters: categories.map((c) => ({
-        text: <Tag color={getColorForCategory(c.name)}>{c.name}</Tag>,
+        text: <Tag color={getColorForCategory(c.name)} style={styles.flatTag}>{c.name}</Tag>,
         value: c._id!,
       })),
       filterMultiple: true,
-      render: (name: string) => <Tag color={getColorForCategory(name)}>{name}</Tag>,
+      render: (name: string) => <Tag color={getColorForCategory(name)} style={styles.flatTag}>{name}</Tag>,
     },
     {
       title: 'Saving Project',
       dataIndex: ['savingProject', 'name'],
       key: 'savingproject',
-      render: (name: string) => <Tag color="blue">{name}</Tag>,
+      width: 160,
+      render: (name: string) => name ? <Tag color="purple" style={styles.flatTag}>{name}</Tag> : <Text type="secondary">-</Text>,
     },
     {
       title: 'Month',
       key: 'month',
+      width: 100,
       filters: months,
       filterMultiple: false,
       filteredValue: expenses?.usedMonth !== undefined ? [expenses?.usedMonth] : null,
@@ -123,6 +140,7 @@ export const ExpensesPage: React.FC = () => {
     {
       title: 'Year',
       key: 'year',
+      width: 100,
       filters: years,
       filterMultiple: false,
       filteredValue: expenses?.usedYear !== undefined ? [expenses?.usedYear] : null,
@@ -131,33 +149,37 @@ export const ExpensesPage: React.FC = () => {
     {
       title: 'Date',
       key: 'date',
+      width: 120,
       render: (_: any, record: Expense) => {
         const dateToShow = record.transactionDate ?? record.auditable?.createdAt;
-        return new Date(dateToShow!).toLocaleDateString();
+        return <Text>{new Date(dateToShow!).toLocaleDateString()}</Text>;
       },
     },
     {
       title: 'Actions',
       key: 'actions',
+      align: 'right' as const,
+      width: 110,
       render: (_: unknown, record: Expense) => (
-        <Space>
+        <Space size="small">
           <Button
-            type="link"
+            type="text"
             icon={<EditOutlined />}
             onClick={() => {
               setEditingExpense(record);
               setIsModalOpen(true);
             }}
+            style={styles.editButton}
           />
           <Button
-            type="link"
+            type="text"
             danger
             loading={deleting}
             icon={<DeleteOutlined />}
             onClick={async () => {
               try {
                 await deleteExpense(record._id!);
-                message.success('Expense deleted');
+                message.success('Expense deleted successfully');
                 setRefreshKey((prev) => prev + 1);
               } catch (err) {
                 message.error(err instanceof Error ? err.message : 'Error deleting expense');
@@ -170,28 +192,37 @@ export const ExpensesPage: React.FC = () => {
   ];
 
   const expandedRowRender = (expense: Expense) => {
-    if (!expense.incomes?.length) return <i>No hay ingresos vinculados</i>;
+    if (!expense.incomes?.length) {
+      return <Text type="secondary" italic style={styles.nestedFallback}>No linked income sources found</Text>;
+    }
 
     const incomeColumns = [
       {
         title: 'Amount',
         dataIndex: 'amount',
-        render: (amount: number) => `${amount.toFixed(2)} €`,
+        key: 'amount',
+        width: 140,
+        render: (amount: number) => <Text strong style={styles.nestedIncomeAmount}>{amount.toFixed(2)} €</Text>,
       },
       {
         title: 'Description',
         dataIndex: 'description',
+        key: 'description',
+        render: (text: string) => <Text type="secondary">{text}</Text>
       },
     ];
 
     return (
-      <Table<MinimalIncome>
-        columns={incomeColumns}
-        dataSource={expense.incomes}
-        pagination={false}
-        rowKey="_id"
-        size="small"
-      />
+      <div style={styles.nestedTableWrapper}>
+        <Table<MinimalIncome>
+          columns={incomeColumns}
+          dataSource={expense.incomes}
+          pagination={false}
+          rowKey="_id"
+          size="small"
+          bordered={false}
+        />
+      </div>
     );
   };
 
@@ -206,44 +237,176 @@ export const ExpensesPage: React.FC = () => {
   };
 
   return (
-    <>
-      <h2>Expenses</h2>
-      <Button type="primary" style={{ marginBottom: 16 }} onClick={handleOpenModal}>
-        + Add Expense
-      </Button>
-      <Statistic
-        title={`Total ${expenses ? getMonthNameCapitalized(expenses.usedMonth) : ''}`}
-        value={`${expenses?.totalAmount.toFixed(2)} €`}
-      />
-      <Statistic title={`Total by category`} value={`${expenses?.visibleAmount.toFixed(2)} €`} />
-      <Table<Expense>
-        columns={columns}
-        dataSource={expenses?.data}
-        loading={loading}
-        pagination={{
-          current: pagination.current,
-          pageSize: pagination.pageSize,
-          total: expenses?.total,
-        }}
-        onChange={handleTableChange}
-        rowKey="_id"
-        expandable={{
-          expandedRowRender,
-          rowExpandable: (record: Expense) => {
-            return record.incomes == undefined ? false : record.incomes.length > 0;
-          },
-        }}
-      />
+    <div style={styles.pageContainer}>
+      {error && (
+        <Alert
+          message="Execution Error"
+          description={error.message}
+          type="error"
+          showIcon
+          closable
+          style={styles.errorAlert}
+        />
+      )}
+
+      {/* Header Grid */}
+      <Row justify="space-between" align="middle" style={styles.headerRow}>
+        <Col>
+          <Space direction="vertical" size={0}>
+            <Title level={2} style={styles.title}>Expenses Log</Title>
+            <Text type="secondary">Review general allocations, tracking filters, and goals</Text>
+          </Space>
+        </Col>
+        <Col>
+          <Button type="primary" icon={<PlusOutlined />} size="large" onClick={handleOpenModal}>
+            Add Expense
+          </Button>
+        </Col>
+      </Row>
+
+      {/* Unified Metrics Row */}
+      <Row gutter={[16, 16]} style={styles.metricsRow}>
+        <Col xs={24} md={8}>
+          <Card bordered={false} style={styles.metricsCard}>
+            <Statistic
+              title={`Total Month (${expenses ? getMonthNameCapitalized(expenses.usedMonth) : ''})`}
+              value={expenses?.totalAmount ?? 0}
+              precision={2}
+              suffix="€"
+              valueStyle={styles.metricPrimaryValue}
+            />
+          </Card>
+        </Col>
+        <Col xs={24} md={8}>
+          <Card bordered={false} style={styles.metricsCard}>
+            <Statistic
+              title="Total by Category"
+              value={expenses?.visibleAmount ?? 0}
+              precision={2}
+              suffix="€"
+              valueStyle={styles.metricSecondaryValue}
+            />
+          </Card>
+        </Col>
+        <Col xs={24} md={8}>
+          <Card bordered={false} style={{ ...styles.metricsCard, ...styles.projectCardAccent }}>
+            <Statistic
+              title="Saving Projects Allocations"
+              value={totalSavingProjectsAmount}
+              precision={2}
+              suffix="€"
+              valueStyle={styles.metricProjectValue}
+            />
+          </Card>
+        </Col>
+      </Row>
+
+      {/* Main Content Table */}
+      <Card bordered={false} style={styles.tableCard}>
+        <Table<Expense>
+          columns={columns}
+          dataSource={expenses?.data}
+          loading={loading}
+          pagination={{
+            current: pagination.current,
+            pageSize: pagination.pageSize,
+            total: expenses?.total,
+            showSizeChanger: true,
+          }}
+          onChange={handleTableChange}
+          rowKey="_id"
+          expandable={{
+            expandedRowRender,
+            rowExpandable: (record: Expense) => !!record.incomes?.length,
+          }}
+        />
+      </Card>
+
       <Modal
         open={isModalOpen}
         onCancel={handleCloseModal}
         footer={null}
         title={editingExpense ? 'Edit Expense' : 'Add Expense'}
-        destroyOnHidden={true}
+        destroyOnClose
       >
         <ExpenseForm initialData={editingExpense || undefined} onSuccess={handleCloseModal} />
       </Modal>
-      {error && <div style={{ color: 'red' }}>{error.message}</div>}
-    </>
+    </div>
   );
+};
+
+// --- Page Styles (Co-location) ---
+const styles = {
+  pageContainer: {
+    padding: '24px',
+    background: '#f5f7fa',
+    minHeight: '100vh',
+  },
+  headerRow: {
+    marginBottom: '24px',
+  },
+  title: {
+    margin: 0,
+  },
+  metricsRow: {
+    marginBottom: '24px',
+  },
+  metricsCard: {
+    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.01), 0 4px 8px rgba(0, 0, 0, 0.02)',
+    borderRadius: '8px',
+  },
+  projectCardAccent: {
+    borderLeft: '4px solid #722ed1',
+  },
+  metricPrimaryValue: {
+    color: '#1f1f1f',
+    fontWeight: 700,
+  },
+  metricSecondaryValue: {
+    color: '#595959',
+    fontWeight: 600,
+  },
+  metricProjectValue: {
+    color: '#722ed1',
+    fontWeight: 700,
+  },
+  tableCard: {
+    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.02), 0 4px 12px rgba(0, 0, 0, 0.03)',
+    borderRadius: '8px',
+  },
+  standardAmount: {
+    color: '#141414',
+  },
+  adjustedAmount: {
+    color: '#ff4d4f',
+  },
+  strikethroughAmount: {
+    textDecoration: 'line-through',
+    color: '#bfbfbf',
+    fontSize: '12px',
+  },
+  flatTag: {
+    margin: 0,
+    fontWeight: 600,
+    fontSize: '11px',
+    borderRadius: '4px',
+  },
+  editButton: {
+    color: '#1890ff',
+  },
+  nestedTableWrapper: {
+    padding: '8px 16px',
+    background: '#fafafa',
+    borderRadius: '6px',
+  },
+  nestedFallback: {
+    paddingLeft: '16px',
+    display: 'block',
+  },
+  nestedIncomeAmount: {
+    color: '#52c41a',
+  },
+  errorAlert: {
+    marginBottom: '16px',
+  },
 };

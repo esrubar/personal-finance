@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Form, Input, Select, Button, message } from 'antd';
+import { Form, Input, Select, Button, message, Switch } from 'antd';
 import { useCreateCategory, useUpdateCategory } from '../../hooks/useCategoryMutations';
 import type { Category } from '../../models/category';
 
@@ -25,17 +25,15 @@ const CategoryForm: React.FC<CategoryFormProps> = ({ initialData, onSuccess }) =
     try {
       if (initialData && initialData._id) {
         await updateCategory(initialData._id, { ...initialData, ...values });
-        message.success('Categoría actualizada');
+        message.success('Category updated successfully');
       } else {
         await createCategory(values as Category);
-        message.success('Categoría creada');
+        message.success('Category created successfully');
       }
 
       if (onSuccess) onSuccess();
     } catch (err: any) {
-      // Ant Design maneja internamente las validaciones,
-      // pero capturamos errores de API aquí
-      message.error(err.message || 'Error al guardar la categoría');
+      message.error(err.message || 'Error saving category');
     }
   };
 
@@ -44,23 +42,25 @@ const CategoryForm: React.FC<CategoryFormProps> = ({ initialData, onSuccess }) =
       form={form}
       layout="vertical"
       onFinish={onFinish}
-      initialValues={{ type: 'expense', ...initialData }}
+      initialValues={{ type: 'expense', isCalculable: true, ...initialData }}
+      style={styles.formContainer}
     >
       <Form.Item
         name="name"
-        label="Nombre"
-        rules={[{ required: true, message: 'El nombre es obligatorio' }]}
+        label="Category Name"
+        rules={[{ required: true, message: 'Please enter the category name' }]}
       >
-        <Input placeholder="Escribe el nombre de la categoría" />
+        <Input placeholder="e.g., Groceries, Rent, Salary" size="large" />
       </Form.Item>
 
       <Form.Item
         name="type"
-        label="Tipo"
-        rules={[{ required: true, message: 'Selecciona un tipo' }]}
+        label="Transaction Type"
+        rules={[{ required: true, message: 'Please select a type' }]}
       >
         <Select
-          placeholder="Selecciona el tipo"
+          placeholder="Select type"
+          size="large"
           options={[
             { value: 'income', label: 'Income' },
             { value: 'expense', label: 'Expense' },
@@ -68,17 +68,40 @@ const CategoryForm: React.FC<CategoryFormProps> = ({ initialData, onSuccess }) =
         />
       </Form.Item>
 
-      <Form.Item name="isCalculable" label="Calculable" valuePropName="checked">
-        <Input type="checkbox" />
+      <Form.Item 
+        name="isCalculable" 
+        label="Include in Metrics" 
+        valuePropName="checked"
+        style={styles.switchFormItem}
+      >
+        <Switch checkedChildren="YES" unCheckedChildren="NO" />
       </Form.Item>
 
-      <Form.Item>
-        <Button type="primary" htmlType="submit" block>
-          {initialData ? 'Update' : 'Create'} Categoría
+      <Form.Item style={styles.actionFormItem}>
+        <Button type="primary" htmlType="submit" size="large" block style={styles.submitButton}>
+          {initialData ? 'Update Category' : 'Create Category'}
         </Button>
       </Form.Item>
     </Form>
   );
+};
+
+// --- Form Styles (Co-location) ---
+const styles = {
+  formContainer: {
+    paddingTop: '12px',
+  },
+  switchFormItem: {
+    marginBottom: '28px',
+  },
+  actionFormItem: {
+    marginBottom: 0,
+  },
+  submitButton: {
+    fontWeight: 600,
+    borderRadius: '6px',
+    height: '40px',
+  },
 };
 
 export default CategoryForm;

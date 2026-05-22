@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Table, Tag, Typography, Space, Modal, Button, Popconfirm, Tooltip, message } from 'antd';
-import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import { Table, Tag, Typography, Space, Modal, Button, Popconfirm, Tooltip, message, Card, Row, Col, Alert } from 'antd';
+import { EditOutlined, DeleteOutlined, PlusOutlined, TagOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import type { ColumnsType } from 'antd/es/table';
 import { useCategories } from '../hooks/useCategories';
@@ -50,15 +50,15 @@ export const CategoriesPage: React.FC = () => {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
-      render: (text) => <Text strong>{text}</Text>,
+      render: (text) => <Text style={styles.categoryName}>{text}</Text>,
     },
     {
       title: 'Type',
       dataIndex: 'type',
       key: 'type',
-      width: 120,
+      width: 140,
       render: (type: string) => (
-        <Tag color={type.toLowerCase() === 'income' ? 'green' : 'volcano'}>
+        <Tag color={type.toLowerCase() === 'income' ? 'green' : 'volcano'} style={styles.flatTag}>
           {type.toUpperCase()}
         </Tag>
       ),
@@ -67,19 +67,27 @@ export const CategoriesPage: React.FC = () => {
       title: 'Calculable',
       dataIndex: 'isCalculable',
       key: 'isCalculable',
-      width: 120,
+      width: 140,
       render: (isCalculable: boolean) => (
-        <Tag color={isCalculable ? 'blue' : 'default'}>{isCalculable ? 'YES' : 'NO'}</Tag>
+        <Tag color={isCalculable ? 'blue' : 'default'} style={styles.flatTag}>
+          {isCalculable ? 'YES' : 'NO'}
+        </Tag>
       ),
     },
     {
       title: 'Actions',
       key: 'actions',
+      align: 'right' as const,
       width: 120,
       render: (_, record) => (
-        <Space size="middle" onClick={(e) => e.stopPropagation()}>
+        <Space size="small" onClick={(e) => e.stopPropagation()}>
           <Tooltip title="Edit">
-            <Button type="text" icon={<EditOutlined />} onClick={() => handleOpenEdit(record)} />
+            <Button 
+              type="text" 
+              icon={<EditOutlined />} 
+              onClick={() => handleOpenEdit(record)} 
+              style={styles.editButton}
+            />
           </Tooltip>
 
           <Tooltip title="Delete">
@@ -89,6 +97,7 @@ export const CategoriesPage: React.FC = () => {
               onConfirm={() => handleDelete(record._id!)}
               okText="Yes"
               cancelText="No"
+              placement="topRight"
             >
               <Button type="text" danger icon={<DeleteOutlined />} />
             </Popconfirm>
@@ -99,45 +108,112 @@ export const CategoriesPage: React.FC = () => {
   ];
 
   return (
-    <div style={{ padding: '24px' }}>
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: 24,
-        }}
-      >
-        <Title level={2} style={{ margin: 0 }}>
-          Categories
-        </Title>
-        <Button type="primary" icon={<PlusOutlined />} size="large" onClick={handleOpenCreate}>
-          New Category
-        </Button>
-      </div>
+    <div style={styles.pageContainer}>
+      {error && (
+        <Alert
+          message="Execution Error"
+          description={error.message}
+          type="error"
+          showIcon
+          closable
+          style={styles.errorAlert}
+        />
+      )}
 
-      <Table
-        dataSource={categories}
-        columns={columns}
-        rowKey="_id"
-        loading={loading}
-        onRow={(record) => ({
-          onClick: () => navigate(`/category-entries/${record._id}`),
-          style: { cursor: 'pointer' },
-        })}
-      />
+      {/* Synchronized Dashboard Header */}
+      <Row justify="space-between" align="middle" style={styles.headerRow}>
+        <Col>
+          <Space direction="vertical" size={0}>
+            <Title level={2} style={styles.title}>
+              Categories
+            </Title>
+            <Text type="secondary">Configure transactional clusters, tracking types, and ledger inclusion rules</Text>
+          </Space>
+        </Col>
+        <Col>
+          <Button type="primary" icon={<PlusOutlined />} size="large" onClick={handleOpenCreate}>
+            New Category
+          </Button>
+        </Col>
+      </Row>
 
+      {/* Main Content Table Wrapper */}
+      <Card bordered={false} style={styles.tableCard}>
+        <Table
+          dataSource={categories}
+          columns={columns}
+          rowKey="_id"
+          loading={loading}
+          pagination={{ pageSize: 10, hideOnSinglePage: true }}
+          onRow={(record) => ({
+            onClick: () => navigate(`/category-entries/${record._id}`),
+            style: styles.clickableRow,
+          })}
+        />
+      </Card>
+
+      {/* Dynamic Creation/Edit Modal Wrapper */}
       <Modal
         open={isModalOpen}
         onCancel={() => setIsModalOpen(false)}
         footer={null}
-        title={editingCategory ? 'Edit Category' : 'New Category'}
+        title={
+          <Space style={styles.modalTitle}>
+            <TagOutlined style={editingCategory ? styles.editIcon : styles.addIcon} />
+            <span>{editingCategory ? 'Modify Category Properties' : 'Create Configuration Category'}</span>
+          </Space>
+        }
         destroyOnClose
       >
         <CategoryForm initialData={editingCategory || undefined} onSuccess={handleCloseModal} />
       </Modal>
-
-      {error && <Text type="danger">{error.message}</Text>}
     </div>
   );
+};
+
+// --- Page Styles (Co-location) ---
+const styles = {
+  pageContainer: {
+    padding: '24px',
+    background: '#f5f7fa',
+    minHeight: '100vh',
+  },
+  headerRow: {
+    marginBottom: '24px',
+  },
+  title: {
+    margin: 0,
+  },
+  tableCard: {
+    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.02), 0 4px 12px rgba(0, 0, 0, 0.03)',
+    borderRadius: '8px',
+  },
+  categoryName: {
+    color: '#1f1f1f',
+    fontWeight: 500,
+  },
+  flatTag: {
+    margin: 0,
+    fontWeight: 600,
+    fontSize: '11px',
+    borderRadius: '4px',
+  },
+  editButton: {
+    color: '#1890ff',
+  },
+  errorAlert: {
+    marginBottom: '16px',
+  },
+  clickableRow: {
+    cursor: 'pointer',
+  },
+  modalTitle: {
+    fontSize: '16px',
+  },
+  addIcon: {
+    color: '#52c41a',
+  },
+  editIcon: {
+    color: '#1890ff',
+  },
 };

@@ -3,7 +3,6 @@ import {
   Button,
   Card,
   Col,
-  Divider,
   InputNumber,
   Row,
   Select,
@@ -13,25 +12,22 @@ import {
   Tag,
   message,
   Popconfirm,
+  Statistic,
 } from 'antd';
 import {
   CopyOutlined,
   SaveOutlined,
-  PlusCircleOutlined,
+  PlusOutlined,
   DeleteOutlined,
   CalendarOutlined,
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
 
-// Importa tus hooks (asegúrate de que las rutas coincidan con la estructura de tu proyecto)
 import { useCategories } from '../hooks/useCategories';
 import { useSavingProjects } from '../hooks/useSavingProjects';
 import { useCreateCategoryBudget } from '../hooks/useCategoryBudgetMutations';
 import { useCreateSavingEntry } from '../hooks/useSavingEntriesMutation.ts';
-// Hook para obtener los datos pasados (necesitas crearlo en tu backend/frontend)
-//import { usePastPlan } from '../hooks/usePastPlan';
 
-const { Option } = Select;
 const { Title, Text } = Typography;
 
 export const MonthlyPlanPage = () => {
@@ -43,45 +39,19 @@ export const MonthlyPlanPage = () => {
 
   const { categories } = useCategories();
   const { savingProjects } = useSavingProjects();
-  //  const { getPastPlan } = usePastPlan();
 
   const { createCategoryBudget } = useCreateCategoryBudget();
   const { createSavingEntry } = useCreateSavingEntry();
 
-  // --- LÓGICA DEL BONUS: COPIAR MES ANTERIOR ---
-  /* const handleCopyLastMonth = async () => {
-    try {
-      const lastMonthDate = dayjs(`${year}-${month}-01`).subtract(1, 'month');
-      const pastData = await getPastPlan(lastMonthDate.month() + 1, lastMonthDate.year());
-
-      if (!pastData || pastData.length === 0) {
-        return message.warning('No se encontró un plan en el mes anterior');
-      }
-
-      // Mapeamos a IDs temporales (key) para que la tabla de React no falle
-      const importedItems = pastData.map((item: any) => ({
-        key: crypto.randomUUID(),
-        type: item.type, // 'expense' o 'saving'
-        targetId: item.targetId,
-        amount: item.amount
-      }));
-
-      setPlanItems(importedItems);
-      message.success(`Copiados ${importedItems.length} elementos del mes anterior`);
-    } catch (err) {
-      message.error('Error al recuperar el plan anterior');
-    }
-  };
-*/
-  // --- LÓGICA DE GUARDADO (MUTACIONES) ---
+  // --- SAVE LOGIC ---
   const handleSavePlan = async () => {
     if (planItems.length === 0) {
-      return message.warning('No hay elementos en el plan para guardar');
+      return message.warning('There are no items in the plan to save');
     }
 
     const isInvalid = planItems.some((item) => !item.targetId);
     if (isInvalid) {
-      return message.error('Por favor, asigna una categoría o proyecto a todos los elementos');
+      return message.error('Please map a category or project to all entries');
     }
 
     setIsSaving(true);
@@ -99,25 +69,22 @@ export const MonthlyPlanPage = () => {
             projectId: item.targetId,
             amount: item.amount,
             date: dayjs(`${year}-${month}-03`).toDate(),
-            note: `Plan mensual ${month}/${year}`,
+            note: `Monthly Plan ${month}/${year}`,
           });
         }
       });
 
       await Promise.all(promises);
-
-      message.success('¡Plan mensual guardado con éxito!');
-      // Si quieres que se limpie la pantalla tras guardar, descomenta la siguiente línea:
-      // setPlanItems([]);
+      message.success('Monthly plan saved successfully!');
     } catch (err) {
       console.error(err);
-      message.error('Error al guardar algunos elementos del plan');
+      message.error('Error saving some plan items');
     } finally {
       setIsSaving(false);
     }
   };
 
-  // --- CRUD DE LA TABLA ---
+  // --- ACTIONS & MUTATIONS ---
   const addItem = (type: 'expense' | 'saving') => {
     const newItem = { key: crypto.randomUUID(), type, targetId: '', amount: 0 };
     setPlanItems([...planItems, newItem]);
@@ -134,58 +101,68 @@ export const MonthlyPlanPage = () => {
   };
 
   const totalAssigned = planItems.reduce((sum, i) => sum + i.amount, 0);
+  const availableFunds = salary - totalAssigned;
 
-  // --- DEFINICIÓN DE COLUMNAS ---
+  // --- COLUMNS DEFINITION ---
   const columns = [
     {
-      title: 'Tipo',
+      title: 'Allocation Type',
       dataIndex: 'type',
-      width: 100,
+      width: 140,
       render: (type: string) => (
-        <Tag color={type === 'expense' ? 'volcano' : 'green'}>
-          {type === 'expense' ? 'GASTO' : 'AHORRO'}
+        <Tag color={type === 'expense' ? 'volcano' : 'green'} style={styles.flatTag}>
+          {type === 'expense' ? 'EXPENSE' : 'SAVING'}
         </Tag>
       ),
     },
     {
-      title: 'Categoría / Proyecto',
+      title: 'Target Category / Project',
+      key: 'targetId',
       render: (_: any, record: any) => (
         <Select
-          style={{ width: '100%' }}
-          placeholder="Seleccionar..."
+          showSearch // Habilita la barra de búsqueda interna del Select
+          style={styles.fullWidth}
+          placeholder="Search and select option..."
+          size="large"
+          optionFilterProp="children" // Filtra las opciones basándose en el texto que hay dentro (c.name / p.name)
           value={record.targetId || undefined}
           onChange={(val) => updateItem(record.key, 'targetId', val)}
         >
           {record.type === 'expense'
             ? categories?.map((c) => (
-                <Option key={c._id} value={c._id}>
+                <Select.Option key={c._id} value={c._id}>
                   {c.name}
-                </Option>
+                </Select.Option>
               ))
             : savingProjects?.map((p) => (
-                <Option key={p._id} value={p._id}>
+                <Select.Option key={p._id} value={p._id}>
                   {p.name}
-                </Option>
+                </Select.Option>
               ))}
         </Select>
       ),
     },
     {
-      title: 'Importe (€)',
+      title: 'Planned Amount',
       dataIndex: 'amount',
-      width: 150,
+      width: 180,
       render: (val: number, record: any) => (
         <InputNumber
-          style={{ width: '100%' }}
+          style={styles.fullWidth}
           min={0}
-          value={val}
+          precision={2}
+          size="large"
+          addonAfter="€"
+          placeholder="0.00"
+          value={val || undefined}
           onChange={(v) => updateItem(record.key, 'amount', v || 0)}
         />
       ),
     },
     {
       title: '',
-      width: 50,
+      width: 60,
+      align: 'center' as const,
       render: (_: any, record: any) => (
         <Button
           type="text"
@@ -198,128 +175,137 @@ export const MonthlyPlanPage = () => {
   ];
 
   return (
-    <div style={{ padding: 24 }}>
-      <Card bordered={false} style={{ borderRadius: 12, boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
-        {/* HEADER */}
-        <Row justify="space-between" align="middle" style={{ marginBottom: 24 }}>
+    <div style={styles.pageContainer}>
+      {/* HEADER ROW */}
+      <Row justify="space-between" align="middle" style={styles.headerRow}>
+        <Col>
+          <Space size="middle">
+            <CalendarOutlined style={styles.headerIcon} />
+            <Space direction="vertical" size={0}>
+              <Title level={2} style={styles.title}>
+                Monthly Budget Planner
+              </Title>
+              <Text type="secondary">Define allocations, set savings benchmarks, and forecast limits</Text>
+            </Space>
+          </Space>
+        </Col>
+        <Col>
+          <Button icon={<CopyOutlined />} size="large" style={styles.actionButton}>
+            Copy Last Month
+          </Button>
+        </Col>
+      </Row>
+
+      {/* METRICS & CONFIGURATION BENCH */}
+      <Row gutter={[16, 16]} style={styles.cardsRow}>
+        <Col xs={24} lg={16}>
+          <Card bordered={false} style={styles.dashboardCard}>
+            <Row gutter={[16, 16]}>
+              <Col xs={24} sm={10}>
+                <Text type="secondary" strong style={styles.inputLabel}>Net Salary Income</Text>
+                <InputNumber
+                  size="large"
+                  style={styles.fullWidth}
+                  value={salary}
+                  onChange={(v) => setSalary(v || 0)}
+                  addonAfter="€"
+                  precision={2}
+                />
+              </Col>
+              <Col xs={12} sm={7}>
+                <Text type="secondary" strong style={styles.inputLabel}>Target Month</Text>
+                <InputNumber
+                  size="large"
+                  style={styles.fullWidth}
+                  value={month}
+                  min={1}
+                  max={12}
+                  onChange={(v) => setMonth(v || 1)}
+                />
+              </Col>
+              <Col xs={12} sm={7}>
+                <Text type="secondary" strong style={styles.inputLabel}>Target Year</Text>
+                <InputNumber
+                  size="large"
+                  style={styles.fullWidth}
+                  value={year}
+                  onChange={(v) => setYear(v || 2026)}
+                />
+              </Col>
+            </Row>
+          </Card>
+        </Col>
+
+        <Col xs={24} lg={8}>
+          <Card bordered={false} style={{ ...styles.dashboardCard, ...styles.accentCard(availableFunds >= 0) }}>
+            <Statistic
+              title="Remaining Available Balance"
+              value={availableFunds}
+              precision={2}
+              suffix="€"
+              valueStyle={availableFunds < 0 ? styles.negativeValue : styles.positiveValue}
+            />
+          </Card>
+        </Col>
+      </Row>
+
+      {/* ACTION CONTROLS & TABLE VIEW */}
+      <Card bordered={false} style={styles.tableCard}>
+        <Row justify="space-between" align="middle" style={styles.tableActionsRow}>
           <Col>
             <Space size="middle">
-              <CalendarOutlined style={{ fontSize: 24, color: '#1890ff' }} />
-              <Title level={2} style={{ margin: 0 }}>
-                Planificador Mensual
-              </Title>
+              <Button
+                type="primary"
+                danger
+                icon={<PlusOutlined />}
+                size="large"
+                onClick={() => addItem('expense')}
+                style={styles.actionButton}
+              >
+                Add Budget Expense
+              </Button>
+              <Button
+                type="primary"
+                icon={<PlusOutlined />}
+                size="large"
+                onClick={() => addItem('saving')}
+                style={styles.savingButton}
+              >
+                Add Saving Target
+              </Button>
             </Space>
           </Col>
-          <Col>
-            <Button
-              icon={<CopyOutlined />}
-              /*onClick={handleCopyLastMonth}*/
-              style={{ borderRadius: 6 }}
-            >
-              Copiar mes anterior
-            </Button>
-          </Col>
         </Row>
 
-        {/* INPUTS PRINCIPALES */}
-        <Row gutter={24} style={{ marginBottom: 24 }}>
-          <Col span={8}>
-            <Text type="secondary">Salario neto</Text>
-            <InputNumber
-              size="large"
-              style={{ width: '100%', marginTop: 8 }}
-              value={salary}
-              onChange={(v) => setSalary(v || 0)}
-              suffix="€"
-            />
-          </Col>
-          <Col span={4}>
-            <Text type="secondary">Mes</Text>
-            <InputNumber
-              size="large"
-              style={{ width: '100%', marginTop: 8 }}
-              value={month}
-              min={1}
-              max={12}
-              onChange={(v) => setMonth(v || 1)}
-            />
-          </Col>
-          <Col span={4}>
-            <Text type="secondary">Año</Text>
-            <InputNumber
-              size="large"
-              style={{ width: '100%', marginTop: 8 }}
-              value={year}
-              onChange={(v) => setYear(v || 2026)}
-            />
-          </Col>
-          <Col span={8}>
-            <div
-              style={{
-                background: '#f5f5f5',
-                padding: '12px 20px',
-                borderRadius: 8,
-                textAlign: 'right',
-              }}
-            >
-              <Text type="secondary">Disponible:</Text>
-              <Title
-                level={3}
-                style={{ margin: 0, color: salary - totalAssigned < 0 ? '#ff4d4f' : '#52c41a' }}
-              >
-                {(salary - totalAssigned).toFixed(2)} €
-              </Title>
-            </div>
-          </Col>
-        </Row>
-
-        <Divider />
-
-        {/* BOTONES DE AÑADIR */}
-        <Space style={{ marginBottom: 16 }}>
-          <Button
-            type="primary"
-            danger
-            icon={<PlusCircleOutlined />}
-            onClick={() => addItem('expense')}
-          >
-            Añadir Gasto
-          </Button>
-          <Button
-            type="primary"
-            style={{ background: '#52c41a', borderColor: '#52c41a' }}
-            icon={<PlusCircleOutlined />}
-            onClick={() => addItem('saving')}
-          >
-            Añadir Ahorro
-          </Button>
-        </Space>
-
-        {/* TABLA PRINCIPAL */}
         <Table
           columns={columns}
           dataSource={planItems}
           pagination={false}
           rowKey="key"
+          style={styles.table}
           summary={() => (
-            <Table.Summary.Row style={{ background: '#fafafa', fontWeight: 'bold' }}>
+            <Table.Summary.Row style={styles.summaryRow}>
               <Table.Summary.Cell index={0} colSpan={2}>
-                Total Planificado
+                <Text strong>Total Allocated Funds</Text>
               </Table.Summary.Cell>
-              <Table.Summary.Cell index={1}>{totalAssigned.toFixed(2)} €</Table.Summary.Cell>
+              <Table.Summary.Cell index={1}>
+                <Text strong style={styles.amountTotal}>
+                  {totalAssigned.toFixed(2)} €
+                </Text>
+              </Table.Summary.Cell>
               <Table.Summary.Cell index={2} />
             </Table.Summary.Row>
           )}
         />
 
-        {/* BOTÓN DE GUARDAR */}
-        <div style={{ marginTop: 32, textAlign: 'right' }}>
+        {/* SUBMIT ROW */}
+        <div style={styles.submitSection}>
           <Popconfirm
-            title="¿Guardar este plan?"
-            description="Se crearán los presupuestos y las entradas de ahorro."
+            title="Commit current plan?"
+            description="This action will initialize all mapped budgets and targets."
             onConfirm={handleSavePlan}
-            okText="Guardar"
-            cancelText="Cancelar"
+            okText="Save Plan"
+            cancelText="Cancel"
             disabled={isSaving}
           >
             <Button
@@ -327,13 +313,110 @@ export const MonthlyPlanPage = () => {
               size="large"
               icon={<SaveOutlined />}
               loading={isSaving}
-              style={{ width: 220, height: 45, borderRadius: 8 }}
+              style={styles.submitButton}
             >
-              Finalizar Plan
+              Finalize Planning Cycle
             </Button>
           </Popconfirm>
         </div>
       </Card>
     </div>
   );
+};
+
+// --- Co-located Architectural Styles ---
+const styles = {
+  pageContainer: {
+    padding: '24px',
+    background: '#f5f7fa',
+    minHeight: '100vh',
+  },
+  headerRow: {
+    marginBottom: '24px',
+  },
+  headerIcon: {
+    fontSize: '26px',
+    color: '#1890ff',
+    padding: '8px',
+    background: '#e6f7ff',
+    borderRadius: '8px',
+  },
+  title: {
+    margin: 0,
+    fontWeight: 600,
+  },
+  cardsRow: {
+    marginBottom: '24px',
+  },
+  dashboardCard: {
+    boxShadow: '0 1px 3px rgba(0,0,0,0.01), 0 4px 8px rgba(0,0,0,0.02)',
+    borderRadius: '8px',
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column' as const,
+    justifyContent: 'center',
+  },
+  accentCard: (isPositive: boolean) => ({
+    borderLeft: isPositive ? '4px solid #52c41a' : '4px solid #ff4d4f',
+  }),
+  inputLabel: {
+    display: 'block',
+    marginBottom: '6px',
+    fontSize: '12px',
+  },
+  positiveValue: {
+    color: '#52c41a',
+    fontWeight: 700,
+  },
+  negativeValue: {
+    color: '#ff4d4f',
+    fontWeight: 700,
+  },
+  tableCard: {
+    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.02), 0 4px 12px rgba(0, 0, 0, 0.03)',
+    borderRadius: '8px',
+    padding: '8px 0',
+  },
+  tableActionsRow: {
+    marginBottom: '20px',
+  },
+  actionButton: {
+    borderRadius: '6px',
+    fontWeight: 500,
+  },
+  savingButton: {
+    borderRadius: '6px',
+    fontWeight: 500,
+    background: '#52c41a',
+    borderColor: '#52c41a',
+  },
+  table: {
+    background: '#ffffff',
+  },
+  flatTag: {
+    margin: 0,
+    fontWeight: 600,
+    borderRadius: '4px',
+    fontSize: '11px',
+  },
+  summaryRow: {
+    background: '#fafafa',
+  },
+  amountTotal: {
+    fontSize: '14px',
+    color: '#141414',
+  },
+  submitSection: {
+    marginTop: '32px',
+    textAlign: 'right' as const,
+  },
+  submitButton: {
+    minWidth: '220px',
+    height: '44px',
+    borderRadius: '6px',
+    fontWeight: 600,
+  },
+  fullWidth: {
+    width: '100%',
+  },
 };

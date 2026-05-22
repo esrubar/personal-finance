@@ -78,23 +78,23 @@ export const OverviewPage: React.FC = () => {
         <Col>
           <Space direction="vertical" size={0}>
             <Title level={2} style={styles.title}>
-              Panel de Control Financiero
+              Financial Dashboard
             </Title>
-            <Text type="secondary">Visualizando datos de {selectedDate.format('MMMM YYYY')}</Text>
+            <Text type="secondary">Viewing data for {selectedDate.format('MMMM YYYY')}</Text>
           </Space>
         </Col>
         <Col>
           <Card size="small" bordered={false} style={styles.headerCard}>
             <Space>
               <CalendarOutlined style={styles.calendarIcon} />
-              <Text strong>Periodo:</Text>
+              <Text strong>Period:</Text>
               <DatePicker
                 picker="month"
                 value={selectedDate}
                 onChange={(date) => date && setSelectedDate(date)}
                 allowClear={false}
                 format="MMMM YYYY"
-                placeholder="Seleccionar mes"
+                placeholder="Select month"
               />
             </Space>
           </Card>
@@ -105,7 +105,7 @@ export const OverviewPage: React.FC = () => {
         <Col xs={24} sm={12} md={6}>
           <Card bordered={false} hoverable>
             <Statistic
-              title="Ingresos del Mes"
+              title="Monthly Income"
               value={income}
               prefix={<ArrowUpOutlined />}
               suffix="€"
@@ -116,7 +116,7 @@ export const OverviewPage: React.FC = () => {
         <Col xs={24} sm={12} md={6}>
           <Card bordered={false} hoverable>
             <Statistic
-              title="Gastos Totales"
+              title="Total Expenses"
               value={expenses}
               prefix={<ArrowDownOutlined />}
               suffix="€"
@@ -127,7 +127,7 @@ export const OverviewPage: React.FC = () => {
         <Col xs={24} sm={12} md={6}>
           <Card bordered={false} hoverable>
             <Statistic
-              title="Ahorrado este Mes"
+              title="Savings This Month"
               value={savings}
               prefix={<RocketOutlined />}
               suffix="€"
@@ -138,7 +138,7 @@ export const OverviewPage: React.FC = () => {
         <Col xs={24} sm={12} md={6}>
           <Card bordered={false} hoverable>
             <Statistic
-              title="Remanente Libre"
+              title="Free Remainder"
               value={monthlyRemainder}
               prefix={<DollarOutlined />}
               suffix="€"
@@ -150,12 +150,12 @@ export const OverviewPage: React.FC = () => {
 
       <Row gutter={[16, 16]} style={styles.chartsRow}>
         <Col xs={24} lg={16}>
-          <Card title="Balance Mensual (Evolución)" bordered={false}>
+          <Card title="Monthly Balance (Evolution)" bordered={false}>
             <Column {...evolutionConfig} height={300} />
           </Card>
         </Col>
         <Col xs={24} lg={8}>
-          <Card title="Gastos por Categoría" bordered={false}>
+          <Card title="Expenses by Category" bordered={false}>
             <Pie {...categoryConfig} height={300} />
           </Card>
         </Col>
@@ -163,10 +163,10 @@ export const OverviewPage: React.FC = () => {
 
       <Row gutter={[16, 16]} style={styles.bottomRow}>
         <Col xs={24} md={12}>
-          <Card title="Control de Presupuesto (Gasto Real vs Planeado)" bordered={false} style={styles.fullHeight}>
+          <Card title="Budget Control (Actual vs Planned)" bordered={false} style={styles.fullHeight}>
             <div style={styles.efficiencyBanner}>
               <div style={styles.efficiencyHeader}>
-                <Text strong><DashboardOutlined style={styles.dashboardIcon} /> Eficiencia Global del Mes</Text>
+                <Text strong><DashboardOutlined style={styles.dashboardIcon} /> Monthly Global Efficiency</Text>
                 <Text strong style={{ color: expenses > budget ? '#f5222d' : '#faad14' }}>
                   {Math.round((expenses / budget) * 100)}%
                 </Text>
@@ -178,7 +178,7 @@ export const OverviewPage: React.FC = () => {
                 strokeColor={expenses > budget ? '#f5222d' : '#faad14'}
               />
               <Text type="secondary" style={styles.microText}>
-                Llevas gastado {expenses}€ de un presupuesto total de {Math.round(budget)}€
+                Spent {expenses}€ of a total budget of {Math.round(budget)}€
               </Text>
             </div>
 
@@ -214,10 +214,10 @@ export const OverviewPage: React.FC = () => {
         </Col>
 
         <Col xs={24} md={12}>
-          <Card title="Fondos y Proyectos de Ahorro" bordered={false} style={styles.fullHeight}>
+          <Card title="Savings Funds & Projects" bordered={false} style={styles.fullHeight}>
             <div style={styles.historicalSavingsBanner}>
               <Statistic
-                title={<Text strong style={styles.historicalSavingsTitle}>Total Ahorrado (Histórico)</Text>}
+                title={<Text strong style={styles.historicalSavingsTitle}>Total Saved (Historical)</Text>}
                 value={totalHistoricalSavings}
                 prefix={<WalletOutlined style={styles.walletIcon} />}
                 suffix="€"
@@ -226,15 +226,15 @@ export const OverviewPage: React.FC = () => {
             </div>
 
             <Text type="secondary" strong style={styles.sectionTitle}>
-              Distribución de Huchas Activas
+              Active Savings Buckets
             </Text>
             
             <List
               dataSource={activeSavingProjects}
-              locale={{ emptyText: 'No tienes proyectos de ahorro activos con saldo positivo' }}
+              locale={{ emptyText: 'No active savings projects with positive balance' }}
               renderItem={(proj) => {
                 const hasGoal = !!proj.goal;
-                const percent = hasGoal ? Math.round((proj.amount / proj.goal) * 100) : 0;
+                const percent = hasGoal ? Math.round((proj.amount / proj.goal!) * 100) : 0;
 
                 return (
                   <List.Item style={styles.listItem}>
@@ -245,7 +245,7 @@ export const OverviewPage: React.FC = () => {
                           <Text strong>{proj.name}</Text>
                           {!hasGoal && (
                             <Text type="secondary" style={styles.freeBadge}>
-                              Libre
+                              Free
                             </Text>
                           )}
                         </Space>
@@ -264,7 +264,7 @@ export const OverviewPage: React.FC = () => {
                             style={styles.progressFlex}
                           />
                           <Text type="secondary" style={styles.goalText}>
-                            {percent}% de {proj.goal}€
+                            {percent}% of {proj.goal}€
                           </Text>
                         </div>
                       )}

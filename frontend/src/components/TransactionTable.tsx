@@ -1,4 +1,3 @@
-// TransactionTable.tsx
 import React, { useEffect, useState } from 'react';
 import {
   Button,
@@ -14,14 +13,13 @@ import {
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import type { BankTransaction } from '../models/bankTransaction';
-import { DeleteOutlined } from '@ant-design/icons';
+import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import type { Category } from '../models/category';
-import { PlusOutlined } from '@ant-design/icons';
 import { ListModal } from './ListModal.tsx';
 import type { SavingProject } from '../models/savingProject.ts';
 
 const { Option } = Select;
-const { Paragraph } = Typography;
+const { Paragraph, Text } = Typography;
 
 interface Props {
   transactions: BankTransaction[];
@@ -45,6 +43,7 @@ export const TransactionTable: React.FC<Props> = ({
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
+
   const onSelectExpense = (expenseId: string, description?: string | undefined) => {
     if (!description || !activeRecord) return;
 
@@ -55,74 +54,74 @@ export const TransactionTable: React.FC<Props> = ({
     });
 
     onChange(expenseId, activeRecord, 'linkedExpenseId');
-
     setActiveRecord(null);
     setIsModalOpen(false);
   };
 
   useEffect(() => {
-    const a = transactions
+    const options = transactions
       .filter((t) => t.type === 'expense')
       .map((item) => ({
         label: item.description,
         value: item.tempId,
       }));
-    setSelectOptions(a);
+    setSelectOptions(options);
   }, [transactions]);
 
   const columns: ColumnsType<BankTransaction> = [
     {
-      title: 'Importe',
+      title: 'Amount / Type',
       dataIndex: 'amount',
+      key: 'amount',
+      width: 160,
       render: (value, record) => (
-        <Space direction="vertical" size={0} style={{ width: '100%' }} align="center">
+        <Space direction="vertical" size={4} style={styles.controlWrapper}>
           <InputNumber
-            style={{
-              color: record.type === 'expense' ? '#ff4d4f' : '#52c41a',
-            }}
+            style={record.type === 'expense' ? styles.inputExpense : styles.inputIncome}
             value={value ?? undefined}
             onChange={(val) => onChange(val ?? null, record, 'amount')}
+            formatter={(val) => `${val}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+            addonAfter="€"
           />
           <Select
+            showSearch
             value={record.type ?? undefined}
             variant="borderless"
             onChange={(val) => onChange(val, record, 'type')}
-            style={{
-              width: '100%',
-              display: 'flex',
-              justifyContent: 'center', // Asegura que el selector busque el centro
-            }}
+            style={styles.typeSelect}
             allowClear
+            placeholder="Type"
+            optionFilterProp="label"
           >
-            <Option value="expense">
-              <Tag color="volcano">EXPENSE</Tag>
+            <Option value="expense" label="Expense">
+              <Tag color="volcano" style={styles.flatTag}>EXPENSE</Tag>
             </Option>
-            <Option value="income">
-              <Tag color="green">INCOME</Tag>
+            <Option value="income" label="Income">
+              <Tag color="green" style={styles.flatTag}>INCOME</Tag>
             </Option>
           </Select>
         </Space>
       ),
     },
     {
-      title: 'Descripción',
+      title: 'Description / Date',
       dataIndex: 'description',
+      key: 'description',
       render: (value, record) => (
-        <Space direction="vertical" size={0} style={{ width: '100%' }}>
-          <Paragraph editable={{ onChange: (e) => onChange(e, record, 'description') }}>
+        <Space direction="vertical" size={2} style={styles.controlWrapper}>
+          <Paragraph 
+            editable={{ onChange: (e) => onChange(e, record, 'description') }}
+            style={styles.editableParagraph}
+          >
             {value}
           </Paragraph>
           <DatePicker
             value={record.date ? dayjs(record.date, 'DD/MM/YYYY') : undefined}
             format="DD/MM/YYYY"
             onChange={(date) => onChange(date ? date.format('DD/MM/YYYY') : null, record, 'date')}
-            style={{
-              fontSize: '12px',
-              padding: 0,
-              height: 'auto',
-              color: '#8c8c8c',
-            }}
+            style={styles.datePicker}
             variant="borderless"
+            allowClear={false}
           />
         </Space>
       ),
@@ -131,13 +130,16 @@ export const TransactionTable: React.FC<Props> = ({
       title: 'Category',
       dataIndex: 'categoryId',
       key: 'categoryId',
+      width: 180,
       render: (value, record) => (
         <Select
+          showSearch
           value={value ?? undefined}
           onChange={(val) => onChange(val, record, 'categoryId')}
-          style={{ width: '100%' }}
+          style={styles.selectField}
           allowClear
-          placeholder="Category..."
+          placeholder="Select category"
+          optionFilterProp="children"
         >
           {categories.map((cat) => (
             <Option key={cat._id} value={cat._id}>
@@ -148,19 +150,22 @@ export const TransactionTable: React.FC<Props> = ({
       ),
     },
     {
-      title: 'Saving Project',
+      title: 'Saving Target / Project',
       dataIndex: 'linkedProjectId',
       key: 'linkedProjectId',
+      width: 180,
       render: (value, record) => {
-        if (record.type === 'income') return null;
+        if (record.type === 'income') return <Text type="secondary" style={styles.disabledText}>-</Text>;
 
         return (
           <Select
+            showSearch
             value={value ?? undefined}
             onChange={(val) => onChange(val, record, 'projectId')}
-            style={{ width: '100%' }}
+            style={styles.selectField}
             allowClear
-            placeholder="Saving Project..."
+            placeholder="Link saving goal"
+            optionFilterProp="children"
           >
             {savingProjects.map((project) => (
               <Option key={project._id} value={project._id}>
@@ -172,26 +177,27 @@ export const TransactionTable: React.FC<Props> = ({
       },
     },
     {
-      title: 'linked Expense',
+      title: 'Linked Expense',
       dataIndex: 'linkedExpenseId',
       key: 'linkedExpenseId',
+      width: 190,
       render: (_, record) => {
-        if (record.type === 'expense') return null;
+        if (record.type === 'expense') return <Text type="secondary" style={styles.disabledText}>-</Text>;
 
         return (
           <Select
-            placeholder="Link to..."
+            showSearch
+            placeholder="Link to expense"
             value={record.linkedExpenseId ?? undefined}
-            onChange={(val) => {
-              onChange(val, record, 'linkedExpenseId');
-            }}
+            onChange={(val) => onChange(val, record, 'linkedExpenseId')}
             allowClear
-            style={{ width: 180 }}
+            style={styles.selectField}
+            optionFilterProp="label"
             popupRender={(menu) => (
               <>
                 {menu}
-                <Divider style={{ margin: '8px 0' }} />
-                <Space style={{ padding: '0 8px 4px' }}>
+                <Divider style={styles.dropdownDivider} />
+                <Space style={styles.dropdownActionSpace}>
                   <Button
                     type="text"
                     icon={<PlusOutlined />}
@@ -199,8 +205,9 @@ export const TransactionTable: React.FC<Props> = ({
                       setActiveRecord(record);
                       setIsModalOpen(true);
                     }}
+                    style={styles.dropdownButton}
                   >
-                    Add item
+                    Add new item
                   </Button>
                 </Space>
               </>
@@ -213,15 +220,16 @@ export const TransactionTable: React.FC<Props> = ({
     {
       title: 'Actions',
       key: 'actions',
-      render: (_: unknown, record: BankTransaction) => (
-        <Space>
-          <Button
-            type="link"
-            danger
-            icon={<DeleteOutlined />}
-            onClick={() => onDelete(transactions.indexOf(record))}
-          />
-        </Space>
+      align: 'center' as const,
+      width: 80,
+      render: (_, record) => (
+        <Button
+          type="text"
+          danger
+          icon={<DeleteOutlined />}
+          onClick={() => onDelete(transactions.indexOf(record))}
+          style={styles.deleteButton}
+        />
       ),
     },
   ];
@@ -233,6 +241,7 @@ export const TransactionTable: React.FC<Props> = ({
         dataSource={transactions}
         columns={columns}
         pagination={false}
+        bordered={false}
       />
       <ListModal
         isModalOpen={isModalOpen}
@@ -241,4 +250,66 @@ export const TransactionTable: React.FC<Props> = ({
       />
     </>
   );
+};
+
+// --- Co-located Architectural Styles ---
+const styles = {
+  controlWrapper: {
+    width: '100%',
+  },
+  inputExpense: {
+    width: '100%',
+    color: '#ff4d4f',
+    fontWeight: 600,
+  },
+  inputIncome: {
+    width: '100%',
+    color: '#52c41a',
+    fontWeight: 600,
+  },
+  typeSelect: {
+    width: '100%',
+    height: '22px',
+    paddingLeft: '4px',
+  },
+  flatTag: {
+    margin: 0,
+    fontWeight: 600,
+    fontSize: '11px',
+    borderRadius: '4px',
+  },
+  editableParagraph: {
+    margin: 0,
+    color: '#262626',
+    fontWeight: 500,
+    paddingLeft: '4px',
+  },
+  datePicker: {
+    fontSize: '13px',
+    padding: '0 4px',
+    height: 'auto',
+    color: '#8c8c8c',
+  },
+  selectField: {
+    width: '100%',
+  },
+  disabledText: {
+    paddingLeft: '12px',
+    display: 'block',
+  },
+  dropdownDivider: {
+    margin: '4px 0',
+  },
+  dropdownActionSpace: {
+    padding: '4px 8px',
+  },
+  dropdownButton: {
+    padding: 0,
+    fontSize: '13px',
+  },
+  deleteButton: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 };

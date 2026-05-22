@@ -2,98 +2,94 @@ import { Table, Typography, Card, Statistic, Row, Col, Button, Progress, Space }
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { useSavingProjectDetails } from '../hooks/useSavingProjects.ts';
-import { useNavigate } from 'react-router-dom';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
-const { Title, Paragraph } = Typography;
+const { Title, Paragraph, Text } = Typography;
 
 export const SavingEntryPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  // Asumo que tu hook maneja la carga y devuelve { savingProject, loading, error }
   const { savingProject: project } = useSavingProjectDetails(id!);
 
-  // Calculamos el porcentaje solo si existe el proyecto y tiene meta
+  // Calculate percentage only if the project and goal exist
   const percent = project?.goal ? Math.round((project.amount / project.goal) * 100) : 0;
 
   const columns = [
     {
-      title: 'Fecha',
+      title: 'Date',
       dataIndex: 'date',
       key: 'date',
-      render: (date: Date) => dayjs(date).format('DD/MM/YYYY'),
+      width: 140,
+      render: (date: Date) => <Text>{dayjs(date).format('DD/MM/YYYY')}</Text>,
     },
     {
-      title: 'Aportación',
+      title: 'Contribution',
       dataIndex: 'amount',
       key: 'amount',
+      width: 160,
       render: (amount: number) => {
         const isNegative = amount < 0;
-
-        const color = isNegative ? '#ff4d4f' : '#52c41a';
-
-        const prefix = isNegative ? '' : '+';
-
         return (
-          <span style={{ fontWeight: 600, color }}>
-            {prefix}
+          <span style={isNegative ? styles.negativeAmount : styles.positiveAmount}>
+            {isNegative ? '' : '+'}
             {amount.toLocaleString()} €
           </span>
         );
       },
     },
     {
-      title: 'Nota',
+      title: 'Note',
       dataIndex: 'note',
       key: 'note',
       render: (note: string) => (
-        <Paragraph ellipsis={{ rows: 1 }} style={{ margin: 0 }}>
+        <Paragraph ellipsis={{ rows: 1 }} style={styles.noteText}>
           {note || '-'}
         </Paragraph>
       ),
     },
   ];
 
-  // Mientras carga el proyecto, podemos mostrar nada o un loader
   if (!project) return null;
 
   return (
-    <div style={{ padding: '24px' }}>
+    <div style={styles.pageContainer}>
+      {/* Navigation Layer */}
       <Button
         type="link"
         icon={<ArrowLeftOutlined />}
         onClick={() => navigate(-1)}
-        style={{ paddingLeft: 0, marginBottom: 16 }}
+        style={styles.backButton}
       >
-        Volver a mis planes
+        Back to Savings Plans
       </Button>
 
-      <Card style={{ marginBottom: 24, borderRadius: '8px' }}>
-        <Row gutter={[16, 16]} align="middle">
+      {/* Analytical Summary Card */}
+      <Card bordered={false} style={styles.summaryCard}>
+        <Row gutter={[24, 24]} align="middle">
           <Col xs={24} md={12}>
-            <Title level={2} style={{ margin: 0 }}>
+            <Title level={2} style={styles.title}>
               {project.name}
             </Title>
           </Col>
 
           <Col xs={12} md={6}>
-            <Statistic title="Total Ahorrado" value={project.amount} suffix="€" />
+            <Statistic title="Total Saved" value={project.amount} suffix="€" />
           </Col>
 
           {project.goal && (
             <Col xs={12} md={6}>
-              <Statistic title="Meta" value={project.goal} suffix="€" />
+              <Statistic title="Target Goal" value={project.goal} suffix="€" />
             </Col>
           )}
 
-          {/* Fila inferior para la barra de progreso (solo si hay meta) */}
+          {/* Allocation Progress Tracker */}
           {project.goal && (
-            <Col span={24} style={{ marginTop: 8 }}>
-              <Space direction="vertical" style={{ width: '100%' }} size={4}>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ color: '#8c8c8c', fontSize: '14px' }}>Progreso del plan</span>
-                  <span style={{ fontWeight: 600 }}>{percent}%</span>
+            <Col span={24} style={styles.progressWrapper}>
+              <Space direction="vertical" style={styles.fullWidth} size={4}>
+                <div style={styles.progressLabelRow}>
+                  <span style={styles.progressLabel}>Plan Progress</span>
+                  <span style={styles.progressPercentage}>{percent}%</span>
                 </div>
                 <Progress
                   percent={percent}
@@ -107,17 +103,80 @@ export const SavingEntryPage = () => {
         </Row>
       </Card>
 
-      <Title level={4} style={{ marginBottom: 16 }}>
-        Historial de entradas
+      <Title level={4} style={styles.sectionTitle}>
+        Contribution History
       </Title>
 
-      <Table
-        dataSource={project.savingEntries}
-        columns={columns}
-        rowKey="_id"
-        pagination={false}
-        bordered={false}
-      />
+      {/* Main Ledger Records Card */}
+      <Card bordered={false} style={styles.tableCard}>
+        <Table
+          dataSource={project.savingEntries}
+          columns={columns}
+          rowKey="_id"
+          pagination={{ pageSize: 10, hideOnSinglePage: true }}
+          bordered={false}
+        />
+      </Card>
     </div>
   );
+};
+
+// --- Page Styles (Co-location) ---
+const styles = {
+  pageContainer: {
+    padding: '24px',
+    background: '#f5f7fa',
+    minHeight: '100vh',
+  },
+  backButton: {
+    paddingLeft: 0,
+    marginBottom: '16px',
+    fontWeight: 500,
+  },
+  summaryCard: {
+    marginBottom: '24px',
+    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.02), 0 4px 12px rgba(0, 0, 0, 0.03)',
+    borderRadius: '8px',
+  },
+  title: {
+    margin: 0,
+    color: '#1f1f1f',
+  },
+  fullWidth: {
+    width: '100%',
+  },
+  progressWrapper: {
+    marginTop: '8px',
+  },
+  progressLabelRow: {
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
+  progressLabel: {
+    color: '#8c8c8c',
+    fontSize: '14px',
+  },
+  progressPercentage: {
+    fontWeight: 600,
+  },
+  sectionTitle: {
+    marginBottom: '16px',
+    color: '#262626',
+  },
+  tableCard: {
+    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.02), 0 4px 12px rgba(0, 0, 0, 0.03)',
+    borderRadius: '8px',
+  },
+  positiveAmount: {
+    fontWeight: 600,
+    color: '#52c41a',
+  },
+  negativeAmount: {
+    fontWeight: 600,
+    color: '#ff4d4f',
+  },
+  noteText: {
+    margin: 0,
+    color: '#434343',
+  },
 };
