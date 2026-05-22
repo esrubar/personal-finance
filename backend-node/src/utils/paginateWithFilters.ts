@@ -6,6 +6,7 @@ import { MinimalIncome } from '../income/income';
 import { PaginatedResponse } from '../dtos/paginatedResponseDTO';
 import { PaginatedExpense } from '../expense/expenseDTO';
 import { ExpensesSummaryDto } from '../dtos/ExpensesSummaryDto';
+import { excludeProjectExpenses } from './queryHelper';
 
 interface PaginationOptions {
   page?: number;
@@ -53,6 +54,7 @@ async function getGeneralMonthResume<T>(
           $gte: startDate,
           $lt: endDate,
         },
+        ...excludeProjectExpenses()
       },
     },
 
@@ -186,6 +188,7 @@ export const paginateWithFilters = async <T extends { amount: number }>(
       $gte: startDate,
       $lt: endDate,
     },
+    ...excludeProjectExpenses()
   };
 
   const [data, result, filteredSummary] = await Promise.all([

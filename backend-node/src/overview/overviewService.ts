@@ -4,6 +4,7 @@ import { ExpenseModel } from '../expense/expenseModel';
 import { IncomeModel } from '../income/incomeModel';
 import { SavingEntryModel } from '../savingEntry/savingEntryModel';
 import { getFullYear, getMonthRange, monthNames } from '../utils/dateUtils';
+import { excludeProjectExpenses } from '../utils/queryHelper';
 import {
   AggregatedData,
   Evolution,
@@ -56,6 +57,7 @@ export const getTotalMonthlyExpense = async (overviewParams: OverviewParams): Pr
       $match: {
         'auditable.createdBy': overviewParams.userName,
         transactionDate: { $gte: firstDay, $lte: lastDay },
+        ...excludeProjectExpenses()
       },
     },
     {
@@ -170,6 +172,7 @@ export const getAnualIncomesAndExpenses = async (
       $match: {
         'auditable.createdBy': overviewParams.userName,
         transactionDate: { $gte: firstDay, $lte: lastDay },
+        ...excludeProjectExpenses()
       },
     },
     {
@@ -258,6 +261,7 @@ async function fetchMonthlyExpenses(
       $match: {
         'auditable.createdBy': userName,
         transactionDate: { $gte: start, $lte: end },
+        ...excludeProjectExpenses()
       },
     },
     // Agrupamos directamente sumando el realAmount de los gastos
