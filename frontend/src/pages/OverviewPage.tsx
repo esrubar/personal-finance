@@ -187,7 +187,7 @@ export const OverviewPage: React.FC = () => {
               dataSource={overviewData.monthlyComparison.comparison || []}
               renderItem={(item: any) => {
                 const categoryName = item.categoryName || item.category;
-                const actual = item.spentAmount || 0;
+                const actual = item.spentAmount?.toFixed(2) || 0;
                 const planned = item.budgetAmount || item.planned || 1;
                 const percent = Math.round((actual / planned) * 100);
 
