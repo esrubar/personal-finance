@@ -57,11 +57,13 @@ app.post('/login', async (req: any, res: any) => {
       expiresIn: '7d',
     });
 
+    const isProd = process.env.NODE_ENV === 'production' || !!process.env.VERCEL;
+
     res
       .cookie('access_token', token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: process.env.SAME_SITE,
+        secure: isProd,
+        sameSite: isProd ? 'none' : 'strict',
       })
       .send(user);
   } catch (error: any) {
@@ -81,7 +83,14 @@ app.post('/register', async (req: any, res: any) => {
   }
 });
 app.post('/logout', (req: any, res: any) => {
-  res.clearCookie('access_token').json({ message: 'Logout successfully' });
+  const isProd = process.env.NODE_ENV === 'production' || !!process.env.VERCEL;
+
+  res.clearCookie('access_token',
+    {
+      path: '/',
+      secure: isProd,
+      sameSite: isProd ? 'none' : 'strict',
+    }).json({ message: 'Logout successfully' });
 });
 app.post('/protected', authMiddleware, (req: any, res: any) => {
   res.status(200).send('Perfect');
