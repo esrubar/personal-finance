@@ -6,6 +6,9 @@ import {
   RocketOutlined,
   SafetyOutlined,
   CalendarOutlined,
+  WalletOutlined,
+  DollarOutlined,
+  DashboardOutlined,
 } from '@ant-design/icons';
 import { Column, Pie } from '@ant-design/charts';
 import dayjs, { Dayjs } from 'dayjs';
@@ -15,19 +18,24 @@ import { useSavingProjects } from '../hooks/useSavingProjects.ts';
 const { Title, Text } = Typography;
 
 export const OverviewPage: React.FC = () => {
-  // --- ESTADOS PARA FILTRO DE FECHA ---
   const [selectedDate, setSelectedDate] = useState<Dayjs>(dayjs());
   const [refreshKey] = useState(0);
 
-  // Extraemos mes y año para pasarlos al hook
   const month = selectedDate.month() + 1;
   const year = selectedDate.year();
 
-  // --- HOOK DE DATOS DINÁMICOS ---
   const { overviewData } = useMensualStats(month, year, refreshKey);
-  const { savingProjects } = useSavingProjects(refreshKey);
+  const { savingProjects = [] } = useSavingProjects(refreshKey);
 
-  // --- CONFIGURACIÓN DE GRÁFICAS ---
+  const income = overviewData?.stats?.income || 0;
+  const expenses = overviewData?.stats?.expenses || 0;
+  const savings = overviewData?.stats?.savings || 0;
+  const budget = overviewData?.stats?.budget || 1;
+
+  const monthlyRemainder = income - expenses - savings;
+  const totalHistoricalSavings = savingProjects.reduce((acc, proj) => acc + (proj.amount || 0), 0);
+  const activeSavingProjects = savingProjects.filter((proj) => proj.amount > 0);
+
   const evolutionConfig = {
     data: overviewData.evolution,
     isGroup: true,
@@ -65,21 +73,20 @@ export const OverviewPage: React.FC = () => {
   };
 
   return (
-    <div style={{ padding: '24px', background: '#f5f7fa', minHeight: '100vh' }}>
-      {/* CABECERA CON SELECTOR DE MES */}
-      <Row justify="space-between" align="middle" style={{ marginBottom: 24 }}>
+    <div style={styles.pageContainer}>
+      <Row justify="space-between" align="middle" style={styles.headerRow}>
         <Col>
           <Space direction="vertical" size={0}>
-            <Title level={2} style={{ margin: 0 }}>
+            <Title level={2} style={styles.title}>
               Panel de Control Financiero
             </Title>
             <Text type="secondary">Visualizando datos de {selectedDate.format('MMMM YYYY')}</Text>
           </Space>
         </Col>
         <Col>
-          <Card size="small" bordered={false} style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}>
+          <Card size="small" bordered={false} style={styles.headerCard}>
             <Space>
-              <CalendarOutlined style={{ color: '#1890ff' }} />
+              <CalendarOutlined style={styles.calendarIcon} />
               <Text strong>Periodo:</Text>
               <DatePicker
                 picker="month"
@@ -94,16 +101,15 @@ export const OverviewPage: React.FC = () => {
         </Col>
       </Row>
 
-      {/* 1. ROW DE TARJETAS (KPIs) */}
       <Row gutter={[16, 16]}>
         <Col xs={24} sm={12} md={6}>
           <Card bordered={false} hoverable>
             <Statistic
               title="Ingresos del Mes"
-              value={overviewData.stats.income}
+              value={income}
               prefix={<ArrowUpOutlined />}
               suffix="€"
-              valueStyle={{ color: '#52c41a' }}
+              valueStyle={styles.incomeValue}
             />
           </Card>
         </Col>
@@ -111,49 +117,38 @@ export const OverviewPage: React.FC = () => {
           <Card bordered={false} hoverable>
             <Statistic
               title="Gastos Totales"
-              value={overviewData.stats.expenses}
+              value={expenses}
               prefix={<ArrowDownOutlined />}
               suffix="€"
-              valueStyle={{ color: '#ff4d4f' }}
+              valueStyle={styles.expensesValue}
             />
           </Card>
         </Col>
         <Col xs={24} sm={12} md={6}>
           <Card bordered={false} hoverable>
             <Statistic
-              title="Ahorro Acumulado"
-              value={overviewData.stats.savings}
+              title="Ahorrado este Mes"
+              value={savings}
               prefix={<RocketOutlined />}
               suffix="€"
-              valueStyle={{ color: '#1890ff' }}
+              valueStyle={styles.savingsValue}
             />
           </Card>
         </Col>
         <Col xs={24} sm={12} md={6}>
           <Card bordered={false} hoverable>
-            <Text type="secondary">Eficiencia de Gasto</Text>
-            <div style={{ marginTop: 8 }}>
-              <Progress
-                percent={Math.round(
-                  (overviewData.stats.expenses / overviewData.stats.budget) * 100
-                )}
-                status={
-                  overviewData.stats.expenses > overviewData.stats.budget ? 'exception' : 'active'
-                }
-                strokeColor={
-                  overviewData.stats.expenses > overviewData.stats.budget ? '#f5222d' : '#faad14'
-                }
-              />
-              <Text style={{ fontSize: '12px' }} type="secondary">
-                vs. Presupuesto mensual
-              </Text>
-            </div>
+            <Statistic
+              title="Remanente Libre"
+              value={monthlyRemainder}
+              prefix={<DollarOutlined />}
+              suffix="€"
+              valueStyle={{ color: monthlyRemainder >= 0 ? '#722ed1' : '#f5222d' }}
+            />
           </Card>
         </Col>
       </Row>
 
-      {/* 2. ROW DE GRÁFICAS PRINCIPALES */}
-      <Row gutter={[16, 16]} style={{ marginTop: 24 }}>
+      <Row gutter={[16, 16]} style={styles.chartsRow}>
         <Col xs={24} lg={16}>
           <Card title="Balance Mensual (Evolución)" bordered={false}>
             <Column {...evolutionConfig} height={300} />
@@ -166,31 +161,40 @@ export const OverviewPage: React.FC = () => {
         </Col>
       </Row>
 
-      {/* 3. ROW DE SEGUIMIENTO (PRESUPUESTO Y PROYECTOS) */}
-      <Row gutter={[16, 16]} style={{ marginTop: 24 }}>
+      <Row gutter={[16, 16]} style={styles.bottomRow}>
         <Col xs={24} md={12}>
-          <Card title="Control de Presupuesto (Gasto Real vs Planeado)" bordered={false}>
-            {/* Aquí utilizamos los datos reales provenientes de tu hook */}
+          <Card title="Control de Presupuesto (Gasto Real vs Planeado)" bordered={false} style={styles.fullHeight}>
+            <div style={styles.efficiencyBanner}>
+              <div style={styles.efficiencyHeader}>
+                <Text strong><DashboardOutlined style={styles.dashboardIcon} /> Eficiencia Global del Mes</Text>
+                <Text strong style={{ color: expenses > budget ? '#f5222d' : '#faad14' }}>
+                  {Math.round((expenses / budget) * 100)}%
+                </Text>
+              </div>
+              <Progress
+                percent={Math.round((expenses / budget) * 100)}
+                size="small"
+                status={expenses > budget ? 'exception' : 'active'}
+                strokeColor={expenses > budget ? '#f5222d' : '#faad14'}
+              />
+              <Text type="secondary" style={styles.microText}>
+                Llevas gastado {expenses}€ de un presupuesto total de {Math.round(budget)}€
+              </Text>
+            </div>
+
             <List
               itemLayout="horizontal"
               dataSource={overviewData.monthlyComparison.comparison || []}
               renderItem={(item: any) => {
-                // Adaptamos las variables por si tu hook devuelve nombres de propiedades distintos (e.g., totalAmount, budgetAmount)
                 const categoryName = item.categoryName || item.category;
                 const actual = item.spentAmount || 0;
-                const planned = item.budgetAmount || item.planned || 1; // Evitar división por 0
+                const planned = item.budgetAmount || item.planned || 1;
                 const percent = Math.round((actual / planned) * 100);
 
                 return (
                   <List.Item>
-                    <div style={{ width: '100%' }}>
-                      <div
-                        style={{
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          marginBottom: 5,
-                        }}
-                      >
+                    <div style={styles.fullWidth}>
+                      <div style={styles.categoryRow}>
                         <Text strong>{categoryName}</Text>
                         <Text>
                           {actual}€ / <Text type="secondary">{planned}€</Text>
@@ -210,45 +214,184 @@ export const OverviewPage: React.FC = () => {
         </Col>
 
         <Col xs={24} md={12}>
-          <Card title="Estado de Proyectos de Ahorro" bordered={false}>
+          <Card title="Fondos y Proyectos de Ahorro" bordered={false} style={styles.fullHeight}>
+            <div style={styles.historicalSavingsBanner}>
+              <Statistic
+                title={<Text strong style={styles.historicalSavingsTitle}>Total Ahorrado (Histórico)</Text>}
+                value={totalHistoricalSavings}
+                prefix={<WalletOutlined style={styles.walletIcon} />}
+                suffix="€"
+                valueStyle={styles.historicalSavingsValue}
+              />
+            </div>
+
+            <Text type="secondary" strong style={styles.sectionTitle}>
+              Distribución de Huchas Activas
+            </Text>
+            
             <List
-              dataSource={savingProjects}
-              renderItem={(proj) => (
-                <List.Item>
-                  <Card size="small" style={{ width: '100%', background: '#fafafa' }}>
-                    <Space direction="vertical" style={{ width: '100%' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <Text strong>
-                          <SafetyOutlined /> {proj.name}
+              dataSource={activeSavingProjects}
+              locale={{ emptyText: 'No tienes proyectos de ahorro activos con saldo positivo' }}
+              renderItem={(proj) => {
+                const hasGoal = !!proj.goal;
+                const percent = hasGoal ? Math.round((proj.amount / proj.goal) * 100) : 0;
+
+                return (
+                  <List.Item style={styles.listItem}>
+                    <div style={styles.fullWidth}>
+                      <div style={{ ...styles.projectRow, marginBottom: hasGoal ? 6 : 0 }}>
+                        <Space size={8}>
+                          <SafetyOutlined style={{ color: hasGoal ? '#52c41a' : '#1890ff' }} />
+                          <Text strong>{proj.name}</Text>
+                          {!hasGoal && (
+                            <Text type="secondary" style={styles.freeBadge}>
+                              Libre
+                            </Text>
+                          )}
+                        </Space>
+                        <Text strong style={styles.projectAmount}>
+                          {proj.amount}€
                         </Text>
-                        {proj.goal && (
-                          <Text strong>{Math.round((proj.amount / proj.goal) * 100)}%</Text>
-                        )}
                       </div>
 
-                      {proj.goal ? (
-                        <>
+                      {hasGoal && (
+                        <div style={styles.goalProgressRow}>
                           <Progress
-                            percent={Math.round((proj.amount / proj.goal) * 100)}
+                            percent={percent}
                             strokeColor="#52c41a"
+                            size="small"
+                            showInfo={false}
+                            style={styles.progressFlex}
                           />
-                          <Text type="secondary" style={{ fontSize: '12px' }}>
-                            {proj.amount}€ de {proj.goal}€ objetivo
+                          <Text type="secondary" style={styles.goalText}>
+                            {percent}% de {proj.goal}€
                           </Text>
-                        </>
-                      ) : (
-                        <Text style={{ fontSize: '16px', fontWeight: 'bold' }}>
-                          {proj.amount}€ ahorrados
-                        </Text>
+                        </div>
                       )}
-                    </Space>
-                  </Card>
-                </List.Item>
-              )}
+                    </div>
+                  </List.Item>
+                );
+              }}
             />
           </Card>
         </Col>
       </Row>
     </div>
   );
+};
+
+const styles = {
+  pageContainer: {
+    padding: '24px',
+    background: '#f5f7fa',
+    minHeight: '100vh',
+  },
+  headerRow: {
+    marginBottom: 24,
+  },
+  title: {
+    margin: 0,
+  },
+  headerCard: {
+    boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+  },
+  calendarIcon: {
+    color: '#1890ff',
+  },
+  incomeValue: {
+    color: '#52c41a',
+  },
+  expensesValue: {
+    color: '#ff4d4f',
+  },
+  savingsValue: {
+    color: '#1890ff',
+  },
+  chartsRow: {
+    marginTop: 24,
+  },
+  bottomRow: {
+    marginTop: 24,
+  },
+  fullHeight: {
+    height: '100%',
+  },
+  fullWidth: {
+    width: '100%',
+  },
+  efficiencyBanner: {
+    background: '#fffbe6',
+    padding: '14px 16px',
+    borderRadius: '8px',
+    marginBottom: 20,
+    border: '1px solid #ffe58f',
+  },
+  efficiencyHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    marginBottom: 6,
+  },
+  dashboardIcon: {
+    color: '#faad14',
+  },
+  microText: {
+    fontSize: '12px',
+  },
+  categoryRow: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    marginBottom: 5,
+  },
+  historicalSavingsBanner: {
+    background: '#e6f7ff',
+    padding: '16px',
+    borderRadius: '8px',
+    marginBottom: 20,
+  },
+  historicalSavingsTitle: {
+    color: '#0050b3',
+  },
+  walletIcon: {
+    color: '#1890ff',
+  },
+  historicalSavingsValue: {
+    color: '#0050b3',
+    fontWeight: 700,
+  },
+  sectionTitle: {
+    display: 'block',
+    marginBottom: 8,
+  },
+  listItem: {
+    padding: '12px 0',
+  },
+  projectRow: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  freeBadge: {
+    fontSize: '11px',
+    background: '#f0f0f0',
+    padding: '2px 6px',
+    borderRadius: '4px',
+  },
+  projectAmount: {
+    fontSize: '15px',
+    color: '#262626',
+  },
+  goalProgressRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+  },
+  progressFlex: {
+    flex: 1,
+    margin: 0,
+  },
+  goalText: {
+    fontSize: '12px',
+    minWidth: '85px',
+    textAlign: 'right' as const,
+  },
 };
