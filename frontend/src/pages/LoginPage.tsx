@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Form, Input, Button, Card, Typography, message } from 'antd';
-import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import { LockOutlined, UserOutlined, WalletOutlined } from '@ant-design/icons';
 import { useLogin } from '../hooks/useLogin.ts';
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 
 export function LoginPage() {
   const [loading, setLoading] = useState(false);
@@ -19,55 +19,103 @@ export function LoginPage() {
         navigate('/overview');
       }
     } catch (err: any) {
-      message.error(err.message);
+      message.error(err.message || 'Error al iniciar sesión');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh',
-        background: '#f0f2f5',
-      }}
-    >
-      <Card style={{ width: 400, padding: 24, boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }}>
-        <div style={{ textAlign: 'center', marginBottom: 24 }}>
-          <Title level={3}>Iniciar Sesión</Title>
+    <div style={styles.container}>
+      <Card style={styles.card} bordered={false}>
+        <div style={styles.header}>
+          <div style={styles.logoContainer}>
+            <WalletOutlined style={styles.logoIcon} />
+          </div>
+          <Title level={2} style={styles.title}>Welcome Back</Title>
+          <Text type="secondary">Sign in to your financial dashboard</Text>
         </div>
 
-        <Form name="login" onFinish={onFinish} layout="vertical">
+        <Form name="login" onFinish={onFinish} layout="vertical" size="large">
           <Form.Item
             name="name"
-            rules={[{ required: true, message: 'Por favor, introduce tu usuario' }]}
+            rules={[{ required: true, message: 'Please enter your username' }]}
           >
-            <Input prefix={<UserOutlined />} placeholder="Usuario" size="large" />
+            <Input prefix={<UserOutlined style={{ color: '#bfbfbf' }} />} placeholder="Username" />
           </Form.Item>
 
           <Form.Item
             name="password"
-            rules={[{ required: true, message: 'Por favor, introduce tu contraseña' }]}
+            rules={[{ required: true, message: 'Please enter your password' }]}
           >
-            <Input.Password prefix={<LockOutlined />} placeholder="Contraseña" size="large" />
+            <Input.Password prefix={<LockOutlined style={{ color: '#bfbfbf' }} />} placeholder="Password" />
           </Form.Item>
 
-          <Form.Item>
+          <Form.Item style={{ marginTop: 24 }}>
             <Button
               type="primary"
               htmlType="submit"
-              style={{ width: '100%' }}
+              block
               size="large"
               loading={loading}
+              style={styles.loginButton}
             >
-              Entrar
+              Sign In
             </Button>
           </Form.Item>
         </Form>
       </Card>
+
+      <Text type="secondary" style={styles.footerText}>
+        Financial Management System © 2026
+      </Text>
     </div>
   );
 }
+
+const styles = {
+  container: {
+    display: 'flex',
+    flexDirection: 'column' as const,
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100vh',
+    background: '#f5f7fa',
+  },
+  card: {
+    width: 400,
+    borderRadius: '16px',
+    boxShadow: '0 8px 30px rgba(0,0,0,0.08)',
+    padding: '20px',
+  },
+  header: {
+    textAlign: 'center' as const,
+    marginBottom: 32,
+  },
+  logoContainer: {
+    background: '#e6f7ff',
+    width: 60,
+    height: 60,
+    borderRadius: '50%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: '0 auto 16px',
+  },
+  logoIcon: {
+    fontSize: '28px',
+    color: '#1890ff',
+  },
+  title: {
+    margin: '0 0 8px 0',
+  },
+  loginButton: {
+    fontWeight: 600,
+    height: '48px',
+    borderRadius: '8px',
+  },
+  footerText: {
+    marginTop: 24,
+    fontSize: '12px',
+  },
+};
