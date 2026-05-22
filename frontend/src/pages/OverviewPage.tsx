@@ -245,7 +245,7 @@ export const OverviewPage: React.FC = () => {
                           <Text strong>{proj.name}</Text>
                           {!hasGoal && (
                             <Text type="secondary" style={styles.freeBadge}>
-                              Free
+                              No goal set
                             </Text>
                           )}
                         </Space>
