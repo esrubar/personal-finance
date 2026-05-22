@@ -106,7 +106,7 @@ export const OverviewPage: React.FC = () => {
           <Card bordered={false} hoverable>
             <Statistic
               title="Monthly Income"
-              value={income}
+              value={income.toFixed(2)}
               prefix={<ArrowUpOutlined />}
               suffix="€"
               valueStyle={styles.incomeValue}
@@ -117,7 +117,7 @@ export const OverviewPage: React.FC = () => {
           <Card bordered={false} hoverable>
             <Statistic
               title="Total Expenses"
-              value={expenses}
+              value={expenses.toFixed(2)}
               prefix={<ArrowDownOutlined />}
               suffix="€"
               valueStyle={styles.expensesValue}
@@ -128,7 +128,7 @@ export const OverviewPage: React.FC = () => {
           <Card bordered={false} hoverable>
             <Statistic
               title="Savings This Month"
-              value={savings}
+              value={savings.toFixed(2)}
               prefix={<RocketOutlined />}
               suffix="€"
               valueStyle={styles.savingsValue}
@@ -139,7 +139,7 @@ export const OverviewPage: React.FC = () => {
           <Card bordered={false} hoverable>
             <Statistic
               title="Free Remainder"
-              value={monthlyRemainder}
+              value={monthlyRemainder.toFixed(2)}
               prefix={<DollarOutlined />}
               suffix="€"
               valueStyle={{ color: monthlyRemainder >= 0 ? '#722ed1' : '#f5222d' }}
@@ -218,7 +218,7 @@ export const OverviewPage: React.FC = () => {
             <div style={styles.historicalSavingsBanner}>
               <Statistic
                 title={<Text strong style={styles.historicalSavingsTitle}>Total Saved (Historical)</Text>}
-                value={totalHistoricalSavings}
+                value={totalHistoricalSavings.toFixed(2)}
                 prefix={<WalletOutlined style={styles.walletIcon} />}
                 suffix="€"
                 valueStyle={styles.historicalSavingsValue}
@@ -250,7 +250,7 @@ export const OverviewPage: React.FC = () => {
                           )}
                         </Space>
                         <Text strong style={styles.projectAmount}>
-                          {proj.amount}€
+                          {proj.amount?.toFixed(2)}€
                         </Text>
                       </div>
 
@@ -264,7 +264,7 @@ export const OverviewPage: React.FC = () => {
                             style={styles.progressFlex}
                           />
                           <Text type="secondary" style={styles.goalText}>
-                            {percent}% of {proj.goal}€
+                            {percent}% of {proj.goal?.toFixed(2)}€
                           </Text>
                         </div>
                       )}
