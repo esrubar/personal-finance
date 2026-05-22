@@ -77,7 +77,7 @@ export function useExpensesByDescription(description: string) {
 }
 
 export function useExpensesByCategory(categoryId: string) {
-  const [expenses, setExpenses] = useState<Expense[] | null>(null);
+  const [expenses, setExpenses] = useState<Expense[] | undefined>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
