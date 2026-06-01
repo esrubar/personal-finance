@@ -57,7 +57,7 @@ export const getTotalMonthlyExpense = async (overviewParams: OverviewParams): Pr
       $match: {
         'auditable.createdBy': overviewParams.userName,
         transactionDate: { $gte: firstDay, $lte: lastDay },
-        ...excludeProjectExpenses()
+        ...excludeProjectExpenses(),
       },
     },
     {
@@ -172,7 +172,7 @@ export const getAnualIncomesAndExpenses = async (
       $match: {
         'auditable.createdBy': overviewParams.userName,
         transactionDate: { $gte: firstDay, $lte: lastDay },
-        ...excludeProjectExpenses()
+        ...excludeProjectExpenses(),
       },
     },
     {
@@ -261,7 +261,7 @@ async function fetchMonthlyExpenses(
       $match: {
         'auditable.createdBy': userName,
         transactionDate: { $gte: start, $lte: end },
-        ...excludeProjectExpenses()
+        ...excludeProjectExpenses(),
       },
     },
     // Agrupamos directamente sumando el realAmount de los gastos

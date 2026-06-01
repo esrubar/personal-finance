@@ -1,5 +1,19 @@
 import React, { useState } from 'react';
-import { Table, Progress, Tag, Typography, Space, Modal, Button, Popconfirm, Tooltip, Card, Row, Col, Alert } from 'antd';
+import {
+  Table,
+  Progress,
+  Tag,
+  Typography,
+  Space,
+  Modal,
+  Button,
+  Popconfirm,
+  Tooltip,
+  Card,
+  Row,
+  Col,
+  Alert,
+} from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined, WalletOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import type { ColumnsType } from 'antd/es/table';
@@ -68,7 +82,12 @@ export const SavingProjectsPage: React.FC = () => {
       key: 'progress',
       width: 260,
       render: (_, record) => {
-        if (!record.goal) return <Text type="secondary" style={styles.fallbackText}>No goal defined</Text>;
+        if (!record.goal)
+          return (
+            <Text type="secondary" style={styles.fallbackText}>
+              No goal defined
+            </Text>
+          );
         const percent = Math.round((record.amount / record.goal) * 100);
         return (
           <Space direction="vertical" style={styles.controlWrapper} size={0}>
@@ -94,7 +113,9 @@ export const SavingProjectsPage: React.FC = () => {
         if (!record.goal) return null;
         const remaining = record.goal - record.amount;
         return remaining > 0 ? (
-          <Text type="secondary" style={styles.remainingText}>{remaining}€</Text>
+          <Text type="secondary" style={styles.remainingText}>
+            {remaining}€
+          </Text>
         ) : (
           <Text type="success" strong style={styles.remainingText}>
             Completed!
@@ -110,10 +131,10 @@ export const SavingProjectsPage: React.FC = () => {
       render: (_, record) => (
         <Space size="small" onClick={(e) => e.stopPropagation()}>
           <Tooltip title="Edit">
-            <Button 
-              type="text" 
-              icon={<EditOutlined />} 
-              onClick={() => handleOpenEdit(record)} 
+            <Button
+              type="text"
+              icon={<EditOutlined />}
+              onClick={() => handleOpenEdit(record)}
               style={styles.editButton}
             />
           </Tooltip>
@@ -155,7 +176,9 @@ export const SavingProjectsPage: React.FC = () => {
             <Title level={2} style={styles.title}>
               Savings Plans
             </Title>
-            <Text type="secondary">Track targets, allocation milestones, and project completion metrics</Text>
+            <Text type="secondary">
+              Track targets, allocation milestones, and project completion metrics
+            </Text>
           </Space>
         </Col>
         <Col>

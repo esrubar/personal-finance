@@ -1,6 +1,3 @@
 export const excludeProjectExpenses = () => ({
-  $or: [
-    { projectId: { $exists: false } },
-    { projectId: null }
-  ]
+  $or: [{ projectId: { $exists: false } }, { projectId: null }],
 });

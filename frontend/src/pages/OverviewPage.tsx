@@ -163,10 +163,16 @@ export const OverviewPage: React.FC = () => {
 
       <Row gutter={[16, 16]} style={styles.bottomRow}>
         <Col xs={24} md={12}>
-          <Card title="Budget Control (Actual vs Planned)" bordered={false} style={styles.fullHeight}>
+          <Card
+            title="Budget Control (Actual vs Planned)"
+            bordered={false}
+            style={styles.fullHeight}
+          >
             <div style={styles.efficiencyBanner}>
               <div style={styles.efficiencyHeader}>
-                <Text strong><DashboardOutlined style={styles.dashboardIcon} /> Monthly Global Efficiency</Text>
+                <Text strong>
+                  <DashboardOutlined style={styles.dashboardIcon} /> Monthly Global Efficiency
+                </Text>
                 <Text strong style={{ color: expenses > budget ? '#f5222d' : '#faad14' }}>
                   {Math.round((expenses / budget) * 100)}%
                 </Text>
@@ -217,7 +223,11 @@ export const OverviewPage: React.FC = () => {
           <Card title="Savings Funds & Projects" bordered={false} style={styles.fullHeight}>
             <div style={styles.historicalSavingsBanner}>
               <Statistic
-                title={<Text strong style={styles.historicalSavingsTitle}>Total Saved (Historical)</Text>}
+                title={
+                  <Text strong style={styles.historicalSavingsTitle}>
+                    Total Saved (Historical)
+                  </Text>
+                }
                 value={totalHistoricalSavings.toFixed(2)}
                 prefix={<WalletOutlined style={styles.walletIcon} />}
                 suffix="€"
@@ -228,7 +238,7 @@ export const OverviewPage: React.FC = () => {
             <Text type="secondary" strong style={styles.sectionTitle}>
               Active Savings Buckets
             </Text>
-            
+
             <List
               dataSource={activeSavingProjects}
               locale={{ emptyText: 'No active savings projects with positive balance' }}

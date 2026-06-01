@@ -54,7 +54,7 @@ async function getGeneralMonthResume<T>(
           $gte: startDate,
           $lt: endDate,
         },
-        ...excludeProjectExpenses()
+        ...excludeProjectExpenses(),
       },
     },
 
@@ -188,7 +188,7 @@ export const paginateWithFilters = async <T extends { amount: number }>(
       $gte: startDate,
       $lt: endDate,
     },
-    ...excludeProjectExpenses()
+    ...excludeProjectExpenses(),
   };
 
   const [data, result, filteredSummary] = await Promise.all([

@@ -15,13 +15,13 @@ interface IncomeFormProps {
 export const IncomeForm: React.FC<IncomeFormProps> = ({ initialData, onSuccess }) => {
   const [form] = Form.useForm();
   const { categories } = useCategories();
-  
+
   // Estado local para capturar lo que el usuario escribe en el Select de gastos
   const [expenseSearchText, setExpenseSearchText] = useState('');
-  
+
   // El hook reacciona automáticamente cada vez que cambia 'expenseSearchText'
   const { expenses, loading: loadingExpenses } = useExpensesByDescription(expenseSearchText);
-  
+
   const { createIncome } = useCreateIncome();
   const { updateIncome } = useUpdateIncome();
 
@@ -34,7 +34,7 @@ export const IncomeForm: React.FC<IncomeFormProps> = ({ initialData, onSuccess }
           ? dayjs(initialData.transactionDate)
           : undefined,
         categoryId: initialData.category?._id,
-        linkedExpenseId: initialData.linkedExpenseId || (initialData as any).linkedExpense?.  _id,
+        linkedExpenseId: initialData.linkedExpenseId || (initialData as any).linkedExpense?._id,
       });
     } else {
       form.resetFields();
@@ -122,10 +122,7 @@ export const IncomeForm: React.FC<IncomeFormProps> = ({ initialData, onSuccess }
       </Form.Item>
 
       {/* Selector de Gasto Vinculado con búsqueda asíncrona */}
-      <Form.Item
-        name="linkedExpenseId"
-        label="Link to Existing Expense"
-      >
+      <Form.Item name="linkedExpenseId" label="Link to Existing Expense">
         <Select
           showSearch
           allowClear

@@ -117,10 +117,7 @@ export const ExpenseForm: React.FC<ExpenseFormProps> = ({ initialData, onSuccess
       </Form.Item>
 
       {/* Nuevo campo opcional para asignar a un Saving Project */}
-      <Form.Item
-        name="projectId"
-        label="Link to Saving Project"
-      >
+      <Form.Item name="projectId" label="Link to Saving Project">
         <Select
           showSearch
           allowClear

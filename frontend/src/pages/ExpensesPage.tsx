@@ -99,13 +99,19 @@ export const ExpensesPage: React.FC = () => {
         if (isDifferent) {
           return (
             <Space size={4}>
-              <Text strong style={styles.adjustedAmount}>{record.realAmount?.toFixed(2)} €</Text>
+              <Text strong style={styles.adjustedAmount}>
+                {record.realAmount?.toFixed(2)} €
+              </Text>
               <Text style={styles.strikethroughAmount}>({amount.toFixed(2)} €)</Text>
             </Space>
           );
         }
 
-        return <Text strong style={styles.standardAmount}>{amount.toFixed(2)} €</Text>;
+        return (
+          <Text strong style={styles.standardAmount}>
+            {amount.toFixed(2)} €
+          </Text>
+        );
       },
     },
     { title: 'Description', dataIndex: 'description', key: 'description' },
@@ -115,18 +121,33 @@ export const ExpensesPage: React.FC = () => {
       key: 'category',
       width: 140,
       filters: categories.map((c) => ({
-        text: <Tag color={getColorForCategory(c.name)} style={styles.flatTag}>{c.name}</Tag>,
+        text: (
+          <Tag color={getColorForCategory(c.name)} style={styles.flatTag}>
+            {c.name}
+          </Tag>
+        ),
         value: c._id!,
       })),
       filterMultiple: true,
-      render: (name: string) => <Tag color={getColorForCategory(name)} style={styles.flatTag}>{name}</Tag>,
+      render: (name: string) => (
+        <Tag color={getColorForCategory(name)} style={styles.flatTag}>
+          {name}
+        </Tag>
+      ),
     },
     {
       title: 'Saving Project',
       dataIndex: ['savingProject', 'name'],
       key: 'savingproject',
       width: 160,
-      render: (name: string) => name ? <Tag color="purple" style={styles.flatTag}>{name}</Tag> : <Text type="secondary">-</Text>,
+      render: (name: string) =>
+        name ? (
+          <Tag color="purple" style={styles.flatTag}>
+            {name}
+          </Tag>
+        ) : (
+          <Text type="secondary">-</Text>
+        ),
     },
     {
       title: 'Month',
@@ -193,7 +214,11 @@ export const ExpensesPage: React.FC = () => {
 
   const expandedRowRender = (expense: Expense) => {
     if (!expense.incomes?.length) {
-      return <Text type="secondary" italic style={styles.nestedFallback}>No linked income sources found</Text>;
+      return (
+        <Text type="secondary" italic style={styles.nestedFallback}>
+          No linked income sources found
+        </Text>
+      );
     }
 
     const incomeColumns = [
@@ -202,13 +227,17 @@ export const ExpensesPage: React.FC = () => {
         dataIndex: 'amount',
         key: 'amount',
         width: 140,
-        render: (amount: number) => <Text strong style={styles.nestedIncomeAmount}>{amount.toFixed(2)} €</Text>,
+        render: (amount: number) => (
+          <Text strong style={styles.nestedIncomeAmount}>
+            {amount.toFixed(2)} €
+          </Text>
+        ),
       },
       {
         title: 'Description',
         dataIndex: 'description',
         key: 'description',
-        render: (text: string) => <Text type="secondary">{text}</Text>
+        render: (text: string) => <Text type="secondary">{text}</Text>,
       },
     ];
 
@@ -253,7 +282,9 @@ export const ExpensesPage: React.FC = () => {
       <Row justify="space-between" align="middle" style={styles.headerRow}>
         <Col>
           <Space direction="vertical" size={0}>
-            <Title level={2} style={styles.title}>Expenses Log</Title>
+            <Title level={2} style={styles.title}>
+              Expenses Log
+            </Title>
             <Text type="secondary">Review general allocations, tracking filters, and goals</Text>
           </Space>
         </Col>

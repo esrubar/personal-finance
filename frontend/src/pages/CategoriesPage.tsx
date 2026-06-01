@@ -1,5 +1,19 @@
 import React, { useState } from 'react';
-import { Table, Tag, Typography, Space, Modal, Button, Popconfirm, Tooltip, message, Card, Row, Col, Alert } from 'antd';
+import {
+  Table,
+  Tag,
+  Typography,
+  Space,
+  Modal,
+  Button,
+  Popconfirm,
+  Tooltip,
+  message,
+  Card,
+  Row,
+  Col,
+  Alert,
+} from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined, TagOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import type { ColumnsType } from 'antd/es/table';
@@ -82,10 +96,10 @@ export const CategoriesPage: React.FC = () => {
       render: (_, record) => (
         <Space size="small" onClick={(e) => e.stopPropagation()}>
           <Tooltip title="Edit">
-            <Button 
-              type="text" 
-              icon={<EditOutlined />} 
-              onClick={() => handleOpenEdit(record)} 
+            <Button
+              type="text"
+              icon={<EditOutlined />}
+              onClick={() => handleOpenEdit(record)}
               style={styles.editButton}
             />
           </Tooltip>
@@ -127,7 +141,9 @@ export const CategoriesPage: React.FC = () => {
             <Title level={2} style={styles.title}>
               Categories
             </Title>
-            <Text type="secondary">Configure transactional clusters, tracking types, and ledger inclusion rules</Text>
+            <Text type="secondary">
+              Configure transactional clusters, tracking types, and ledger inclusion rules
+            </Text>
           </Space>
         </Col>
         <Col>
@@ -160,7 +176,9 @@ export const CategoriesPage: React.FC = () => {
         title={
           <Space style={styles.modalTitle}>
             <TagOutlined style={editingCategory ? styles.editIcon : styles.addIcon} />
-            <span>{editingCategory ? 'Modify Category Properties' : 'Create Configuration Category'}</span>
+            <span>
+              {editingCategory ? 'Modify Category Properties' : 'Create Configuration Category'}
+            </span>
           </Space>
         }
         destroyOnClose

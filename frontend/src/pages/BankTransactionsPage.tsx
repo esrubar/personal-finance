@@ -83,7 +83,9 @@ export const BankTransactionsPage: React.FC = () => {
             <Title level={2} style={styles.title}>
               Import Bank Statement
             </Title>
-            <Text type="secondary">Upload your spreadsheet files to process and categorize statements into the system</Text>
+            <Text type="secondary">
+              Upload your spreadsheet files to process and categorize statements into the system
+            </Text>
           </Space>
         </Col>
       </Row>
@@ -91,17 +93,19 @@ export const BankTransactionsPage: React.FC = () => {
       {/* File Upload Control Card */}
       <Card bordered={false} style={styles.actionCard}>
         <Space direction="vertical" size={16} style={{ width: '100%' }}>
-          <Text strong style={styles.sectionLabel}>Select statement file (.xlsx, .csv)</Text>
+          <Text strong style={styles.sectionLabel}>
+            Select statement file (.xlsx, .csv)
+          </Text>
           <div style={styles.uploadFlexContainer}>
             <Upload {...uploadProps}>
               <Button icon={<UploadOutlined />} size="large">
                 Choose Excel file
               </Button>
             </Upload>
-            
-            <Button 
-              type="primary" 
-              onClick={handleUpload} 
+
+            <Button
+              type="primary"
+              onClick={handleUpload}
               disabled={!file}
               size="large"
               style={styles.primaryBtn}
@@ -117,10 +121,15 @@ export const BankTransactionsPage: React.FC = () => {
         <Space direction="vertical" size={24} style={{ width: '100%' }}>
           <Card bordered={false} style={styles.tableCard} bodyStyle={{ padding: 0 }}>
             <div style={styles.tableHeaderZone}>
-              <Text strong style={styles.tableTitle}>Detected Transactions ({transactions.length})</Text>
-              <Text type="secondary" style={styles.tableSubtitle}>Review data fields, allocate categories, or discard rows before staging consolidation</Text>
+              <Text strong style={styles.tableTitle}>
+                Detected Transactions ({transactions.length})
+              </Text>
+              <Text type="secondary" style={styles.tableSubtitle}>
+                Review data fields, allocate categories, or discard rows before staging
+                consolidation
+              </Text>
             </div>
-            
+
             <TransactionTable
               transactions={transactions}
               categories={categories}
@@ -133,10 +142,10 @@ export const BankTransactionsPage: React.FC = () => {
           {/* Consolidated Sync Trigger */}
           <Row justify="end">
             <Col>
-              <Button 
-                type="primary" 
-                icon={<CheckCircleOutlined />} 
-                size="large" 
+              <Button
+                type="primary"
+                icon={<CheckCircleOutlined />}
+                size="large"
                 onClick={handleSave}
                 style={styles.saveAllButton}
               >

@@ -24,14 +24,17 @@ export const CategoryEntriesPage: React.FC = () => {
       key: 'transactionDate',
       width: 150,
       render: (date: string) => dayjs(date).format('DD/MM/YYYY'),
-      sorter: (a: Expense, b: Expense) => dayjs(a.transactionDate).unix() - dayjs(b.transactionDate).unix(),
+      sorter: (a: Expense, b: Expense) =>
+        dayjs(a.transactionDate).unix() - dayjs(b.transactionDate).unix(),
     },
     {
       title: 'Description',
       dataIndex: 'description',
       key: 'description',
       render: (text: string) => (
-        <Text style={styles.descriptionText}>{text || <Text type="secondary">No description</Text>}</Text>
+        <Text style={styles.descriptionText}>
+          {text || <Text type="secondary">No description</Text>}
+        </Text>
       ),
     },
     {
@@ -63,7 +66,9 @@ export const CategoryEntriesPage: React.FC = () => {
       {/* Cabecera y Resumen */}
       <Row justify="space-between" align="middle" style={styles.headerRow}>
         <Col>
-          <Title level={2} style={styles.title}>Expense History</Title>
+          <Title level={2} style={styles.title}>
+            Expense History
+          </Title>
           <Text type="secondary">Detailed breakdown of all transactions in this category</Text>
         </Col>
         <Col>

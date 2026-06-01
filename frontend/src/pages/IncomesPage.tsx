@@ -30,10 +30,10 @@ export const IncomesPage: React.FC = () => {
         </Text>
       ),
     },
-    { 
-      title: 'Description', 
-      dataIndex: 'description', 
-      key: 'description' 
+    {
+      title: 'Description',
+      dataIndex: 'description',
+      key: 'description',
     },
     {
       title: 'Category',
@@ -41,11 +41,19 @@ export const IncomesPage: React.FC = () => {
       key: 'category',
       width: 160,
       filters: categories.map((c) => ({
-        text: <Tag color={getColorForCategory(c.name)} style={styles.flatTag}>{c.name}</Tag>,
+        text: (
+          <Tag color={getColorForCategory(c.name)} style={styles.flatTag}>
+            {c.name}
+          </Tag>
+        ),
         value: c._id!,
       })),
       filterMultiple: false,
-      render: (name: string) => <Tag color={getColorForCategory(name)} style={styles.flatTag}>{name}</Tag>,
+      render: (name: string) => (
+        <Tag color={getColorForCategory(name)} style={styles.flatTag}>
+          {name}
+        </Tag>
+      ),
     },
     {
       title: 'Date',

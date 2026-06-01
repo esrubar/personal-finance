@@ -68,9 +68,9 @@ const CategoryForm: React.FC<CategoryFormProps> = ({ initialData, onSuccess }) =
         />
       </Form.Item>
 
-      <Form.Item 
-        name="isCalculable" 
-        label="Include in Metrics" 
+      <Form.Item
+        name="isCalculable"
+        label="Include in Metrics"
         valuePropName="checked"
         style={styles.switchFormItem}
       >

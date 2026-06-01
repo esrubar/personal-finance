@@ -25,15 +25,15 @@ export const CategoryBudgetsPage: React.FC = () => {
       align: 'right' as const,
       render: (amount: number) => <span style={styles.amountText}>{amount.toFixed(2)} €</span>,
     },
-    { 
-      title: 'Month', 
-      dataIndex: 'month', 
+    {
+      title: 'Month',
+      dataIndex: 'month',
       key: 'month',
       align: 'center' as const,
     },
-    { 
-      title: 'Year', 
-      dataIndex: 'year', 
+    {
+      title: 'Year',
+      dataIndex: 'year',
       key: 'year',
       align: 'center' as const,
     },

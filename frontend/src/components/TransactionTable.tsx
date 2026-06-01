@@ -94,10 +94,14 @@ export const TransactionTable: React.FC<Props> = ({
             optionFilterProp="label"
           >
             <Option value="expense" label="Expense">
-              <Tag color="volcano" style={styles.flatTag}>EXPENSE</Tag>
+              <Tag color="volcano" style={styles.flatTag}>
+                EXPENSE
+              </Tag>
             </Option>
             <Option value="income" label="Income">
-              <Tag color="green" style={styles.flatTag}>INCOME</Tag>
+              <Tag color="green" style={styles.flatTag}>
+                INCOME
+              </Tag>
             </Option>
           </Select>
         </Space>
@@ -109,7 +113,7 @@ export const TransactionTable: React.FC<Props> = ({
       key: 'description',
       render: (value, record) => (
         <Space direction="vertical" size={2} style={styles.controlWrapper}>
-          <Paragraph 
+          <Paragraph
             editable={{ onChange: (e) => onChange(e, record, 'description') }}
             style={styles.editableParagraph}
           >
@@ -155,7 +159,12 @@ export const TransactionTable: React.FC<Props> = ({
       key: 'linkedProjectId',
       width: 180,
       render: (value, record) => {
-        if (record.type === 'income') return <Text type="secondary" style={styles.disabledText}>-</Text>;
+        if (record.type === 'income')
+          return (
+            <Text type="secondary" style={styles.disabledText}>
+              -
+            </Text>
+          );
 
         return (
           <Select
@@ -182,7 +191,12 @@ export const TransactionTable: React.FC<Props> = ({
       key: 'linkedExpenseId',
       width: 190,
       render: (_, record) => {
-        if (record.type === 'expense') return <Text type="secondary" style={styles.disabledText}>-</Text>;
+        if (record.type === 'expense')
+          return (
+            <Text type="secondary" style={styles.disabledText}>
+              -
+            </Text>
+          );
 
         return (
           <Select

@@ -1,8 +1,16 @@
 import { Layout, Menu, Button, Typography, Space, Tag } from 'antd';
-import { 
-  PieChartOutlined, LogoutOutlined, WalletOutlined, AppstoreOutlined, 
-  DollarOutlined, CreditCardOutlined, SafetyOutlined, UserOutlined, 
-  SettingOutlined, UploadOutlined, CloudServerOutlined 
+import {
+  PieChartOutlined,
+  LogoutOutlined,
+  WalletOutlined,
+  AppstoreOutlined,
+  DollarOutlined,
+  CreditCardOutlined,
+  SafetyOutlined,
+  UserOutlined,
+  SettingOutlined,
+  UploadOutlined,
+  CloudServerOutlined,
 } from '@ant-design/icons';
 import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useLogout } from '../hooks/useLogin';
@@ -30,24 +38,44 @@ export const MainLayout = () => {
       <Sider breakpoint="lg" collapsedWidth="0" width={240} style={styles.sider}>
         <div style={styles.logoContainer}>
           <WalletOutlined style={{ fontSize: '24px', color: '#1890ff' }} />
-          <Text strong style={{ color: 'white', marginLeft: 12, fontSize: '16px' }}>FinanceApp</Text>
+          <Text strong style={{ color: 'white', marginLeft: 12, fontSize: '16px' }}>
+            FinanceApp
+          </Text>
         </div>
 
-        <Menu 
-          theme="dark" 
-          mode="inline" 
+        <Menu
+          theme="dark"
+          mode="inline"
           selectedKeys={[location.pathname.replace('/', '') || 'overview']}
           style={{ background: 'transparent' }}
         >
-          <Menu.Item key="overview" icon={<PieChartOutlined />}><Link to="/overview">Overview</Link></Menu.Item>
-          <Menu.Item key="monthly-plan" icon={<AppstoreOutlined />}><Link to="/monthly-plan">Monthly Plan</Link></Menu.Item>
-          <Menu.Item key="incomes" icon={<DollarOutlined />}><Link to="/incomes">Incomes</Link></Menu.Item>
-          <Menu.Item key="expenses" icon={<CreditCardOutlined />}><Link to="/expenses">Expenses</Link></Menu.Item>
-          <Menu.Item key="saving-plans" icon={<SafetyOutlined />}><Link to="/saving-plans">Saving Plans</Link></Menu.Item>
-          <Menu.Item key="categories" icon={<SettingOutlined />}><Link to="/categories">Categories</Link></Menu.Item>
-          <Menu.Item key="category-budgets" icon={<AppstoreOutlined />}><Link to="/category-budgets">Budgets</Link></Menu.Item>
-          <Menu.Item key="upload-transactions" icon={<UploadOutlined />}><Link to="/upload-transactions">Upload Data</Link></Menu.Item>
-          <Menu.Item key="users" icon={<UserOutlined />}><Link to="/users">Users</Link></Menu.Item>
+          <Menu.Item key="overview" icon={<PieChartOutlined />}>
+            <Link to="/overview">Overview</Link>
+          </Menu.Item>
+          <Menu.Item key="monthly-plan" icon={<AppstoreOutlined />}>
+            <Link to="/monthly-plan">Monthly Plan</Link>
+          </Menu.Item>
+          <Menu.Item key="incomes" icon={<DollarOutlined />}>
+            <Link to="/incomes">Incomes</Link>
+          </Menu.Item>
+          <Menu.Item key="expenses" icon={<CreditCardOutlined />}>
+            <Link to="/expenses">Expenses</Link>
+          </Menu.Item>
+          <Menu.Item key="saving-plans" icon={<SafetyOutlined />}>
+            <Link to="/saving-plans">Saving Plans</Link>
+          </Menu.Item>
+          <Menu.Item key="categories" icon={<SettingOutlined />}>
+            <Link to="/categories">Categories</Link>
+          </Menu.Item>
+          <Menu.Item key="category-budgets" icon={<AppstoreOutlined />}>
+            <Link to="/category-budgets">Budgets</Link>
+          </Menu.Item>
+          <Menu.Item key="upload-transactions" icon={<UploadOutlined />}>
+            <Link to="/upload-transactions">Upload Data</Link>
+          </Menu.Item>
+          <Menu.Item key="users" icon={<UserOutlined />}>
+            <Link to="/users">Users</Link>
+          </Menu.Item>
         </Menu>
       </Sider>
 

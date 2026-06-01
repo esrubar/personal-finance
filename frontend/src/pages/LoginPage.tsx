@@ -32,7 +32,9 @@ export function LoginPage() {
           <div style={styles.logoContainer}>
             <WalletOutlined style={styles.logoIcon} />
           </div>
-          <Title level={2} style={styles.title}>Welcome Back</Title>
+          <Title level={2} style={styles.title}>
+            Welcome Back
+          </Title>
           <Text type="secondary">Sign in to your financial dashboard</Text>
         </div>
 
@@ -48,7 +50,10 @@ export function LoginPage() {
             name="password"
             rules={[{ required: true, message: 'Please enter your password' }]}
           >
-            <Input.Password prefix={<LockOutlined style={{ color: '#bfbfbf' }} />} placeholder="Password" />
+            <Input.Password
+              prefix={<LockOutlined style={{ color: '#bfbfbf' }} />}
+              placeholder="Password"
+            />
           </Form.Item>
 
           <Form.Item style={{ marginTop: 24 }}>

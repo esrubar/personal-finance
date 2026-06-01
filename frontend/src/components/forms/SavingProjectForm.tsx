@@ -70,7 +70,7 @@ const SavingProjectForm: React.FC<SavingProjectFormProps> = ({ initialData, onSu
               precision={2}
               addonAfter="€"
               size="large"
-                />
+            />
           </Form.Item>
         </Col>
         <Col span={12}>
@@ -92,8 +92,8 @@ const SavingProjectForm: React.FC<SavingProjectFormProps> = ({ initialData, onSu
         label="Plan Status"
         rules={[{ required: true, message: 'Please select a status' }]}
       >
-        <Select 
-          placeholder="Select status" 
+        <Select
+          placeholder="Select status"
           size="large"
           options={[
             { value: 'active', label: 'Active' },
