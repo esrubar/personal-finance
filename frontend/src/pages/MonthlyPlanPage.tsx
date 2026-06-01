@@ -14,21 +14,16 @@ import {
   Popconfirm,
   Statistic,
 } from 'antd';
-import {
-  CopyOutlined,
-  SaveOutlined,
-  PlusOutlined,
-  DeleteOutlined,
-  CalendarOutlined,
-} from '@ant-design/icons';
+import { CopyOutlined, SaveOutlined, DeleteOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 
 import { useCategories } from '../hooks/useCategories';
 import { useSavingProjects } from '../hooks/useSavingProjects';
 import { useCreateCategoryBudget } from '../hooks/useCategoryBudgetMutations';
 import { useCreateSavingEntry } from '../hooks/useSavingEntriesMutation.ts';
+import { usePreviousPlanning } from '../hooks/useMonthlyPlan.ts';
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
 export const MonthlyPlanPage = () => {
   const [salary, setSalary] = useState<number>(2000);
@@ -42,17 +37,11 @@ export const MonthlyPlanPage = () => {
 
   const { createCategoryBudget } = useCreateCategoryBudget();
   const { createSavingEntry } = useCreateSavingEntry();
+  const { previousPlanning } = usePreviousPlanning(month, year);
 
-  // --- SAVE LOGIC ---
   const handleSavePlan = async () => {
-    if (planItems.length === 0) {
-      return message.warning('There are no items in the plan to save');
-    }
-
-    const isInvalid = planItems.some((item) => !item.targetId);
-    if (isInvalid) {
-      return message.error('Please map a category or project to all entries');
-    }
+    if (planItems.length === 0) return message.warning('No items to save');
+    if (planItems.some((item) => !item.targetId)) return message.error('Map all entries');
 
     setIsSaving(true);
     try {
@@ -61,8 +50,8 @@ export const MonthlyPlanPage = () => {
           return createCategoryBudget({
             categoryId: item.targetId,
             budgetAmount: item.amount,
-            month: month,
-            year: year,
+            month,
+            year,
           });
         } else {
           return createSavingEntry({
@@ -75,58 +64,64 @@ export const MonthlyPlanPage = () => {
       });
 
       await Promise.all(promises);
-      message.success('Monthly plan saved successfully!');
+      message.success(`Plan finalized for ${month}/${year}!`);
     } catch (err) {
-      console.error(err);
-      message.error('Error saving some plan items');
+      message.error('Error saving plan');
     } finally {
       setIsSaving(false);
     }
   };
 
-  // --- ACTIONS & MUTATIONS ---
+  const getLastMonthPlanning = () => {
+    if (!previousPlanning || previousPlanning.length === 0) {
+      return console.log('No previous planning found');
+    }
+
+    const mappedItems = previousPlanning.map((item) => ({
+      key: crypto.randomUUID(),
+      type: item.categoryId ? 'expense' : 'saving',
+      targetId: item.categoryId || item.projectId,
+      amount: item.amount || 0,
+    }));
+
+    setPlanItems(mappedItems);
+    console.log('Previous month loaded! Update month/year if needed.');
+  };
+
   const addItem = (type: 'expense' | 'saving') => {
-    const newItem = { key: crypto.randomUUID(), type, targetId: '', amount: 0 };
-    setPlanItems([...planItems, newItem]);
+    setPlanItems([...planItems, { key: crypto.randomUUID(), type, targetId: '', amount: 0 }]);
   };
 
   const updateItem = (key: string, field: string, value: any) => {
-    setPlanItems((prev) =>
-      prev.map((item) => (item.key === key ? { ...item, [field]: value } : item))
-    );
+    setPlanItems((prev) => prev.map((i) => (i.key === key ? { ...i, [field]: value } : i)));
   };
 
-  const removeItem = (key: string) => {
-    setPlanItems((prev) => prev.filter((item) => item.key !== key));
-  };
+  const removeItem = (key: string) => setPlanItems((prev) => prev.filter((i) => i.key !== key));
 
   const totalAssigned = planItems.reduce((sum, i) => sum + i.amount, 0);
   const availableFunds = salary - totalAssigned;
 
-  // --- COLUMNS DEFINITION ---
   const columns = [
     {
-      title: 'Allocation Type',
+      title: 'Type',
       dataIndex: 'type',
-      width: 140,
+      width: 120,
       render: (type: string) => (
-        <Tag color={type === 'expense' ? 'volcano' : 'green'} style={styles.flatTag}>
-          {type === 'expense' ? 'EXPENSE' : 'SAVING'}
-        </Tag>
+        <Tag color={type === 'expense' ? 'volcano' : 'green'}>{type.toUpperCase()}</Tag>
       ),
     },
     {
-      title: 'Target Category / Project',
+      title: 'Category / Project',
       key: 'targetId',
       render: (_: any, record: any) => (
         <Select
-          showSearch // Habilita la barra de búsqueda interna del Select
-          style={styles.fullWidth}
-          placeholder="Search and select option..."
+          showSearch
+          style={{ width: '100%' }}
           size="large"
-          optionFilterProp="children" // Filtra las opciones basándose en el texto que hay dentro (c.name / p.name)
+          placeholder="Select..."
           value={record.targetId || undefined}
           onChange={(val) => updateItem(record.key, 'targetId', val)}
+          optionFilterProp="children"
         >
           {record.type === 'expense'
             ? categories?.map((c) => (
@@ -143,30 +138,25 @@ export const MonthlyPlanPage = () => {
       ),
     },
     {
-      title: 'Planned Amount',
+      title: 'Amount',
       dataIndex: 'amount',
       width: 180,
       render: (val: number, record: any) => (
         <InputNumber
-          style={styles.fullWidth}
+          style={{ width: '100%' }}
           min={0}
-          precision={2}
           size="large"
           addonAfter="€"
-          placeholder="0.00"
           value={val || undefined}
           onChange={(v) => updateItem(record.key, 'amount', v || 0)}
         />
       ),
     },
     {
-      title: '',
-      width: 60,
-      align: 'center' as const,
       render: (_: any, record: any) => (
         <Button
-          type="text"
           danger
+          type="text"
           icon={<DeleteOutlined />}
           onClick={() => removeItem(record.key)}
         />
@@ -175,248 +165,69 @@ export const MonthlyPlanPage = () => {
   ];
 
   return (
-    <div style={styles.pageContainer}>
-      {/* HEADER ROW */}
-      <Row justify="space-between" align="middle" style={styles.headerRow}>
+    <div style={{ padding: 24, background: '#f5f7fa', minHeight: '100vh' }}>
+      <Row justify="space-between" align="middle" style={{ marginBottom: 24 }}>
         <Col>
-          <Space size="middle">
-            <CalendarOutlined style={styles.headerIcon} />
-            <Space direction="vertical" size={0}>
-              <Title level={2} style={styles.title}>
-                Monthly Budget Planner
-              </Title>
-              <Text type="secondary">Define allocations, set savings benchmarks, and forecast limits</Text>
-            </Space>
-          </Space>
+          <Title level={2}>Monthly Budget Planner</Title>
         </Col>
         <Col>
-          <Button icon={<CopyOutlined />} size="large" style={styles.actionButton}>
+          <Button icon={<CopyOutlined />} size="large" onClick={getLastMonthPlanning}>
             Copy Last Month
           </Button>
         </Col>
       </Row>
 
-      {/* METRICS & CONFIGURATION BENCH */}
-      <Row gutter={[16, 16]} style={styles.cardsRow}>
+      <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
         <Col xs={24} lg={16}>
-          <Card bordered={false} style={styles.dashboardCard}>
-            <Row gutter={[16, 16]}>
-              <Col xs={24} sm={10}>
-                <Text type="secondary" strong style={styles.inputLabel}>Net Salary Income</Text>
-                <InputNumber
-                  size="large"
-                  style={styles.fullWidth}
-                  value={salary}
-                  onChange={(v) => setSalary(v || 0)}
-                  addonAfter="€"
-                  precision={2}
-                />
-              </Col>
-              <Col xs={12} sm={7}>
-                <Text type="secondary" strong style={styles.inputLabel}>Target Month</Text>
-                <InputNumber
-                  size="large"
-                  style={styles.fullWidth}
-                  value={month}
-                  min={1}
-                  max={12}
-                  onChange={(v) => setMonth(v || 1)}
-                />
-              </Col>
-              <Col xs={12} sm={7}>
-                <Text type="secondary" strong style={styles.inputLabel}>Target Year</Text>
-                <InputNumber
-                  size="large"
-                  style={styles.fullWidth}
-                  value={year}
-                  onChange={(v) => setYear(v || 2026)}
-                />
-              </Col>
-            </Row>
+          <Card bordered={false}>
+            <Space style={{ width: '100%' }}>
+              <InputNumber
+                addonBefore="Salary"
+                value={salary}
+                onChange={(v) => setSalary(v || 0)}
+                addonAfter="€"
+              />
+              <InputNumber addonBefore="Month" value={month} onChange={(v) => setMonth(v || 1)} />
+              <InputNumber addonBefore="Year" value={year} onChange={(v) => setYear(v || 2026)} />
+            </Space>
           </Card>
         </Col>
-
         <Col xs={24} lg={8}>
-          <Card bordered={false} style={{ ...styles.dashboardCard, ...styles.accentCard(availableFunds >= 0) }}>
+          <Card bordered={false}>
             <Statistic
-              title="Remaining Available Balance"
+              title="Available Balance"
               value={availableFunds}
-              precision={2}
               suffix="€"
-              valueStyle={availableFunds < 0 ? styles.negativeValue : styles.positiveValue}
+              valueStyle={{ color: availableFunds < 0 ? '#ff4d4f' : '#52c41a' }}
             />
           </Card>
         </Col>
       </Row>
 
-      {/* ACTION CONTROLS & TABLE VIEW */}
-      <Card bordered={false} style={styles.tableCard}>
-        <Row justify="space-between" align="middle" style={styles.tableActionsRow}>
-          <Col>
-            <Space size="middle">
-              <Button
-                type="primary"
-                danger
-                icon={<PlusOutlined />}
-                size="large"
-                onClick={() => addItem('expense')}
-                style={styles.actionButton}
-              >
-                Add Budget Expense
-              </Button>
-              <Button
-                type="primary"
-                icon={<PlusOutlined />}
-                size="large"
-                onClick={() => addItem('saving')}
-                style={styles.savingButton}
-              >
-                Add Saving Target
-              </Button>
-            </Space>
-          </Col>
-        </Row>
-
-        <Table
-          columns={columns}
-          dataSource={planItems}
-          pagination={false}
-          rowKey="key"
-          style={styles.table}
-          summary={() => (
-            <Table.Summary.Row style={styles.summaryRow}>
-              <Table.Summary.Cell index={0} colSpan={2}>
-                <Text strong>Total Allocated Funds</Text>
-              </Table.Summary.Cell>
-              <Table.Summary.Cell index={1}>
-                <Text strong style={styles.amountTotal}>
-                  {totalAssigned.toFixed(2)} €
-                </Text>
-              </Table.Summary.Cell>
-              <Table.Summary.Cell index={2} />
-            </Table.Summary.Row>
-          )}
-        />
-
-        {/* SUBMIT ROW */}
-        <div style={styles.submitSection}>
-          <Popconfirm
-            title="Commit current plan?"
-            description="This action will initialize all mapped budgets and targets."
-            onConfirm={handleSavePlan}
-            okText="Save Plan"
-            cancelText="Cancel"
-            disabled={isSaving}
+      <Card bordered={false}>
+        <Space style={{ marginBottom: 20 }}>
+          <Button type="primary" danger onClick={() => addItem('expense')}>
+            Add Expense
+          </Button>
+          <Button
+            type="primary"
+            onClick={() => addItem('saving')}
+            style={{ background: '#52c41a' }}
           >
-            <Button
-              type="primary"
-              size="large"
-              icon={<SaveOutlined />}
-              loading={isSaving}
-              style={styles.submitButton}
-            >
-              Finalize Planning Cycle
+            Add Saving
+          </Button>
+        </Space>
+
+        <Table dataSource={planItems} columns={columns} pagination={false} rowKey="key" />
+
+        <div style={{ marginTop: 24, textAlign: 'right' }}>
+          <Popconfirm title="Finalize and save this plan?" onConfirm={handleSavePlan}>
+            <Button type="primary" size="large" icon={<SaveOutlined />} loading={isSaving}>
+              Finalize Planning
             </Button>
           </Popconfirm>
         </div>
       </Card>
     </div>
   );
-};
-
-// --- Co-located Architectural Styles ---
-const styles = {
-  pageContainer: {
-    padding: '24px',
-    background: '#f5f7fa',
-    minHeight: '100vh',
-  },
-  headerRow: {
-    marginBottom: '24px',
-  },
-  headerIcon: {
-    fontSize: '26px',
-    color: '#1890ff',
-    padding: '8px',
-    background: '#e6f7ff',
-    borderRadius: '8px',
-  },
-  title: {
-    margin: 0,
-    fontWeight: 600,
-  },
-  cardsRow: {
-    marginBottom: '24px',
-  },
-  dashboardCard: {
-    boxShadow: '0 1px 3px rgba(0,0,0,0.01), 0 4px 8px rgba(0,0,0,0.02)',
-    borderRadius: '8px',
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column' as const,
-    justifyContent: 'center',
-  },
-  accentCard: (isPositive: boolean) => ({
-    borderLeft: isPositive ? '4px solid #52c41a' : '4px solid #ff4d4f',
-  }),
-  inputLabel: {
-    display: 'block',
-    marginBottom: '6px',
-    fontSize: '12px',
-  },
-  positiveValue: {
-    color: '#52c41a',
-    fontWeight: 700,
-  },
-  negativeValue: {
-    color: '#ff4d4f',
-    fontWeight: 700,
-  },
-  tableCard: {
-    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.02), 0 4px 12px rgba(0, 0, 0, 0.03)',
-    borderRadius: '8px',
-    padding: '8px 0',
-  },
-  tableActionsRow: {
-    marginBottom: '20px',
-  },
-  actionButton: {
-    borderRadius: '6px',
-    fontWeight: 500,
-  },
-  savingButton: {
-    borderRadius: '6px',
-    fontWeight: 500,
-    background: '#52c41a',
-    borderColor: '#52c41a',
-  },
-  table: {
-    background: '#ffffff',
-  },
-  flatTag: {
-    margin: 0,
-    fontWeight: 600,
-    borderRadius: '4px',
-    fontSize: '11px',
-  },
-  summaryRow: {
-    background: '#fafafa',
-  },
-  amountTotal: {
-    fontSize: '14px',
-    color: '#141414',
-  },
-  submitSection: {
-    marginTop: '32px',
-    textAlign: 'right' as const,
-  },
-  submitButton: {
-    minWidth: '220px',
-    height: '44px',
-    borderRadius: '6px',
-    fontWeight: 600,
-  },
-  fullWidth: {
-    width: '100%',
-  },
 };

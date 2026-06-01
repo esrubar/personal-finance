@@ -16,6 +16,7 @@ import incomeRoutes from './income/incomeRoutes';
 import importTransactionRoutes from './importTransaction/importTransactionRoutes';
 import savingEntryRoutes from './savingEntry/savingEntryRoutes';
 import overviewRoutes from './overview/overviewRoutes';
+import monthlyPlanRoutes from './monthlyPlan/monthlyPlanRoutes';
 
 config();
 
@@ -85,12 +86,13 @@ app.post('/register', async (req: any, res: any) => {
 app.post('/logout', (req: any, res: any) => {
   const isProd = process.env.NODE_ENV === 'production' || !!process.env.VERCEL;
 
-  res.clearCookie('access_token',
-    {
+  res
+    .clearCookie('access_token', {
       path: '/',
       secure: isProd,
       sameSite: isProd ? 'none' : 'strict',
-    }).json({ message: 'Logout successfully' });
+    })
+    .json({ message: 'Logout successfully' });
 });
 app.post('/protected', authMiddleware, (req: any, res: any) => {
   res.status(200).send('Perfect');
@@ -107,5 +109,6 @@ app.use('/api/incomes', incomeRoutes);
 app.use('/api/import-transactions', importTransactionRoutes);
 app.use('/api/saving-entries', savingEntryRoutes);
 app.use('/api/resume', overviewRoutes);
+app.use('/api/monthlyPlan', monthlyPlanRoutes);
 
 export default app;
