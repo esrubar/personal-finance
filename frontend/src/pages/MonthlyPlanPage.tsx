@@ -17,7 +17,7 @@ import {
 import { CopyOutlined, SaveOutlined, DeleteOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 
-import { useCategories } from '../hooks/useCategories';
+import { useEnabledCategories } from '../hooks/useCategories';
 import { useSavingProjects } from '../hooks/useSavingProjects';
 import { useCreateCategoryBudget } from '../hooks/useCategoryBudgetMutations';
 import { useCreateSavingEntry } from '../hooks/useSavingEntriesMutation.ts';
@@ -32,7 +32,7 @@ export const MonthlyPlanPage = () => {
   const [planItems, setPlanItems] = useState<any[]>([]);
   const [isSaving, setIsSaving] = useState(false);
 
-  const { categories } = useCategories();
+  const { categories } = useEnabledCategories();
   const { savingProjects } = useSavingProjects();
 
   const { createCategoryBudget } = useCreateCategoryBudget();

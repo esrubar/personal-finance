@@ -8,7 +8,7 @@ import { useCreateExpenses } from '../hooks/useExpenseMutations';
 import { useCreateIncomes } from '../hooks/useIncomeMutations';
 import { createIncomeFromTransaction, type Income } from '../models/income';
 import { createExpenseFromTransaction, type Expense } from '../models/expense';
-import { useCategories } from '../hooks/useCategories';
+import { useEnabledCategories } from '../hooks/useCategories';
 import { useSavingProjects } from '../hooks/useSavingProjects';
 
 const { Title, Text } = Typography;
@@ -19,7 +19,7 @@ export const BankTransactionsPage: React.FC = () => {
   const { fetchTransactions } = useImportTransaction();
   const { createExpenses } = useCreateExpenses();
   const { createIncomes } = useCreateIncomes();
-  const { categories } = useCategories();
+  const { categories } = useEnabledCategories();
   const { savingProjects } = useSavingProjects();
 
   const handleUpload = async () => {

@@ -15,6 +15,14 @@ export const getCategories = async (userName: string): Promise<CategoryDocument[
     'auditable.createdBy': userName,
   }).sort({ name: 1 });
 };
+
+export const getEnabledCategories = async (userName: string): Promise<CategoryDocument[]> => {
+  return CategoryModel.find({
+    'auditable.createdBy': userName,
+    isEnabled: true,
+  }).sort({ name: 1 });
+};
+
 export const getCategoryById = async (id: string, userName: string): Promise<CategoryDocument> => {
   const category = await CategoryModel.findById(id);
   if (!category) {

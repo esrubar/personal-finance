@@ -64,29 +64,50 @@ export const CategoriesPage: React.FC = () => {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
-      render: (text) => <Text style={styles.categoryName}>{text}</Text>,
+      render: (text, record) => (
+        <Text 
+          style={{
+            ...styles.categoryName,
+            ...(record.isEnabled === false ? styles.disabledText : {})
+          }}
+        >
+          {text}
+        </Text>
+      ),
     },
     {
       title: 'Type',
       dataIndex: 'type',
       key: 'type',
       width: 140,
-      render: (type: string) => (
-        <Tag color={type.toLowerCase() === 'income' ? 'green' : 'volcano'} style={styles.flatTag}>
-          {type.toUpperCase()}
-        </Tag>
-      ),
+      render: (type: string, record) => {
+        const tagColor = record.isEnabled === false 
+          ? 'default' 
+          : (type.toLowerCase() === 'income' ? 'green' : 'volcano');
+        
+        return (
+          <Tag color={tagColor} style={styles.flatTag}>
+            {type.toUpperCase()}
+          </Tag>
+        );
+      },
     },
     {
       title: 'Calculable',
       dataIndex: 'isCalculable',
       key: 'isCalculable',
       width: 140,
-      render: (isCalculable: boolean) => (
-        <Tag color={isCalculable ? 'blue' : 'default'} style={styles.flatTag}>
-          {isCalculable ? 'YES' : 'NO'}
-        </Tag>
-      ),
+      render: (isCalculable: boolean, record) => {
+        const tagColor = record.isEnabled === false 
+          ? 'default' 
+          : (isCalculable ? 'blue' : 'default');
+
+        return (
+          <Tag color={tagColor} style={styles.flatTag}>
+            {isCalculable ? 'YES' : 'NO'}
+          </Tag>
+        );
+      },
     },
     {
       title: 'Actions',
@@ -100,7 +121,7 @@ export const CategoriesPage: React.FC = () => {
               type="text"
               icon={<EditOutlined />}
               onClick={() => handleOpenEdit(record)}
-              style={styles.editButton}
+              style={record.isEnabled === false ? styles.disabledActionButton : styles.editButton}
             />
           </Tooltip>
 
@@ -113,7 +134,12 @@ export const CategoriesPage: React.FC = () => {
               cancelText="No"
               placement="topRight"
             >
-              <Button type="text" danger icon={<DeleteOutlined />} />
+              <Button 
+                type="text" 
+                danger 
+                icon={<DeleteOutlined />} 
+                style={record.isEnabled === false ? styles.disabledActionButton : undefined}
+              />
             </Popconfirm>
           </Tooltip>
         </Space>
@@ -163,7 +189,10 @@ export const CategoriesPage: React.FC = () => {
           pagination={{ pageSize: 10, hideOnSinglePage: true }}
           onRow={(record) => ({
             onClick: () => navigate(`/category-entries/${record._id}`),
-            style: styles.clickableRow,
+            style: {
+              ...styles.clickableRow,
+              ...(record.isEnabled === false ? styles.disabledRow : {})
+            },
           })}
         />
       </Card>
@@ -234,4 +263,15 @@ const styles = {
   editIcon: {
     color: '#1890ff',
   },
+  disabledRow: {
+    cursor: 'pointer',
+    backgroundColor: '#fafafa',
+    opacity: 0.6,
+  },
+  disabledText: {
+    color: '#8c8c8c',
+  },
+  disabledActionButton: {
+    color: '#bfbfbf',
+  }
 };

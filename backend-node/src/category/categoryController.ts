@@ -13,6 +13,12 @@ export const getAll = async (req: any, res: Response) => {
   res.json(categories);
 };
 
+export const getEnabled = async (req: any, res: Response) => {
+  const user = req.session.user;
+  const categories = await categoryService.getEnabledCategories(user.name);
+  res.json(categories);
+};
+
 export const getById = async (req: any, res: Response) => {
   const user = req.session.user;
   const category = await categoryService.getCategoryById(req.params.id, user.name);

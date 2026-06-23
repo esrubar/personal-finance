@@ -8,6 +8,11 @@ export const getCategories = async (): Promise<Category[]> => {
   return data;
 };
 
+export const getEnabledCategories = async (): Promise<Category[]> => {
+  const { data } = await axios.get<Category[]>(`${API_URL}/enabled`);
+  return data;
+};
+
 export const getCategory = async (id: string): Promise<Category> => {
   const { data } = await axios.get<Category>(`${API_URL}/${id}`);
   return data;

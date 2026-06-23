@@ -19,6 +19,23 @@ export function useCategories(refreshKey?: number) {
   return { categories, loading, error };
 }
 
+export function useEnabledCategories(refreshKey?: number) {
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+
+  useEffect(() => {
+    setLoading(true);
+    categoryDataSource
+      .getEnabledCategories()
+      .then(setCategories)
+      .catch(setError)
+      .finally(() => setLoading(false));
+  }, [refreshKey]);
+
+  return { categories, loading, error };
+}
+
 export function useCategory(id: string) {
   const [category, setCategory] = useState<Category | null>(null);
   const [loading, setLoading] = useState(true);

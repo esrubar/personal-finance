@@ -5,5 +5,6 @@ export interface Category {
   name: string;
   type?: string;
   isCalculable?: boolean;
+  isEnabled: boolean;
   auditable?: Auditable;
 }

@@ -6,6 +6,7 @@ const CategorySchema = new Schema<Category>({
   name: { type: String, required: true },
   type: { type: String, required: false },
   isCalculable: { type: Boolean, required: false, default: true },
+  isEnabled: { type: Boolean, required: true, default: true },
   auditable: {
     createdAt: { type: Date, required: true, default: Date.now },
     updatedAt: { type: Date, required: true, default: Date.now },
