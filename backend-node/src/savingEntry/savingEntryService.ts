@@ -10,7 +10,9 @@ export const createSavingEntry = async (data: any, userName: string) => {
 };
 
 export const getSavingEntries = async (userName: string) => {
-  await SavingEntryModel.find({
+  return await SavingEntryModel.find({
     'auditable.createdBy': userName,
-  }).lean();
+  })
+    .sort({ date: -1 })
+    .lean();
 };

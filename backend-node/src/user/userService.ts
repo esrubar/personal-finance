@@ -9,7 +9,7 @@ export const createUser = async (data: any) => {
   return await UserModel.create(userData);
 };
 
-export const getUsers = async () => await UserModel.find();
+export const getUsers = async () => await UserModel.find().sort({ name: 1 });
 export const getUserById = async (id: string) => await UserModel.findById(id);
 
 export const updateUser = async (id: string, data: any) => {

@@ -16,7 +16,9 @@ export const createSavingProject = async (data: any, userName: string) => {
 export const getSavingProjects = async (userName: string) => {
   return SavingProjectModel.find({
     'auditable.createdBy': userName,
-  }).lean();
+  })
+    .sort({ name: 1 })
+    .lean();
 };
 
 export const getSavingProjectById = async (id: string, userName: string) => {
@@ -66,7 +68,9 @@ export const getSavingProjectWithEntries = async (
   const savingEntries: SavingEntryDto[] = await SavingEntryModel.find({
     'auditable.createdBy': userName,
     projectId: savingProject._id,
-  }).lean();
+  })
+    .sort({ date: -1 })
+    .lean();
 
   const expenses = await ExpenseModel.find({
     projectId: savingProject._id,
@@ -84,6 +88,7 @@ export const getSavingProjectWithEntries = async (
   }));
 
   savingEntries.push(...mappingExpenses);
+  savingEntries.sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   return {
     id: savingProject._id,
