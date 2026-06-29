@@ -1,12 +1,12 @@
 import dayjs from 'dayjs';
 import type { Auditable } from './auditable';
 import type { BankTransaction } from './bankTransaction';
-import type { Category } from './category';
+import type { MinimalCategory } from './category';
 
 export interface Income {
   _id?: string;
   amount: number;
-  category: Category;
+  category: MinimalCategory;
   transactionDate?: Date;
   description?: string;
   auditable?: Auditable;
