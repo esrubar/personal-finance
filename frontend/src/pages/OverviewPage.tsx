@@ -65,7 +65,7 @@ export const OverviewPage: React.FC = () => {
       items: [
         (d: { categoryName: string; spentAmount: number }) => ({
           name: d.categoryName,
-          value: `${d.spentAmount}€`,
+          value: `${d.spentAmount.toFixed(2)}€`,
         }),
       ],
     },
