@@ -1,5 +1,5 @@
-import { Table, Typography, Card, Statistic, Row, Col, Button, Progress, Space } from 'antd';
-import { ArrowLeftOutlined } from '@ant-design/icons';
+import { Table, Typography, Card, Statistic, Row, Col, Button, Progress, Space, Tag } from 'antd';
+import { ArrowLeftOutlined, CheckCircleOutlined, CalculatorOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { useSavingProjectDetails } from '../hooks/useSavingProjects.ts';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -12,8 +12,11 @@ export const SavingEntryPage = () => {
 
   const { savingProject: project } = useSavingProjectDetails(id!);
 
-  // Calculate percentage only if the project and goal exist
-  const percent = project?.goal ? Math.round((project.amount / project.goal) * 100) : 0;
+  const rawCalculatedTotal = project?.savingEntries?.reduce((sum, entry) => sum + (entry.amount || 0), 0) ?? 0;
+  const calculatedTotal = Math.round(rawCalculatedTotal * 100) / 100;
+  const hasMismatch = project && project.amount !== calculatedTotal;
+
+  const percent = project?.goal ? Math.round(((project.amount || 0) / project.goal) * 100) : 0;
 
   const columns = [
     {
@@ -54,7 +57,6 @@ export const SavingEntryPage = () => {
 
   return (
     <div style={styles.pageContainer}>
-      {/* Navigation Layer */}
       <Button
         type="link"
         icon={<ArrowLeftOutlined />}
@@ -64,13 +66,23 @@ export const SavingEntryPage = () => {
         Back to Savings Plans
       </Button>
 
-      {/* Analytical Summary Card */}
       <Card bordered={false} style={styles.summaryCard}>
         <Row gutter={[24, 24]} align="middle">
           <Col xs={24} md={12}>
-            <Title level={2} style={styles.title}>
-              {project.name}
-            </Title>
+            <Space direction="vertical" size={4}>
+              <Title level={2} style={styles.title}>
+                {project.name}
+              </Title>
+              {hasMismatch ? (
+                <Tag color="warning" icon={<CalculatorOutlined />}>
+                  Calculated Total: {calculatedTotal}€ (Mismatch)
+                </Tag>
+              ) : (
+                <Tag color="success" icon={<CheckCircleOutlined />}>
+                  Calculated Total matches DB ({calculatedTotal}€)
+                </Tag>
+              )}
+            </Space>
           </Col>
 
           <Col xs={12} md={6}>
@@ -83,7 +95,6 @@ export const SavingEntryPage = () => {
             </Col>
           )}
 
-          {/* Allocation Progress Tracker */}
           {project.goal && (
             <Col span={24} style={styles.progressWrapper}>
               <Space direction="vertical" style={styles.fullWidth} size={4}>
@@ -107,7 +118,6 @@ export const SavingEntryPage = () => {
         Contribution History
       </Title>
 
-      {/* Main Ledger Records Card */}
       <Card bordered={false} style={styles.tableCard}>
         <Table
           dataSource={project.savingEntries}
@@ -121,7 +131,6 @@ export const SavingEntryPage = () => {
   );
 };
 
-// --- Page Styles (Co-location) ---
 const styles = {
   pageContainer: {
     padding: '24px',
