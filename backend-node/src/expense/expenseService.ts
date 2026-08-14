@@ -3,7 +3,7 @@ import { paginateWithFilters } from '../utils/paginateWithFilters';
 import dayjs from 'dayjs';
 import { ExpenseModel } from './expenseModel';
 import { getIncomesByLinkedExpense } from '../income/incomeService';
-import { createAuditable, updateAuditable } from '../auditable/auditableService';
+import { createAuditable, getAuditableUpdateFields, updateAuditable } from '../auditable/auditableService';
 import { FilteredExpenseQuery } from './filteredExpensequeryDTO';
 import { ExpenseDTO, MensualExpenseDTO } from './expenseDTO';
 import { mapToPaginatedExpense } from './expenseMapper';
@@ -129,7 +129,7 @@ export const getExpenseById = async (id: string, userName: string) => {
 export const updateExpense = async (id: string, data: any, userName: string) => {
   const expenseData = {
     ...data,
-    auditable: updateAuditable(data.auditable, userName),
+    auditable: getAuditableUpdateFields(userName)
   };
   return ExpenseModel.findByIdAndUpdate(id, expenseData, { new: true });
 };

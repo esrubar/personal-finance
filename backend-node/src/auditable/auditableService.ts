@@ -11,3 +11,10 @@ export const updateAuditable = (existingAuditable: Auditable, userName?: string)
     updatedAt: new Date(),
   };
 };
+
+export const getAuditableUpdateFields = (userName?: string) => {
+  return {
+    'auditable.updatedAt': new Date(),
+    'auditable.updatedBy': userName ?? 'admin',
+  };
+};
