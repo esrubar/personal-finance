@@ -12,7 +12,8 @@ export const SavingEntryPage = () => {
 
   const { savingProject: project } = useSavingProjectDetails(id!);
 
-  const rawCalculatedTotal = project?.savingEntries?.reduce((sum, entry) => sum + (entry.amount || 0), 0) ?? 0;
+  const rawCalculatedTotal =
+    project?.savingEntries?.reduce((sum, entry) => sum + (entry.amount || 0), 0) ?? 0;
   const calculatedTotal = Math.round(rawCalculatedTotal * 100) / 100;
   const hasMismatch = project && project.amount !== calculatedTotal;
 

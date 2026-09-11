@@ -65,10 +65,10 @@ export const CategoriesPage: React.FC = () => {
       dataIndex: 'name',
       key: 'name',
       render: (text, record) => (
-        <Text 
+        <Text
           style={{
             ...styles.categoryName,
-            ...(record.isEnabled === false ? styles.disabledText : {})
+            ...(record.isEnabled === false ? styles.disabledText : {}),
           }}
         >
           {text}
@@ -81,10 +81,13 @@ export const CategoriesPage: React.FC = () => {
       key: 'type',
       width: 140,
       render: (type: string, record) => {
-        const tagColor = record.isEnabled === false 
-          ? 'default' 
-          : (type.toLowerCase() === 'income' ? 'green' : 'volcano');
-        
+        const tagColor =
+          record.isEnabled === false
+            ? 'default'
+            : type.toLowerCase() === 'income'
+              ? 'green'
+              : 'volcano';
+
         return (
           <Tag color={tagColor} style={styles.flatTag}>
             {type.toUpperCase()}
@@ -98,9 +101,7 @@ export const CategoriesPage: React.FC = () => {
       key: 'isCalculable',
       width: 140,
       render: (isCalculable: boolean, record) => {
-        const tagColor = record.isEnabled === false 
-          ? 'default' 
-          : (isCalculable ? 'blue' : 'default');
+        const tagColor = record.isEnabled === false ? 'default' : isCalculable ? 'blue' : 'default';
 
         return (
           <Tag color={tagColor} style={styles.flatTag}>
@@ -134,10 +135,10 @@ export const CategoriesPage: React.FC = () => {
               cancelText="No"
               placement="topRight"
             >
-              <Button 
-                type="text" 
-                danger 
-                icon={<DeleteOutlined />} 
+              <Button
+                type="text"
+                danger
+                icon={<DeleteOutlined />}
                 style={record.isEnabled === false ? styles.disabledActionButton : undefined}
               />
             </Popconfirm>
@@ -191,7 +192,7 @@ export const CategoriesPage: React.FC = () => {
             onClick: () => navigate(`/category-entries/${record._id}`),
             style: {
               ...styles.clickableRow,
-              ...(record.isEnabled === false ? styles.disabledRow : {})
+              ...(record.isEnabled === false ? styles.disabledRow : {}),
             },
           })}
         />
@@ -273,5 +274,5 @@ const styles = {
   },
   disabledActionButton: {
     color: '#bfbfbf',
-  }
+  },
 };

@@ -3,7 +3,11 @@ import { paginateWithFilters } from '../utils/paginateWithFilters';
 import dayjs from 'dayjs';
 import { ExpenseModel } from './expenseModel';
 import { getIncomesByLinkedExpense } from '../income/incomeService';
-import { createAuditable, getAuditableUpdateFields, updateAuditable } from '../auditable/auditableService';
+import {
+  createAuditable,
+  getAuditableUpdateFields,
+  updateAuditable,
+} from '../auditable/auditableService';
 import { FilteredExpenseQuery } from './filteredExpensequeryDTO';
 import { ExpenseDTO, MensualExpenseDTO } from './expenseDTO';
 import { mapToPaginatedExpense } from './expenseMapper';
@@ -127,7 +131,6 @@ export const getExpenseById = async (id: string, userName: string) => {
 };
 
 export const updateExpense = async (id: string, data: any, userName: string) => {
-
   const expense = await ExpenseModel.findById(id);
 
   if (!expense) {
@@ -138,7 +141,7 @@ export const updateExpense = async (id: string, data: any, userName: string) => 
 
   const updateFields = updateAuditable(expense.auditable, userName);
   expense.auditable.updatedAt = updateFields.updatedAt;
-  expense.auditable.updatedBy = updateFields.updatedBy; 
+  expense.auditable.updatedBy = updateFields.updatedBy;
 
   await expense.save();
   return expense;

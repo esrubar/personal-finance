@@ -20,12 +20,15 @@ export const CategoryEntriesPage: React.FC = () => {
   const monthlyChartData = useMemo(() => {
     if (!expenses || expenses.length === 0) return [];
 
-    const grouped = expenses.reduce((acc, exp) => {
-      if (!exp.transactionDate) return acc;
-      const monthKey = dayjs(exp.transactionDate).format('YYYY-MM');
-      acc[monthKey] = (acc[monthKey] || 0) + (exp.realAmount || 0);
-      return acc;
-    }, {} as Record<string, number>);
+    const grouped = expenses.reduce(
+      (acc, exp) => {
+        if (!exp.transactionDate) return acc;
+        const monthKey = dayjs(exp.transactionDate).format('YYYY-MM');
+        acc[monthKey] = (acc[monthKey] || 0) + (exp.realAmount || 0);
+        return acc;
+      },
+      {} as Record<string, number>
+    );
 
     return Object.entries(grouped)
       .map(([month, total]) => ({
@@ -34,7 +37,7 @@ export const CategoryEntriesPage: React.FC = () => {
         type: 'Expense',
         rawDate: month,
       }))
-      .filter((item) => item.value > 0) 
+      .filter((item) => item.value > 0)
       .sort((a, b) => (a.rawDate > b.rawDate ? 1 : -1));
   }, [expenses]);
 
@@ -127,7 +130,9 @@ export const CategoryEntriesPage: React.FC = () => {
         {!loading && monthlyChartData.length > 0 ? (
           <Column {...chartConfig} height={300} />
         ) : (
-          <div style={{ height: 300, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div
+            style={{ height: 300, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          >
             <Text type="secondary">
               {loading ? 'Loading chart...' : 'No expenses available for this category'}
             </Text>
