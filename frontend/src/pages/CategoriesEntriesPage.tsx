@@ -15,10 +15,8 @@ export const CategoryEntriesPage: React.FC = () => {
 
   const { expenses = [], loading } = useExpensesByCategory(id!);
 
-  // Cálculo del total acumulado
   const totalAmount = expenses?.reduce((acc, exp) => acc + (exp.realAmount || 0), 0);
 
-  // 1. Agrupar y procesar gastos por mes
   const monthlyChartData = useMemo(() => {
     if (!expenses || expenses.length === 0) return [];
 
@@ -36,22 +34,18 @@ export const CategoryEntriesPage: React.FC = () => {
         type: 'Expense',
         rawDate: month,
       }))
-      // IMPORTANTE: Filtrar valores <= 0 para evitar que el gráfico rompa su escala
       .filter((item) => item.value > 0) 
       .sort((a, b) => (a.rawDate > b.rawDate ? 1 : -1));
   }, [expenses]);
 
-  // 2. Configuración simplificada y robusta del chart
   const chartConfig = {
     data: monthlyChartData,
     xField: 'month',
     yField: 'value',
-    // Si usas @ant-design/plots v2.x, se recomienda 'colorField' o pasar 'color' directo:
     color: '#ff4d4f',
     columnStyle: {
       radius: [4, 4, 0, 0],
     },
-    // Manejo elegante si no hay datos cargados aún
     emptyText: 'No data available to build chart',
   };
 
