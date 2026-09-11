@@ -127,11 +127,21 @@ export const getExpenseById = async (id: string, userName: string) => {
 };
 
 export const updateExpense = async (id: string, data: any, userName: string) => {
-  const expenseData = {
-    ...data,
-    auditable: getAuditableUpdateFields(userName)
-  };
-  return ExpenseModel.findByIdAndUpdate(id, expenseData, { new: true });
+
+  const expense = await ExpenseModel.findById(id);
+
+  if (!expense) {
+    throw new Error(`Expense with id ${id} not found`);
+  }
+
+  Object.assign(expense, data);
+
+  const updateFields = updateAuditable(expense.auditable, userName);
+  expense.auditable.updatedAt = updateFields.updatedAt;
+  expense.auditable.updatedBy = updateFields.updatedBy; 
+
+  await expense.save();
+  return expense;
 };
 
 export const deleteExpense = async (id: string, userName: string) => {

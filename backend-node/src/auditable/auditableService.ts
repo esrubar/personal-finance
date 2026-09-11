@@ -4,9 +4,8 @@ export const createAuditable = (userName?: string): Auditable => {
   return new Auditable(userName);
 };
 
-export const updateAuditable = (existingAuditable: Auditable, userName?: string): Auditable => {
+export const updateAuditable = (existingAuditable: Auditable, userName?: string) => {
   return {
-    ...existingAuditable,
     updatedBy: userName ?? 'admin',
     updatedAt: new Date(),
   };

@@ -17,6 +17,7 @@ const ExpenseSchema = new mongoose.Schema({
       updatedBy: { type: String, required: true },
     },
     required: true,
+    _id: false,
   },
 });
 
