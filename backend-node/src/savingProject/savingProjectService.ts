@@ -33,11 +33,20 @@ export const getSavingProjectById = async (id: string, userName: string) => {
 };
 
 export const updateSavingProject = async (id: string, data: any, userName: string) => {
-  const savingProjectData = {
-    ...data,
-    auditable: updateAuditable(data.auditable, userName),
-  };
-  return SavingProjectModel.findByIdAndUpdate(id, savingProjectData, { new: true });
+  const savingProject = await SavingProjectModel.findById(id);
+
+  if (!savingProject) {
+    throw new Error(`Saving project with id ${id} not found`);
+  }
+
+  Object.assign(savingProject, data);
+
+  const updateFields = updateAuditable(savingProject.auditable, userName);
+  savingProject.auditable.updatedAt = updateFields.updatedAt;
+  savingProject.auditable.updatedBy = updateFields.updatedBy;
+
+  await savingProject.save();
+  return savingProject;
 };
 
 export const deleteSavingProject = async (id: string, userName: string) => {

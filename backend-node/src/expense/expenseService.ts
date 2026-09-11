@@ -5,7 +5,6 @@ import { ExpenseModel } from './expenseModel';
 import { getIncomesByLinkedExpense } from '../income/incomeService';
 import {
   createAuditable,
-  getAuditableUpdateFields,
   updateAuditable,
 } from '../auditable/auditableService';
 import { FilteredExpenseQuery } from './filteredExpensequeryDTO';

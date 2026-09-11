@@ -35,11 +35,18 @@ export const getCategoryById = async (id: string, userName: string): Promise<Cat
 };
 
 export const updateCategory = async (id: string, data: any, userName: string) => {
-  const categoryData = {
-    ...data,
-    auditable: updateAuditable(data.auditable, userName),
-  };
-  await CategoryModel.findByIdAndUpdate(id, categoryData, { new: true });
+  const category = await CategoryModel.findById(id);
+  if (!category) {
+    throw new Error(`Category with id ${id} not found`);
+  }
+
+  Object.assign(category, data);
+  const updateFields = updateAuditable(category.auditable, userName);
+  category.auditable.updatedAt = updateFields.updatedAt;
+  category.auditable.updatedBy = updateFields.updatedBy;
+
+  await category.save();
+  return category;
 };
 
 export const deleteCategory = async (id: string, userName: string) => {
