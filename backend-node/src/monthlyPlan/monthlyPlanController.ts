@@ -2,7 +2,7 @@ import { getLastMonthPlan } from './monthlyPlanService';
 import { Response } from 'express';
 
 export const getPreviousPlan = async (req: any, res: Response) => {
-  const user = req.session.user;
+  const user = req.user;
 
   var overviewParams = {
     month: parseInt(req.params.month),

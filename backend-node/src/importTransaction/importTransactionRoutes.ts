@@ -2,7 +2,7 @@
 import { Router } from 'express';
 import multer from 'multer';
 import * as importTransactionController from './importTansactionController';
-import { authMiddleware } from '../middlewares/middleware';
+import { authMiddleware } from '../middlewares/authMiddleware';
 
 const router = Router();
 

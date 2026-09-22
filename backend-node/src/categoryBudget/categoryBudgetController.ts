@@ -2,13 +2,13 @@ import { Response } from 'express';
 import * as categoryBudgetService from './categoryBudgetService';
 
 export const create = async (req: any, res: Response) => {
-  const user = req.session.user;
+  const user = req.user;
   const categoryBudget = await categoryBudgetService.create(req.body, user.name);
   res.status(201).json(categoryBudget);
 };
 
 export const getAll = async (req: any, res: Response) => {
-  const user = req.session.user;
+  const user = req.user;
   const categoryBudgets = await categoryBudgetService.getAll(user.name);
   res.status(200).json(categoryBudgets);
 };

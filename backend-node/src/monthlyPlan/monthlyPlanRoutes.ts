@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { authMiddleware } from '../middlewares/middleware';
+import { authMiddleware } from '../middlewares/authMiddleware';
 import * as MonthlyPlanController from './monthlyPlanController';
 
 const router = Router();

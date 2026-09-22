@@ -29,7 +29,7 @@ export class UserRepository {
     Validation.password(password);
 
     const user: UserAuthProjection | null = await UserModel.findOne({ name })
-      .select('_id name password')
+      .select('_id name password role')
       .lean();
 
     if (!user) throw new Error('user does not exists');

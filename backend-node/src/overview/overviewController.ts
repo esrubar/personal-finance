@@ -10,7 +10,7 @@ import {
 import { Request, Response } from 'express';
 
 export const getStats = async (req: any, res: Response) => {
-  const user = req.session.user;
+  const user = req.user;
 
   var overviewParams = {
     month: parseInt(req.params.month),

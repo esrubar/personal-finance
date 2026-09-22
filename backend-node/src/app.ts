@@ -4,7 +4,7 @@ import { config } from 'dotenv';
 import connectDB from './config/db';
 import jwt from 'jsonwebtoken';
 import cookieParser from 'cookie-parser';
-import { authMiddleware } from './middlewares/middleware';
+import { authMiddleware } from './middlewares/authMiddleware';
 import { UserRepository } from './user/userRepository';
 import authRoutes from './auth/authRoutes';
 import userRoutes from './user/userRoutes';
@@ -54,9 +54,13 @@ app.post('/login', async (req: any, res: any) => {
     const user = await UserRepository.login(name, password);
     if (!user) return res.status(401).json({});
 
-    const token = jwt.sign({ id: user.id, name: user.name }, process.env.JWT_SECRET ?? '', {
-      expiresIn: '7d',
-    });
+    const token = jwt.sign(
+      { id: user.id, name: user.name, role: user.role },
+      process.env.JWT_SECRET ?? '',
+      {
+        expiresIn: '7d',
+      },
+    );
 
     const isProd = process.env.NODE_ENV === 'production' || !!process.env.VERCEL;
 

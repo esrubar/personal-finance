@@ -3,10 +3,7 @@ import { paginateWithFilters } from '../utils/paginateWithFilters';
 import dayjs from 'dayjs';
 import { ExpenseModel } from './expenseModel';
 import { getIncomesByLinkedExpense } from '../income/incomeService';
-import {
-  createAuditable,
-  updateAuditable,
-} from '../auditable/auditableService';
+import { createAuditable, updateAuditable } from '../auditable/auditableService';
 import { FilteredExpenseQuery } from './filteredExpensequeryDTO';
 import { ExpenseDTO, MensualExpenseDTO } from './expenseDTO';
 import { mapToPaginatedExpense } from './expenseMapper';

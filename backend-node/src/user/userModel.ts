@@ -1,10 +1,15 @@
 import mongoose, { Model } from 'mongoose';
-import { User } from './user';
+import { User, UserRole } from './user';
 
 // Schema
 const UserSchema = new mongoose.Schema({
   name: { type: String, required: true },
   password: { type: String, required: true },
+  role: {
+    type: String,
+    enum: Object.values(UserRole),
+    default: UserRole.USER,
+  },
   auditable: {
     type: {
       createdAt: { type: Date, required: true, default: Date.now },

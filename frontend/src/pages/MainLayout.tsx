@@ -73,9 +73,11 @@ export const MainLayout = () => {
           <Menu.Item key="upload-transactions" icon={<UploadOutlined />}>
             <Link to="/upload-transactions">Upload Data</Link>
           </Menu.Item>
-          <Menu.Item key="users" icon={<UserOutlined />}>
-            <Link to="/users">Users</Link>
-          </Menu.Item>
+          {user?.role === 'admin' && (
+            <Menu.Item key="users" icon={<UserOutlined />}>
+              <Link to="/users">Users</Link>
+            </Menu.Item>
+          )}
         </Menu>
       </Sider>
 

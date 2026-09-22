@@ -1,12 +1,10 @@
 import axios from '../api/axios';
+import type { MinimalUser } from '../models/user';
 
 //const API_URL = '/api/auth/login';
 const API_URL = '/login';
-export const login = async (values: {
-  name: string;
-  password: string;
-}): Promise<{ name: string; password: string }> => {
-  const { data } = await axios.post<{ name: string; password: string }>(API_URL, values, {
+export const login = async (values: { name: string; password: string }): Promise<MinimalUser> => {
+  const { data } = await axios.post<MinimalUser>(API_URL, values, {
     withCredentials: true,
   });
   return data;

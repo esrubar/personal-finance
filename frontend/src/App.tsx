@@ -40,6 +40,10 @@ const App: React.FC = () => {
             <Route path="/entries/:id" element={<SavingEntryPage />} />
             <Route path="/category-entries/:id" element={<CategoryEntriesPage />} />
           </Route>
+
+          <Route element={<PrivateRoute allowedRoles={['admin']} />}>
+            <Route path="/users" element={<UsersPage />} />
+          </Route>
         </Route>
       </Routes>
     </Router>
