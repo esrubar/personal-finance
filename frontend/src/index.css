@@ -1,0 +1,75 @@
+:root {
+  font-family: Inter, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: #1f1f1f;
+  background: #f5f7fa;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  min-width: 320px;
+  width: 100%;
+  min-height: 100%;
+}
+
+body {
+  background: #f5f7fa;
+  overflow-x: hidden;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+.ant-layout {
+  min-height: 100vh;
+}
+
+.ant-table-wrapper {
+  overflow-x: auto;
+}
+
+.ant-table {
+  min-width: 700px;
+}
+
+.ant-drawer-content-wrapper {
+  max-width: 85vw;
+}
+
+@media (max-width: 767px) {
+  .ant-table {
+    min-width: 620px;
+  }
+
+  .ant-modal {
+    max-width: calc(100vw - 20px);
+    margin: 10px auto;
+  }
+
+  .ant-card,
+  .ant-modal-content,
+  .ant-drawer-content {
+    border-radius: 12px !important;
+  }
+}

@@ -180,8 +180,8 @@ export const SavingProjectsPage: React.FC = () => {
       )}
 
       {/* Synchronized Dashboard Header Grid */}
-      <Row justify="space-between" align="middle" style={styles.headerRow}>
-        <Col>
+      <Row justify="space-between" align="middle" gutter={[16, 16]} style={styles.headerRow}>
+        <Col xs={24} lg={18}>
           <Space direction="vertical" size={0}>
             <Title level={2} style={styles.title}>
               Savings Plans
@@ -191,8 +191,8 @@ export const SavingProjectsPage: React.FC = () => {
             </Text>
           </Space>
         </Col>
-        <Col>
-          <Button type="primary" icon={<PlusOutlined />} size="large" onClick={handleOpenCreate}>
+        <Col xs={24} lg={6} style={styles.headerActionCol}>
+          <Button type="primary" icon={<PlusOutlined />} size="large" onClick={handleOpenCreate} block>
             New Project
           </Button>
         </Col>
@@ -235,12 +235,17 @@ export const SavingProjectsPage: React.FC = () => {
 // --- Page Styles (Co-location) ---
 const styles = {
   pageContainer: {
-    padding: '24px',
+    padding: '16px 12px',
     background: '#f5f7fa',
     minHeight: '100vh',
   },
   headerRow: {
     marginBottom: '24px',
+    width: '100%',
+  },
+  headerActionCol: {
+    display: 'flex',
+    justifyContent: 'flex-end',
   },
   title: {
     margin: 0,

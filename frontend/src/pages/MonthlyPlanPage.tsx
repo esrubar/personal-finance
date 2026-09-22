@@ -165,13 +165,13 @@ export const MonthlyPlanPage = () => {
   ];
 
   return (
-    <div style={{ padding: 24, background: '#f5f7fa', minHeight: '100vh' }}>
-      <Row justify="space-between" align="middle" style={{ marginBottom: 24 }}>
-        <Col>
-          <Title level={2}>Monthly Budget Planner</Title>
+    <div style={{ padding: '16px 12px', background: '#f5f7fa', minHeight: '100vh' }}>
+      <Row justify="space-between" align="middle" gutter={[16, 16]} style={{ marginBottom: 24 }}>
+        <Col xs={24} lg={16}>
+          <Title level={2} style={{ margin: 0 }}>Monthly Budget Planner</Title>
         </Col>
-        <Col>
-          <Button icon={<CopyOutlined />} size="large" onClick={getLastMonthPlanning}>
+        <Col xs={24} lg={8} style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <Button icon={<CopyOutlined />} size="large" onClick={getLastMonthPlanning} block>
             Copy Last Month
           </Button>
         </Col>
@@ -180,15 +180,26 @@ export const MonthlyPlanPage = () => {
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
         <Col xs={24} lg={16}>
           <Card bordered={false}>
-            <Space style={{ width: '100%' }}>
+            <Space size="middle" wrap style={{ width: '100%' }}>
               <InputNumber
                 addonBefore="Salary"
                 value={salary}
                 onChange={(v) => setSalary(v || 0)}
                 addonAfter="€"
+                style={{ minWidth: 180 }}
               />
-              <InputNumber addonBefore="Month" value={month} onChange={(v) => setMonth(v || 1)} />
-              <InputNumber addonBefore="Year" value={year} onChange={(v) => setYear(v || 2026)} />
+              <InputNumber
+                addonBefore="Month"
+                value={month}
+                onChange={(v) => setMonth(v || 1)}
+                style={{ minWidth: 140 }}
+              />
+              <InputNumber
+                addonBefore="Year"
+                value={year}
+                onChange={(v) => setYear(v || 2026)}
+                style={{ minWidth: 150 }}
+              />
             </Space>
           </Card>
         </Col>
@@ -205,7 +216,7 @@ export const MonthlyPlanPage = () => {
       </Row>
 
       <Card bordered={false}>
-        <Space style={{ marginBottom: 20 }}>
+        <Space size="middle" wrap style={{ marginBottom: 20 }}>
           <Button type="primary" danger onClick={() => addItem('expense')}>
             Add Expense
           </Button>
