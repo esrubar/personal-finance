@@ -173,10 +173,14 @@ export const paginateWithFilters = async <T extends { amount: number }>(
   };
   fullQuery['auditable.createdBy'] = userName;
 
-  if (!!categoriesIds && categoriesIds.length > 0) {
-    const objectIds = categoriesIds.map((id) => new Types.ObjectId(id.trim()));
+  if (categoriesIds) {
+  const categoriesArray = [categoriesIds].flat();
+  const objectIds = categoriesArray.map((id) => new Types.ObjectId(id.trim()));
+  
+  if (objectIds.length > 0) {
     fullQuery['category'] = { $in: objectIds };
   }
+}
 
   // Total de documentos
   const total = await model.countDocuments(fullQuery);
