@@ -1,11 +1,13 @@
 // src/middlewares/authMiddleware.ts
+/// <reference path="../types/express.d.ts" />
 import { Request, Response, NextFunction } from 'express';
 import jwt, { VerifyErrors, JwtPayload } from 'jsonwebtoken';
+import { UserRole } from '../user/user.js';
 
 // Interfaz para extender el payload si guardas datos personalizados (ej. 'role')
 export interface CustomJwtPayload extends JwtPayload {
   id: string;
-  role: string;
+  role: UserRole;
 }
 
 export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {

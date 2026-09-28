@@ -1,4 +1,5 @@
 // src/middlewares/roleMiddleware.ts
+/// <reference path="../types/express.d.ts" />
 import { Request, Response, NextFunction } from 'express';
 
 export const requireRoles = (...allowedRoles: string[]) => {
