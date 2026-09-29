@@ -16,26 +16,5 @@ const SavingEntrySchema = new mongoose.Schema({
   },
 });
 
-SavingEntrySchema.post('save', async function (doc) {
-  const Project = mongoose.model('SavingProject');
-
-  try {
-    await Project.findByIdAndUpdate(doc.projectId, {
-      $inc: { amount: doc.amount },
-    });
-  } catch (error) {
-    console.error('Error actualizando el total del proyecto:', error);
-  }
-});
-
-SavingEntrySchema.post('findOneAndDelete', async function (doc) {
-  if (doc) {
-    const Project = mongoose.model('SavingProject');
-    await Project.findByIdAndUpdate(doc.projectId, {
-      $inc: { amount: -doc.amount },
-    });
-  }
-});
-
 export const SavingEntryModel: Model<SavingEntry> =
   mongoose.models.SavingEntry ?? mongoose.model<SavingEntry>('SavingEntry', SavingEntrySchema);
