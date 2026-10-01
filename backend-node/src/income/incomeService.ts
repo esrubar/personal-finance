@@ -173,7 +173,11 @@ export const updateIncome = async (id: string, data: any, userName: string) => {
       // 2. Preparar los nuevos datos
       const incomeData = {
         ...data,
-        auditable: updateAuditable(data.auditable, userName),
+        auditable: {
+          ...oldIncome.auditable,
+          updatedAt: new Date(),
+          updatedBy: userName,
+        },
       };
 
       // 3. Lógica de recalculo de balances
