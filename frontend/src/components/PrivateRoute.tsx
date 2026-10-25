@@ -7,6 +7,8 @@ interface PrivateRouteProps {
 
 export const PrivateRoute: React.FC<PrivateRouteProps> = ({ allowedRoles }) => {
   const { isAuthenticated, user } = useAuth();
+  console.log('PrivateRoute - isAuthenticated:', isAuthenticated);
+  console.log('PrivateRoute - user:', user);
 
   if (isAuthenticated === null) {
     return <div>Cargando...</div>;
